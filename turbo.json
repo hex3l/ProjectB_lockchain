@@ -1,0 +1,31 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "build-next-static/**"]
+    },
+    "storybook-build": {
+      "dependsOn": ["build"],
+      "outputs": ["build-storybook-static/**"]
+    },
+    "lint": {
+      "dependsOn": ["build"]
+    },
+    "tsc": {
+      "dependsOn": ["build"]
+    },
+    "test": {
+      "dependsOn": ["build"]
+    },
+    "storybook": {
+      "dependsOn": ["build"]
+    },
+    "dev": {
+      "cache": false
+    },
+    "update-dependencies": {
+      "cache": false
+    }
+  }
+}
