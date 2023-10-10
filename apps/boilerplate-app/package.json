@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "next build",
-    "dev": "open http://localhost:3100 && next dev --port 3100",
+    "dev": "xdg-open http://localhost:3100 && next dev --port 3100",
     "lint": "eslint --max-warnings 0 .",
     "lint-fix": "eslint --fix .",
     "tsc": "tsc -p tsconfig.json",
@@ -20,7 +20,11 @@
     "react-parallax-tilt": "1.7.170",
     "trpc-api-boilerplate": "1.0.15",
     "ui-tailwind": "*",
-    "utils-version": "*"
+    "utils-version": "*",
+    "config-mui": "*",
+    "ui": "*",
+    "ui-mui": "*",
+    "utils-mui": "*"
   },
   "devDependencies": {
     "config-storybook": "*",
