@@ -19,11 +19,9 @@
     "config-tailwind": "*",
     "react-parallax-tilt": "1.7.170",
     "trpc-api-boilerplate": "1.0.15",
-    "ui-tailwind": "*",
     "utils-version": "*",
     "config-mui": "*",
     "ui": "*",
-    "ui-mui": "*",
     "utils-mui": "*"
   },
   "devDependencies": {

@@ -1,9 +1,12 @@
+import { Container, CssBaseline } from '@mui/material';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { Version } from 'ui-tailwind';
+import * as React from 'react';
 import { getVersionInfo } from 'utils-version';
 
 import 'common/styles/global.css';
+import { BottomBar } from 'modules/BottomBar';
+import { TopBar } from 'modules/TopBar';
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
@@ -14,11 +17,12 @@ const App = ({ Component, pageProps }: AppProps) => {
         <meta name="version" content={getVersionInfo()} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="mb-5 mt-3 text-center">
-        <div className="text-lg font-medium">Monorepo Boilerplate - App (Tailwind)</div>
-        <Version version={getVersionInfo()} />
-      </div>
-      {<Component {...pageProps} />}
+      <CssBaseline />
+      <TopBar />
+      <Container maxWidth="xl" className="pb-11">
+        <Component {...pageProps} />
+      </Container>
+      <BottomBar />
     </>
   );
 };
