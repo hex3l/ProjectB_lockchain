@@ -21,7 +21,8 @@
     "format-fix": "prettier --config .prettierrc --write --ignore-unknown -l .",
     "clean": "npm exec --workspaces -- shx rm -rf node_modules .next .turbo coverage dist compiled build-next-static build-storybook-static && shx rm -rf node_modules",
     "remove-turbo-cache": "shx rm -rf ./node_modules/.cache/turbo",
-    "update-dependencies": "turbo update-dependencies && npx npm-check-updates -u"
+    "update-dependencies": "turbo update-dependencies && npx npm-check-updates -u",
+    "start": "ts-node src/index.ts"
   },
   "dependencies": {
     "@emotion/react": "11.11.1",
@@ -36,7 +37,10 @@
     "next": "13.5.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "zod": "3.22.4"
+    "zod": "3.22.4",
+    "typeorm": "0.3.17",
+    "reflect-metadata": "^0.1.13",
+    "pg": "^8.4.0"
   },
   "devDependencies": {
     "@commitlint/cli": "17.7.2",
@@ -49,7 +53,7 @@
     "@testing-library/jest-dom": "5.17.0",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.5.1",
-    "@types/node": "20.8.3",
+    "@types/node": "^16.11.10",
     "@types/react": "18.2.25",
     "@types/react-dom": "18.2.11",
     "autoprefixer": "10.4.16",
@@ -63,10 +67,10 @@
     "storybook": "7.4.6",
     "tailwindcss": "3.3.3",
     "ts-jest": "29.1.1",
-    "ts-node": "10.9.1",
+    "ts-node": "10.7.0",
     "tsup": "7.2.0",
     "turbo": "1.10.15",
-    "typescript": "5.2.2"
+    "typescript": "4.5.2"
   },
   "engines": {
     "node": ">=20.8.0",

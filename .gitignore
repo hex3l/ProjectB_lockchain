@@ -4,7 +4,7 @@ dist
 build-next-static
 build-storybook-static
 compiled
-
+package-lock.json
 .DS_Store
 *.log
 .vscode
