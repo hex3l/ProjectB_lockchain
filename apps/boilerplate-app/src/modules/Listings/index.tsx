@@ -53,7 +53,7 @@ const messages = [
 ];
 
 // eslint-disable-next-line import/no-default-export
-export function HomePage() {
+export function Listings() {
   return (
     <React.Fragment>
       <List sx={{ mb: 2 }} className="space-y-4">

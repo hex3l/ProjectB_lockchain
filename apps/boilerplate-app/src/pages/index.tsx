@@ -1,5 +1,5 @@
-import { HomePage } from 'modules';
+import { Listings } from 'modules';
 
-const Home = () => <HomePage />;
+const Home = () => <Listings />;
 
 export default Home;
