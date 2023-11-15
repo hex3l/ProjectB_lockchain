@@ -58,4 +58,6 @@ contract ContractHandler {
 	// TODO: 2 owner functions:
 	// 			1. Discard and refund source
 	// 			2. Complete and pay target
+
+	// TODO: hook events up
 }

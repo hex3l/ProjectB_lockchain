@@ -1,26 +1,26 @@
 import { NestFactory } from '@nestjs/core';
-import { AuthModule } from './app.module';
+import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as passport from 'passport';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
 async function bootstrap() {
-    const app = await NestFactory.create<NestExpressApplication>(AuthModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-    // Set up static file serving
-    app.useStaticAssets(join(__dirname, '..', 'public'));
+  // Set up static file serving
+  app.useStaticAssets(join(__dirname, '..', 'public'));
 
-    // Set up view engine
-    app.setBaseViewsDir(join(__dirname, '..', 'views'));
-    app.setViewEngine('ejs');
+  // Set up view engine
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('ejs');
 
-    // Set up validation pipe
-    app.useGlobalPipes(new ValidationPipe());
+  // Set up validation pipe
+  app.useGlobalPipes(new ValidationPipe());
 
-    // Set up Passport.js
-    app.use(passport.initialize());
+  // Set up Passport.js
+  app.use(passport.initialize());
 
-    await app.listen(3000);
+  await app.listen(3000);
 }
 bootstrap();
