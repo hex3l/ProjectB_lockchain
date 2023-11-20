@@ -3,21 +3,16 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as passport from 'passport';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.setGlobalPrefix('api/v1');
 
-  // Set up static file serving
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-
-  // Set up view engine
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
 
   // Set up validation pipe
   app.useGlobalPipes(new ValidationPipe());
-
+  app.enableCors({ origin: '*' });
   // Set up Passport.js
   app.use(passport.initialize());
 

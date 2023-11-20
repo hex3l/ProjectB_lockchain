@@ -4,4 +4,7 @@ const config = require('config-tailwind/tailwind.config.js');
 
 module.exports = {
   presets: [config],
+  corePlugins: {
+    preflight: false,
+  },
 };

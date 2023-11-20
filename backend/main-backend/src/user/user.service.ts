@@ -18,16 +18,12 @@ export class UserService {
     return this.userRepository.findOneBy({ id });
   }
 
-  save(user: User): Promise<User> {
+  save(user: any): Promise<User> {
     return this.userRepository.save(user);
   }
 
-  async findOneByUsername(username: string): Promise<User> {
-    return this.userRepository.findOneBy({ username });
-  }
-
-  async findOneByEmail(email: string): Promise<User> {
-    return this.userRepository.findOneBy({ email });
+  async findOneByAddress(address: string): Promise<User> {
+    return this.userRepository.findOneBy({ address });
   }
 
   async deleteById(id: number): Promise<void> {

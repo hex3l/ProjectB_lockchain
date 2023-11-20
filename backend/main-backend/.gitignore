@@ -5,3 +5,6 @@ build/
 tmp/
 temp/
 .env
+test/
+cache/
+artifacts/

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "next build",
-    "dev": "xdg-open http://localhost:3100 && next dev --port 3100",
+    "dev": "next dev --port 3100",
     "lint": "eslint --max-warnings 0 .",
     "lint-fix": "eslint --fix .",
     "tsc": "tsc -p tsconfig.json",
@@ -16,13 +16,15 @@
     "update-dependencies": "npx npm-check-updates -u"
   },
   "dependencies": {
+    "config-mui": "*",
     "config-tailwind": "*",
     "react-parallax-tilt": "1.7.170",
     "trpc-api-boilerplate": "1.0.15",
-    "utils-version": "*",
-    "config-mui": "*",
     "ui": "*",
-    "utils-mui": "*"
+    "utils-mui": "*",
+    "utils-version": "*",
+    "viem": "^1.19.3",
+    "wagmi": "^1.4.7"
   },
   "devDependencies": {
     "config-storybook": "*",

@@ -1,19 +1,33 @@
 import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { RealIP } from 'nestjs-real-ip';
+import { RetriveAccessTokenDto } from './dto/request-token.dto';
+import randomString from '../utils/randomString';
+import { ValidateTokenDto } from './dto/validate-token.dto';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
-    @Post('login')
-    async login(@Body() loginDto: LoginDto) {
-        const { username, password } = loginDto;
-        const user = await this.authService.validateUser(username, password);
-        if (!user) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
-        const accessToken = await this.authService.generateAccessToken(user);
-        return { accessToken };
+  @Post('validate')
+  async login(@Body() validateDto: ValidateTokenDto, @RealIP() ip: string) {
+    const { address, signedToken } = validateDto;
+    const accessToken = await this.authService.authenticateAuthCache({
+      ip,
+      verify: { address, signedMessage: signedToken },
+    });
+    if (!accessToken) {
+      throw new UnauthorizedException('The verification process failed');
     }
+
+    return { accessToken };
+  }
+
+  @Post('request')
+  async retrieveAccessToken(@Body() bodyDto: RetriveAccessTokenDto, @RealIP() ip: string) {
+    const { address } = bodyDto;
+    const message = address + randomString(25) + Date.now().toString() + ip;
+    await this.authService.saveAuthCache({ address, nounce: message, ip });
+    return { message };
+  }
 }
