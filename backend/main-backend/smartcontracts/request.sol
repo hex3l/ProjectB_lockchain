@@ -1,4 +1,4 @@
-pragma solidity 0.8.22;
+pragma solidity 0.8.19;
 
 contract ContractHandler {
 
@@ -108,8 +108,7 @@ contract ContractHandler {
     }
 
 
-	//Big-ass red button to stop the contract in case of << exothic >> behaviours
-	//TOUPDATE following Di Ciccio's guidelines
+	//Big-ass red button to stop the contract in case of << exotic >> events
 	function destroySmartContract(address payable _to) public {
         require(msg.sender == owner, "You are not the owner");
         selfdestruct(_to);
