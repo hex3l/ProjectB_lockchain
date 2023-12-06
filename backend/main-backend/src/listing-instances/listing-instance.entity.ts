@@ -1,4 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, LineString, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  LineString,
+  OneToMany,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from '../user/user.entity';
 import { Listing } from '../listings/listing.entity';
 import { Message } from '../messages/message.entity';
@@ -28,4 +38,13 @@ export class ListingInstance {
 
   @OneToMany(() => Message, (message) => message.id_listing_instance)
   messages: Message[];
+
+  @CreateDateColumn()
+  created!: Date;
+
+  @UpdateDateColumn()
+  updated!: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

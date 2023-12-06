@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToOne,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { ListingInstance } from '../listing-instances/listing-instance.entity';
 import { User } from '../user/user.entity';
 
@@ -21,4 +30,13 @@ export class Message {
 
   @Column()
   creation_date: Date;
+
+  @CreateDateColumn()
+  created!: Date;
+
+  @UpdateDateColumn()
+  updated!: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
