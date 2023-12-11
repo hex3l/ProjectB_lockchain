@@ -9,7 +9,7 @@ import Toolbar from '@mui/material/Toolbar';
 
 const BottomBar = () => {
   return (
-    <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
+    <AppBar position="static" color="primary">
       <Container maxWidth="xl">
         <Toolbar>
           <IconButton color="inherit" aria-label="open drawer">

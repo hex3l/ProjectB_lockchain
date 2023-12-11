@@ -26,7 +26,15 @@ export class AuthController {
   @Post('request')
   async retrieveAccessToken(@Body() bodyDto: RetriveAccessTokenDto, @RealIP() ip: string) {
     const { address } = bodyDto;
-    const message = address + randomString(25) + Date.now().toString() + ip;
+    const message =
+      'WALLET AUTHENTICATION\n\nADDRESS: ' +
+      address +
+      '\n\nNOUNCE: ' +
+      randomString(25) +
+      '\n\nTIME: ' +
+      Date.now().toString() +
+      '\n\nIP: ' +
+      ip;
     await this.authService.saveAuthCache({ address, nounce: message, ip });
     return { message };
   }

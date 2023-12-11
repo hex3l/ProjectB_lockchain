@@ -1,47 +1,39 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-throw-literal */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Avatar, CircularProgress, IconButton, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import Button from '@mui/material/Button';
 import { InjectedConnector } from '@wagmi/core';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
 
-const loggedInSettings = [
-  { label: 'Profile', url: '/user/profile' },
-  { label: 'Logout', url: '/user/logout' },
-];
-const WalletLogin = () => {
-  const [enableWalletSync, setEnableWalletSync] = useState(false);
+import { clone } from 'utils';
+import { GlobalStateData, GlobalStateContext } from 'utils/GlobalState';
+
+type WalletLoginProps = {
+  jwt: string | null;
+};
+
+const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
+  const { state, setState } = useContext(GlobalStateContext);
   const [syncInProgress, setSetsyncInProgress] = useState(false);
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setEnableWalletSync(true);
-    }, 1000);
-  }, []);
-
-  const hasJwt = () => {
-    if (typeof window !== 'undefined' && enableWalletSync) {
-      const token = localStorage.getItem('token');
-
-      return !!token;
-    }
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
   const { address, isConnected } = useAccount();
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
+
+  const setJWT = useCallback(
+    (token: string) => {
+      const newState = clone(state) as GlobalStateData;
+      newState.auth.jwt = token;
+      if (setState) setState(newState);
+      localStorage.setItem('token', token);
+    },
+    [setState, state],
+  );
 
   const { disconnect } = useDisconnect();
 
@@ -65,7 +57,7 @@ const WalletLogin = () => {
   // STEP 2: when wallet is succesfully connected we contact the server to get a nounce
   useEffect(() => {
     // If connected but does not have a JWT token, then we need to get one
-    if (isConnected && !hasJwt()) {
+    if (isConnected && !jwt) {
       const loginProcess = async () => {
         setSetsyncInProgress(true);
         const nounce = await fetch(`${process.env.BACKEND}/auth/request`, {
@@ -82,7 +74,6 @@ const WalletLogin = () => {
         .then(({ message }) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           setAuthNounce(message);
-          console.log(message);
         })
         .catch((error) => {
           resetSync();
@@ -93,30 +84,28 @@ const WalletLogin = () => {
 
   // STEP 3: once we have a nounce we sign it with the wallet
   useEffect(() => {
-    if (authNounce && !hasJwt()) signMessage();
+    if (authNounce && !jwt) signMessage();
   }, [authNounce]);
 
   // STEP 4: when the nonce is signed we send it to the server to get a JWT token and store it in localstorage
   useEffect(() => {
     if (isSuccess) {
       const requestToken = async () => {
-        const nounce = await fetch(`${process.env.BACKEND}/auth/validate`, {
+        const response = await fetch(`${process.env.BACKEND}/auth/validate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ address, signedToken: data }),
         });
-        const { accessToken, error, message } = await nounce.json();
+        const { accessToken, error, message } = await response.json();
 
-        console.log(accessToken, error, message);
         if (!error && accessToken !== 'undefined') return accessToken;
         else throw `${error}: ${message}`;
       };
       requestToken()
         .then((accessToken) => {
-          localStorage.setItem('token', accessToken);
-          console.log(accessToken);
+          setJWT(accessToken);
         })
         .catch((error) => {
           resetSync();
@@ -130,45 +119,12 @@ const WalletLogin = () => {
 
   return (
     <>
-      {isConnected && hasJwt() && (
-        <>
-          <Tooltip title="Open profile links">
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar alt="ETH" />
-            </IconButton>
-          </Tooltip>
-          <Menu
-            sx={{ mt: '45px' }}
-            id="menu-appbar"
-            anchorEl={anchorElUser}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={Boolean(anchorElUser)}
-            onClose={handleCloseUserMenu}
-          >
-            {loggedInSettings.map((setting) => (
-              <MenuItem key={setting.label} onClick={handleCloseUserMenu}>
-                <Link href={setting.url}>
-                  <Typography textAlign="center">{setting.label}</Typography>
-                </Link>
-              </MenuItem>
-            ))}
-          </Menu>
-        </>
-      )}
-      {((!isConnected && !hasJwt()) || !syncInProgress) && (
+      {(!isConnected || !syncInProgress) && (
         <Button variant="contained" color="success" onClick={() => handleWalletConnection()}>
           Connect your wallet
         </Button>
       )}
-      {isConnected && !hasJwt() && syncInProgress && (
+      {isConnected && syncInProgress && (
         <Button variant="contained" color="success" endIcon={<CircularProgress size="20px" color="warning" />}>
           Loading data
         </Button>
