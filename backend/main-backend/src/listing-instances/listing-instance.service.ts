@@ -23,7 +23,7 @@ export class ListingInstanceService {
     return this.listingInstanceRepository.save(lisiting);
   }
 
-  findAllByCustomer(id_customer: User): Promise<ListingInstance[]> {
+  findAllByCustomer(id_customer: number): Promise<ListingInstance[]> {
     return this.listingInstanceRepository.find({ where: { id_customer } });
   }
 

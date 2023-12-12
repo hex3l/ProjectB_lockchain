@@ -1,4 +1,5 @@
 import { IsEthereumAddress } from 'class-validator';
+import { isRegExp } from 'util/types';
 
 export class RetriveAccessTokenDto {
   @IsEthereumAddress({

@@ -23,7 +23,7 @@ export class ListingService {
     return this.listingRepository.save(lisiting);
   }
 
-  findAllByCreator(id_creator: User, take: number, page: number): Promise<Listing[]> {
+  findAllByCreator(id_creator: number, take: number, page: number): Promise<Listing[]> {
     return this.listingRepository.find({ where: { id_creator }, take, skip: take * (page - 1) });
   }
 

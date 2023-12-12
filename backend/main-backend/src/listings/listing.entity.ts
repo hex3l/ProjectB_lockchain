@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { ListingInstance } from '../listing-instances/listing-instance.entity';
@@ -17,16 +18,30 @@ export class Listing {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.id)
-  id_creator: User;
+  @Column({ type: 'int', nullable: true })
+  id_creator: number;
 
-  @Column({ type: 'jsonb' })
-  data: Record<string, any>;
+  @ManyToOne((type) => User)
+  @JoinColumn({ name: 'id_creator' })
+  creator: User;
+
+  @Column()
+  title: String;
+
+  @Column()
+  description: String;
+
+  @Column()
+  image: String;
 
   @Column()
   limit: number;
 
-  @ManyToOne(() => Category, (category) => category.id)
+  @Column()
+  id_category: number;
+
+  @ManyToOne((type) => Category)
+  @JoinColumn({ name: 'id_category' })
   category: Category;
 
   @OneToMany(() => ListingInstance, (listing_instance) => listing_instance.id_listing)

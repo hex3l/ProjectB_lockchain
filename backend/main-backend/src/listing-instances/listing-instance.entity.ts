@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Listing } from '../listings/listing.entity';
@@ -18,8 +19,12 @@ export class ListingInstance {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.id)
-  id_customer: User;
+  @Column()
+  id_customer: number;
+
+  @ManyToOne((type) => User)
+  @JoinColumn({ name: 'id_customer' })
+  customer: User;
 
   @Column({ type: 'jsonb' })
   data: Record<string, any>;
@@ -33,8 +38,12 @@ export class ListingInstance {
   @Column({ type: 'jsonb' })
   state: Record<string, any>;
 
-  @ManyToOne(() => Listing, (listing) => listing.id)
+  @Column()
   id_listing: Listing;
+
+  @ManyToOne((type) => Listing)
+  @JoinColumn({ name: 'id_listing' })
+  listing: Listing;
 
   @OneToMany(() => Message, (message) => message.id_listing_instance)
   messages: Message[];
