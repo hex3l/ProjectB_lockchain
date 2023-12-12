@@ -13,8 +13,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { Wallet } from 'modules/Wallet';
+import { ServiceBayLogo46px } from 'modules/ServiceBayLogo';
 
-const logoText = 'SELLURSOUL';
+const logoText = 'ServiceBay';
 
 const pages = [
   {
@@ -42,7 +43,7 @@ function TopBar() {
       <AppBar position="sticky" sx={{ top: 0 }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <ServiceBayLogo46px sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
             <Typography
               variant="h6"
               noWrap
@@ -99,7 +100,7 @@ function TopBar() {
                 ))}
               </Menu>
             </Box>
-            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+            <ServiceBayLogo46px sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
             <Typography
               variant="h5"
               noWrap

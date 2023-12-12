@@ -7,4 +7,11 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
+  theme: {
+    extend: {
+      boxShadow: {
+        's-top': '0px 0px 18px 5px rgba(0,0,0,0.54)',
+      },
+    },
+  },
 };

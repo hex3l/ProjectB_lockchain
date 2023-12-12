@@ -1,5 +1,14 @@
-import { Brush, Camera, Code, Search, ViewQuilt } from '@mui/icons-material';
-import { Autocomplete, Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
+import {
+  Brush,
+  Camera,
+  Code,
+  Search,
+  ShowChart,
+  ShowChartOutlined,
+  ViewQuilt,
+  WhatshotOutlined,
+} from '@mui/icons-material';
+import { Autocomplete, Box, Button, Container, Paper, Skeleton, TextField, Typography } from '@mui/material';
 import { useMemo } from 'react';
 
 // import { Listings } from 'modules';
@@ -70,12 +79,24 @@ const Home = () => {
           </Box>
         </Container>
       </Box>
-      <Box className="h-[1000px]"></Box>
-      {/*
-      <Container maxWidth="xl">
-        <Listings />
-      </Container>
-    */}
+      <Box className="shadow-s-top w-full">
+        <Container maxWidth="xl" className="pt-10">
+          <Typography className="flex justify-items-center pb-5 pl-3">
+            <WhatshotOutlined className="text-orange-600" /> Currently trending
+          </Typography>
+          <Box className="flex flex-wrap flex-row gap-10 justify-evenly">
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((v) => (
+              <div>
+                <Skeleton variant="rectangular" width={280} height={160} />
+                <Box sx={{ pt: 0.5 }}>
+                  <Skeleton />
+                  <Skeleton width="60%" />
+                </Box>
+              </div>
+            ))}
+          </Box>
+        </Container>
+      </Box>
     </>
   );
 };

@@ -9,20 +9,13 @@ import Toolbar from '@mui/material/Toolbar';
 
 const BottomBar = () => {
   return (
-    <AppBar position="static" color="primary">
+    <AppBar position="static" color="primary" className="mt-5">
       <Container maxWidth="xl">
-        <Toolbar>
-          <IconButton color="inherit" aria-label="open drawer">
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton color="inherit">
-            <SearchIcon />
-          </IconButton>
-          <IconButton color="inherit">
-            <MoreIcon />
-          </IconButton>
-        </Toolbar>
+        <Box className="w-full flex flex-wrap gap-14 py-10">
+          <Box className="flex flex-1 flex-wrap gap-14"></Box>
+          <Box className="flex flex-1 flex-wrap gap-14"></Box>
+          <Box className="flex flex-1 flex-wrap gap-14"></Box>
+        </Box>
       </Container>
     </AppBar>
   );
