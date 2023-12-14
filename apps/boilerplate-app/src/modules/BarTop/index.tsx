@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { Wallet } from 'modules/Wallet';
-import { ServiceBayLogo46px } from 'modules/ServiceBayLogo';
+import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 
 const logoText = 'ServiceBay';
 
@@ -43,7 +43,9 @@ function TopBar() {
       <AppBar position="sticky" sx={{ top: 0 }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <ServiceBayLogo46px sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <Link href="/">
+              <ServiceBayLogo sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            </Link>
             <Typography
               variant="h6"
               noWrap
@@ -59,7 +61,9 @@ function TopBar() {
                 textDecoration: 'none',
               }}
             >
-              {logoText}
+              {
+                //logoText
+              }
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -100,7 +104,7 @@ function TopBar() {
                 ))}
               </Menu>
             </Box>
-            <ServiceBayLogo46px sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+            <ServiceBayLogo sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
             <Typography
               variant="h5"
               noWrap
@@ -117,7 +121,9 @@ function TopBar() {
                 textDecoration: 'none',
               }}
             >
-              {logoText}
+              {
+                //logoText
+              }
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (

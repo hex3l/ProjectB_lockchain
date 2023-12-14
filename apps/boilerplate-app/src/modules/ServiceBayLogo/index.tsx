@@ -1,12 +1,17 @@
 import { Box } from '@mui/system';
 
-const ServiceBayLogo = () => {
+type ServiceBayLogoSvgProps = {
+  overrideWidth: string;
+  overrideHeight: string;
+};
+
+const ServiceBayLogoSvg = ({ overrideWidth, overrideHeight }: ServiceBayLogoSvgProps) => {
   return (
     <svg
       version="1.0"
       xmlns="http://www.w3.org/2000/svg"
-      width="100%"
-      height="100%"
+      width={overrideWidth || '100%'}
+      height={overrideHeight || '100%'}
       viewBox="0 0 700.000000 700.000000"
       preserveAspectRatio="xMidYMid meet"
     >
@@ -101,12 +106,12 @@ c-22 -41 -42 -82 -46 -90 -3 -8 -13 -31 -22 -50 -41 -92 -66 -161 -81 -223
   );
 };
 
-const ServiceBayLogo46px = ({ sx }: any) => {
+const ServiceBayLogo = ({ sx, fn, overrideHeight, overrideWidth }: any) => {
   return (
-    <Box height="46px" sx={sx}>
-      <ServiceBayLogo />
+    <Box sx={{ height: '46px', ...sx }}>
+      <ServiceBayLogoSvg {...{ overrideHeight, overrideWidth }} />
     </Box>
   );
 };
 
-export { ServiceBayLogo, ServiceBayLogo46px };
+export { ServiceBayLogo };

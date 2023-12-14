@@ -1,14 +1,6 @@
-import {
-  Brush,
-  Camera,
-  Code,
-  Search,
-  ShowChart,
-  ShowChartOutlined,
-  ViewQuilt,
-  WhatshotOutlined,
-} from '@mui/icons-material';
+import { Brush, Camera, Code, Search, ViewQuilt, WhatshotOutlined } from '@mui/icons-material';
 import { Autocomplete, Box, Button, Container, Paper, Skeleton, TextField, Typography } from '@mui/material';
+import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { useMemo } from 'react';
 
 // import { Listings } from 'modules';
@@ -33,13 +25,49 @@ const Home = () => {
     ],
     [],
   );
+
   return (
     <>
-      <Box className="banner">
+      <Box className="banner beach">
+        <div className="beach__waves" />
+        <div className="beach__sand beach__sand--background" />
+        <div className="beach__sand beach__sand--foreground" />
         <Container maxWidth="xl">
-          <Box className="w-full h-[500px] flex flex-col space-y-2 text-center justify-center items-center">
-            <Paper className="w-[700px] p-5 shadow-2xl">
-              <Box className="flex flex-row space-x-4 text-left">
+          <Box className="w-full h-[600px] flex flex-col space-y-2 text-center justify-center items-center">
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <Box className="flex flex-row items-center space-x-2 translate-x-10 translate-y-[-30px] z-[1000]">
+                <ServiceBayLogo
+                  sx={{ height: '300px', minHeight: '300px' }}
+                  overrideHeight={null}
+                  overrideWidth={null}
+                ></ServiceBayLogo>
+                <Box className="rotate-[-12deg] translate-x-[-100px] translate-y-[-30px]">
+                  <Typography className="font-bukhari text-[4.5rem] leading-[4.5rem]">
+                    Service
+                    <br />
+                    Bay
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <Box className="flex flex-row items-center space-x-2 translate-x-8 translate-y-[-20px] z-[1000]">
+                <ServiceBayLogo
+                  sx={{ height: '200px', minHeight: '200px' }}
+                  overrideHeight={'200px'}
+                  overrideWidth={'200px'}
+                ></ServiceBayLogo>
+                <Box className="rotate-[-12deg] translate-x-[-70px] translate-y-[-30px]">
+                  <Typography className="font-bukhari text-[3.5rem] leading-[3.5rem]">
+                    Service
+                    <br />
+                    Bay
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            <Paper className="max-w-[700px] p-5 shadow-2xl z-[1000]">
+              <Box className="flex flex-col gap-3 justify-evenly text-left md:flex-row md:w-[660px]">
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">What are you looking for?</Typography>
                   <TextField label="Outlined" variant="outlined" className="w-full flex-1" />
@@ -61,7 +89,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Paper>
-            <Box className="w-[700px] flex flex-row space-x-4">
+            <Box className="w-[700px] hidden md:flex flex-row space-x-4 z-[1000]">
               {relevantCategories.map((category) => {
                 return (
                   <Button
