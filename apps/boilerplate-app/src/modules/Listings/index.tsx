@@ -1,7 +1,11 @@
-import List from '@mui/material/List';
 import * as React from 'react';
 
-import { Offer } from './Offer';
+import { Offer } from './OfferBox';
+import { Autocomplete, Box, Button, Container, IconButton, Paper, Slider, TextField, Typography } from '@mui/material';
+import { ServiceBayLogo } from 'modules/ServiceBayLogo';
+import { FilterAltOff, FilterList, Search } from '@mui/icons-material';
+import { OfferRow } from './OfferRow';
+import { useRouter } from 'next/router';
 
 const messages = [
   {
@@ -54,15 +58,71 @@ const messages = [
 
 // eslint-disable-next-line import/no-default-export
 export function Listings() {
+  const router = useRouter();
   return (
     <React.Fragment>
-      <List sx={{ mb: 2 }} className="space-y-4">
-        {messages.map(({ id, primary, secondary }) => (
-          <React.Fragment key={id}>
-            <Offer description={secondary} title={primary} />
-          </React.Fragment>
-        ))}
-      </List>
+      <Box className="banner static-beach_bar">
+        <div className="static-beach_bar__waves" />
+        <div className="static-beach_bar__sand static-beach_bar__sand--background" />
+        <div className="static-beach_bar__sand static-beach_bar__sand--foreground" />
+        <Container maxWidth="xl">
+          <Box className="w-full h-[200px] flex text-center justify-center items-center">
+            <Box className="flex z-10">
+              <Typography className="font-bukhari text-[4.5rem] leading-[4.5rem] text-[#121212]">
+                {router.query.category ? router.query.category : 'Listings'}
+              </Typography>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+
+      <Container maxWidth="xl" className="pt-10 flex flex-col gap-5">
+        <Paper className="w-full flex h-[60px] items-center justify-center gap-3 px-3">
+          <TextField
+            label="What are you lookign for?"
+            variant="outlined"
+            value=" "
+            className="w-[250px]"
+            inputProps={{ className: 'h-[6px]' }}
+          />
+          <Button variant="contained" color="secondary" startIcon={<Search />}>
+            Search
+          </Button>
+          <Box className="flex flex-1"></Box>
+          <IconButton>
+            <FilterList></FilterList>
+          </IconButton>
+        </Paper>
+        <Box className="flex flex-row gap-5">
+          <Box className="w-[250px]" sx={{ display: { sm: 'none', md: 'flex' } }}>
+            <Paper>
+              <Box className="flex flex-col gap-5 p-5 w-[250px]">
+                <Box className="flex flex-row items-center">
+                  <Typography className="font-bold flex-1">FILTERS</Typography>
+                  <IconButton>
+                    <FilterAltOff></FilterAltOff>
+                  </IconButton>
+                </Box>
+                <Typography className="font-bold">Price range</Typography>
+                <Slider
+                  getAriaLabel={() => 'Minimum distance'}
+                  value={[10, 50]}
+                  onChange={() => {}}
+                  valueLabelDisplay="auto"
+                  disableSwap
+                />
+              </Box>
+            </Paper>
+          </Box>
+          <Box className="flex flex-wrap flex-row gap-5 justify-evenly">
+            {messages.map(({ id, primary, secondary }) => (
+              <React.Fragment key={id}>
+                <OfferRow description={secondary} title={primary} />
+              </React.Fragment>
+            ))}
+          </Box>
+        </Box>
+      </Container>
     </React.Fragment>
   );
 }

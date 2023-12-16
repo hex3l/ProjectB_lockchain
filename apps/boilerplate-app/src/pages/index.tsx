@@ -1,5 +1,6 @@
 import { Brush, Camera, Code, Search, ViewQuilt, WhatshotOutlined } from '@mui/icons-material';
 import { Autocomplete, Box, Button, Container, Paper, Skeleton, TextField, Typography } from '@mui/material';
+import { Offer } from 'modules/Listings/OfferBox';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { useMemo } from 'react';
 
@@ -70,7 +71,7 @@ const Home = () => {
               <Box className="flex flex-col gap-3 justify-evenly text-left md:flex-row md:w-[660px]">
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">What are you looking for?</Typography>
-                  <TextField label="Outlined" variant="outlined" className="w-full flex-1" />
+                  <TextField placeholder="Wordpress plugin" variant="outlined" className="w-full flex-1" />
                 </Box>
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">In which Category?</Typography>
@@ -78,7 +79,7 @@ const Home = () => {
                     className="flex-1"
                     disablePortal
                     options={['Option 1', 'Option 2']}
-                    renderInput={(params) => <TextField {...params} label="Combo box" />}
+                    renderInput={(params) => <TextField {...params} placeholder="CMS development" />}
                   />
                 </Box>
                 <Box className="flex flex-col space-y-2">
@@ -89,7 +90,7 @@ const Home = () => {
                 </Box>
               </Box>
             </Paper>
-            <Box className="w-[700px] hidden md:flex flex-row space-x-4 z-[1000]">
+            <Box className="w-[700px] hidden md:flex flex-row space-x-4 z-10">
               {relevantCategories.map((category) => {
                 return (
                   <Button
@@ -114,19 +115,23 @@ const Home = () => {
           </Typography>
           <Box className="flex flex-wrap flex-row gap-10 justify-evenly">
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((v) => (
-              <div>
-                <Skeleton variant="rectangular" width={280} height={160} />
-                <Box sx={{ pt: 0.5 }}>
-                  <Skeleton />
-                  <Skeleton width="60%" />
-                </Box>
-              </div>
+              <Offer
+                description={`Who wants to have a cookout this weekend? I just got some furniture
+              for my backyard and would love to fire up the grill.`}
+                title={'SummerBBQ'}
+              />
             ))}
           </Box>
         </Container>
       </Box>
     </>
   );
-};
+}; /*<div>
+<Skeleton variant="rectangular" width={280} height={160} />
+<Box sx={{ pt: 0.5 }}>
+  <Skeleton />
+  <Skeleton width="60%" />
+</Box>
+</div>*/
 
 export default Home;

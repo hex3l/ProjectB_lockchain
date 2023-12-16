@@ -96,7 +96,7 @@ function TopBar() {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                  <MenuItem key={page.label}>
                     <Link href={page.url}>
                       <Typography textAlign="center">{page.label}</Typography>
                     </Link>
@@ -127,9 +127,15 @@ function TopBar() {
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
-                <Button key={page.label} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
-                  {page.label}
-                </Button>
+                <Link href={page.url}>
+                  <Button
+                    key={page.label}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page.label}
+                  </Button>
+                </Link>
               ))}
             </Box>
 
