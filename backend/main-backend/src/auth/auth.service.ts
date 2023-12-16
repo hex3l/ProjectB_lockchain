@@ -41,7 +41,7 @@ export class AuthService {
       existingUser = await this.usersService.save({ address: signerAddress });
     }
 
-    return this.jwtService.sign({ id_user: existingUser.id, address: signerAddress }); //todo make an entry that verify if the jwt is signed by us return true else false
+    return this.jwtService.sign({ id_user: existingUser.id, address: signerAddress });
   }
 
   async saveAuthCache(data: { address: string; nounce: string; ip: string }): Promise<void> {
