@@ -1,4 +1,3 @@
-import AdbIcon from '@mui/icons-material/Adb';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -14,8 +13,6 @@ import { useState } from 'react';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { Wallet } from 'modules/Wallet';
-
-const logoText = 'ServiceBay';
 
 const pages = [
   {
@@ -96,7 +93,7 @@ function TopBar() {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page.label}>
+                  <MenuItem key={page.url}>
                     <Link href={page.url}>
                       <Typography textAlign="center">{page.label}</Typography>
                     </Link>
@@ -127,7 +124,7 @@ function TopBar() {
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
-                <Link href={page.url}>
+                <Link key={page.url} href={page.url}>
                   <Button
                     key={page.label}
                     onClick={handleCloseNavMenu}

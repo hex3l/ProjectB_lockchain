@@ -1,8 +1,9 @@
 import { Brush, Camera, Code, Search, ViewQuilt, WhatshotOutlined } from '@mui/icons-material';
 import { Autocomplete, Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
+import { useMemo } from 'react';
+
 import { Offer } from 'modules/Listings/OfferBox';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-import { useMemo } from 'react';
 
 // import { Listings } from 'modules';
 
@@ -37,11 +38,7 @@ const Home = () => {
           <Box className="w-full h-[600px] flex flex-col space-y-2 text-center justify-center items-center">
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Box className="flex flex-row items-center space-x-2 translate-x-10 translate-y-[-30px] z-[1000]">
-                <ServiceBayLogo
-                  sx={{ height: '300px', minHeight: '300px' }}
-                  overrideHeight={null}
-                  overrideWidth={null}
-                ></ServiceBayLogo>
+                <ServiceBayLogo sx={{ height: '300px', minHeight: '300px' }}></ServiceBayLogo>
                 <Box className="rotate-[-12deg] translate-x-[-100px] translate-y-[-30px]">
                   <Typography className="font-bukhari text-[4.5rem] leading-[4.5rem]">
                     Service

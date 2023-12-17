@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import { Button, Container, IconButton, Paper, Typography } from '@mui/material';
 import { Rating } from '@mui/material';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 const Page = () => {
