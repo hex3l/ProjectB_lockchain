@@ -7,7 +7,7 @@ const clone = (obj: unknown): object => JSON.parse(JSON.stringify(obj)) as objec
  * @returns fetch result
  */
 const backendCall = async (relpath: string, params: RequestInit) => {
-  const headers = clone(params.headers) || {};
+  const headers = clone(params.headers);
   delete params.headers;
 
   return await fetch(`${process.env.BACKEND}/${relpath}`, {

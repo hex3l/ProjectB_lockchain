@@ -1,9 +1,8 @@
 import { Brush, Camera, Code, Search, ViewQuilt, WhatshotOutlined } from '@mui/icons-material';
-import { Autocomplete, Box, Button, Container, Paper, Skeleton, TextField, Typography } from '@mui/material';
-import { useMemo } from 'react';
-
+import { Autocomplete, Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
 import { Offer } from 'modules/Listings/OfferBox';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
+import { useMemo } from 'react';
 
 // import { Listings } from 'modules';
 
@@ -115,8 +114,9 @@ const Home = () => {
             <WhatshotOutlined className="text-orange-600" /> Currently trending
           </Typography>
           <Box className="flex flex-wrap flex-row gap-10 justify-evenly">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((v) => (
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
               <Offer
+                key={index}
                 description={`Who wants to have a cookout this weekend? I just got some furniture
               for my backyard and would love to fire up the grill.`}
                 title={'SummerBBQ'}

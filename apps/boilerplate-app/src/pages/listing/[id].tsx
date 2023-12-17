@@ -1,16 +1,4 @@
-import {
-  FavoriteBorder,
-  FilterAltOff,
-  FilterList,
-  Flag,
-  LocalMall,
-  LocalOffer,
-  Padding,
-  Report,
-  Share,
-  ShoppingBasket,
-} from '@mui/icons-material';
-import { Home as HomeIcon } from '@mui/icons-material'; // useless I guess
+import { FavoriteBorder, Flag, LocalOffer, Share, ShoppingBasket } from '@mui/icons-material';
 import {
   Avatar,
   Box,
@@ -24,13 +12,10 @@ import {
   ListItemText,
   Stack,
 } from '@mui/material';
-import { Autocomplete, Button, Container, IconButton, Paper, Slider, TextField, Typography } from '@mui/material';
+import { Button, Container, IconButton, Paper, Typography } from '@mui/material';
 import { Rating } from '@mui/material';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
-
-import { Listings } from 'modules';
-import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-import Home from 'pages';
 
 const Page = () => {
   const router = useRouter();
@@ -56,7 +41,8 @@ const Page = () => {
           <Paper variant="outlined">
             <Grid container>
               <Grid item>
-                <img
+                <Image
+                  alt="listingImage"
                   src="https://i.seadn.io/s/raw/files/a7ac74a21c6da5edd7fe1db0b6cf9a57.jpg?auto=format&dpr=1&w=1000"
                   width={300}
                 />
