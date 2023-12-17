@@ -40,13 +40,7 @@ const Page = () => {
         <Box>
           <Paper variant="outlined">
             <Grid container>
-              <Grid item>
-                <Image
-                  alt="listingImage"
-                  src="https://i.seadn.io/s/raw/files/a7ac74a21c6da5edd7fe1db0b6cf9a57.jpg?auto=format&dpr=1&w=1000"
-                  width={300}
-                />
-              </Grid>
+              <Grid item></Grid>
               <Grid item xs={6}>
                 <List
                   sx={{
