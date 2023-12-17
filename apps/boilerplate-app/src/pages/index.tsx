@@ -75,7 +75,7 @@ const Home = () => {
                   <Autocomplete
                     className="flex-1"
                     disablePortal
-                    options={['Option 1', 'Option 2']}
+                    options={['Date', 'Price', 'Name']}
                     renderInput={(params) => <TextField {...params} placeholder="CMS development" />}
                   />
                 </Box>
