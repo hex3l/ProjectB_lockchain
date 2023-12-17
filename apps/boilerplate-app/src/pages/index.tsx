@@ -1,8 +1,9 @@
 import { Brush, Camera, Code, Search, ViewQuilt, WhatshotOutlined } from '@mui/icons-material';
 import { Autocomplete, Box, Button, Container, Paper, Skeleton, TextField, Typography } from '@mui/material';
+import { useMemo } from 'react';
+
 import { Offer } from 'modules/Listings/OfferBox';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-import { useMemo } from 'react';
 
 // import { Listings } from 'modules';
 
@@ -126,7 +127,7 @@ const Home = () => {
       </Box>
     </>
   );
-}; /*<div>
+}; /* <div>
 <Skeleton variant="rectangular" width={280} height={160} />
 <Box sx={{ pt: 0.5 }}>
   <Skeleton />

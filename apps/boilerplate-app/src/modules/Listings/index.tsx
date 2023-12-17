@@ -1,11 +1,12 @@
+import { FilterAltOff, FilterList, Search } from '@mui/icons-material';
+import { Autocomplete, Box, Button, Container, IconButton, Paper, Slider, TextField, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 
-import { Offer } from './OfferBox';
-import { Autocomplete, Box, Button, Container, IconButton, Paper, Slider, TextField, Typography } from '@mui/material';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-import { FilterAltOff, FilterList, Search } from '@mui/icons-material';
+
+import { Offer } from './OfferBox';
 import { OfferRow } from './OfferRow';
-import { useRouter } from 'next/router';
 
 const messages = [
   {

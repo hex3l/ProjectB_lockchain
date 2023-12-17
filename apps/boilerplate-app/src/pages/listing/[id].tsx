@@ -1,4 +1,17 @@
 import {
+  FavoriteBorder,
+  FilterAltOff,
+  FilterList,
+  Flag,
+  LocalMall,
+  LocalOffer,
+  Padding,
+  Report,
+  Share,
+  ShoppingBasket,
+} from '@mui/icons-material';
+import { Home as HomeIcon } from '@mui/icons-material'; // useless I guess
+import {
   Avatar,
   Box,
   Chip,
@@ -11,26 +24,13 @@ import {
   ListItemText,
   Stack,
 } from '@mui/material';
-import { Listings } from 'modules';
-
 import { Autocomplete, Button, Container, IconButton, Paper, Slider, TextField, Typography } from '@mui/material';
-import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-import {
-  FavoriteBorder,
-  FilterAltOff,
-  FilterList,
-  Flag,
-  LocalMall,
-  LocalOffer,
-  Padding,
-  Report,
-  Share,
-  ShoppingBasket,
-} from '@mui/icons-material';
-import { Home as HomeIcon } from '@mui/icons-material'; //useless I guess
-import { useRouter } from 'next/router';
-import Home from 'pages';
 import { Rating } from '@mui/material';
+import { useRouter } from 'next/router';
+
+import { Listings } from 'modules';
+import { ServiceBayLogo } from 'modules/ServiceBayLogo';
+import Home from 'pages';
 
 const Page = () => {
   const router = useRouter();

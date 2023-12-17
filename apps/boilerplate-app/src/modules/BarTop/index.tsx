@@ -12,8 +12,8 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { Wallet } from 'modules/Wallet';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
+import { Wallet } from 'modules/Wallet';
 
 const logoText = 'ServiceBay';
 
@@ -62,7 +62,7 @@ function TopBar() {
               }}
             >
               {
-                //logoText
+                // logoText
               }
             </Typography>
 
@@ -122,7 +122,7 @@ function TopBar() {
               }}
             >
               {
-                //logoText
+                // logoText
               }
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
