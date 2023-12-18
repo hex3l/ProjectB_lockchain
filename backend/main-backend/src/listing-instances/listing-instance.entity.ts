@@ -39,7 +39,7 @@ export class ListingInstance {
   state: Record<string, any>;
 
   @Column()
-  id_listing: Listing;
+  id_listing: number;
 
   @ManyToOne((type) => Listing)
   @JoinColumn({ name: 'id_listing' })
