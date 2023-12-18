@@ -1,4 +1,3 @@
-import AdbIcon from '@mui/icons-material/Adb';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -12,10 +11,8 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { Wallet } from 'modules/Wallet';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-
-const logoText = 'ServiceBay';
+import { Wallet } from 'modules/Wallet';
 
 const pages = [
   {
@@ -62,7 +59,7 @@ function TopBar() {
               }}
             >
               {
-                //logoText
+                // logoText
               }
             </Typography>
 
@@ -96,7 +93,7 @@ function TopBar() {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                  <MenuItem key={page.url}>
                     <Link href={page.url}>
                       <Typography textAlign="center">{page.label}</Typography>
                     </Link>
@@ -122,14 +119,20 @@ function TopBar() {
               }}
             >
               {
-                //logoText
+                // logoText
               }
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
-                <Button key={page.label} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
-                  {page.label}
-                </Button>
+                <Link key={page.url} href={page.url}>
+                  <Button
+                    key={page.label}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page.label}
+                  </Button>
+                </Link>
               ))}
             </Box>
 

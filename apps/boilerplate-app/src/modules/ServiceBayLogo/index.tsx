@@ -1,8 +1,9 @@
+import { SxProps } from '@mui/material';
 import { Box } from '@mui/system';
 
 type ServiceBayLogoSvgProps = {
-  overrideWidth: string;
-  overrideHeight: string;
+  overrideWidth?: string;
+  overrideHeight?: string;
 };
 
 const ServiceBayLogoSvg = ({ overrideWidth, overrideHeight }: ServiceBayLogoSvgProps) => {
@@ -10,8 +11,8 @@ const ServiceBayLogoSvg = ({ overrideWidth, overrideHeight }: ServiceBayLogoSvgP
     <svg
       version="1.0"
       xmlns="http://www.w3.org/2000/svg"
-      width={overrideWidth || '100%'}
-      height={overrideHeight || '100%'}
+      width={overrideWidth ?? '100%'}
+      height={overrideHeight ?? '100%'}
       viewBox="0 0 700.000000 700.000000"
       preserveAspectRatio="xMidYMid meet"
     >
@@ -106,12 +107,18 @@ c-22 -41 -42 -82 -46 -90 -3 -8 -13 -31 -22 -50 -41 -92 -66 -161 -81 -223
   );
 };
 
-const ServiceBayLogo = ({ sx, fn, overrideHeight, overrideWidth }: any) => {
+const ServiceBayLogo = ({ sx, overrideHeight, overrideWidth }: ServiceBayLogoProps) => {
   return (
     <Box sx={{ height: '46px', ...sx }}>
       <ServiceBayLogoSvg {...{ overrideHeight, overrideWidth }} />
     </Box>
   );
+};
+
+type ServiceBayLogoProps = {
+  sx?: SxProps;
+  overrideHeight?: string;
+  overrideWidth?: string;
 };
 
 export { ServiceBayLogo };

@@ -69,7 +69,9 @@ const Wallet = () => {
             {loggedInSettings.map((setting) => (
               <MenuItem key={setting.label} onClick={handleCloseUserMenu}>
                 <Link href={setting.url}>
-                  <Typography textAlign="center">{setting.label}</Typography>
+                  <Typography textAlign="center" className="no-underline text-white hover:no-underline">
+                    {setting.label}
+                  </Typography>
                 </Link>
               </MenuItem>
             ))}

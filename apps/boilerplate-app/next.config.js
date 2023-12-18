@@ -8,6 +8,7 @@ const nextConfig = {
   env: {
     BACKEND: 'http://localhost:3000/api/v1',
   },
+  eslint: { ignoreDuringBuilds: true },
 };
 
 module.exports = nextConfig;

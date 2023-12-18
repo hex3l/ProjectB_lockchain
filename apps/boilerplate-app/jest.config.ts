@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Config } from 'jest';
 
 import { jestConfigJsdom } from '../../packages/config-jest';

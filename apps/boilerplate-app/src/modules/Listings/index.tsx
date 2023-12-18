@@ -1,7 +1,26 @@
-import List from '@mui/material/List';
-import * as React from 'react';
+import { ArrowLeft, ArrowRight, FilterAltOff, FilterList, Search } from '@mui/icons-material';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import {
+  Accordion,
+  AccordionSummaryProps,
+  Autocomplete,
+  Box,
+  Button,
+  Container,
+  Divider,
+  IconButton,
+  Paper,
+  Slider,
+  TextField,
+  Typography,
+  styled,
+} from '@mui/material';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import { useRouter } from 'next/router';
+import { Fragment, useState } from 'react';
 
-import { Offer } from './Offer';
+import { OfferRow } from './OfferRow';
 
 const messages = [
   {
@@ -52,17 +71,208 @@ const messages = [
   },
 ];
 
+const categories = [
+  { label: 'Art' },
+  { label: 'Music' },
+  { label: 'Sports' },
+  { label: 'Gaming' },
+  { label: 'Collectibles' },
+  { label: 'Domains' },
+  { label: 'Virtual Worlds' },
+  { label: 'Trading Cards' },
+  { label: 'DeFi' },
+  { label: 'Utility' },
+  { label: 'Metaverses' },
+  { label: 'All' },
+  { label: 'Fashion' },
+  { label: 'Books' },
+  { label: 'Movies' },
+  { label: 'Technology' },
+  { label: 'Food' },
+  { label: 'Health' },
+  { label: 'Travel' },
+  { label: 'Home Decor' },
+  { label: 'Fitness' },
+  { label: 'Education' },
+  { label: 'Pets' },
+  { label: 'Beauty' },
+  { label: 'Finance' },
+  { label: 'Automotive' },
+  { label: 'Outdoor' },
+  { label: 'Events' },
+  { label: 'Charity' },
+  { label: 'Hobbies' },
+  { label: 'Photography' },
+  { label: 'Crafts' },
+  { label: 'Music' },
+  { label: 'Sports' },
+  { label: 'Gaming' },
+  { label: 'Collectibles' },
+  { label: 'Domains' },
+  { label: 'Virtual Worlds' },
+  { label: 'Trading Cards' },
+  { label: 'DeFi' },
+  { label: 'Utility' },
+  { label: 'Metaverses' },
+  { label: 'All' },
+];
+
+const marks = [
+  {
+    value: 0,
+    label: '0',
+  },
+  {
+    value: 100,
+    label: '100',
+  },
+];
+
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+  <MuiAccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />} {...props} />
+))(() => ({
+  padding: 0,
+  flexDirection: 'row',
+  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+    transform: 'rotate(90deg)',
+  },
+  '& .MuiAccordionSummary-content': {
+    marginLeft: 0,
+  },
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(() => ({
+  padding: 0,
+  borderTop: '1px solid rgba(0, 0, 0, .125)',
+}));
+
 // eslint-disable-next-line import/no-default-export
 export function Listings() {
+  const router = useRouter();
+
+  const [accordionState, setAccordionState] = useState([true, true, true]);
+  const [acc1] = accordionState;
+
+  const handleChange = (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    const newAccordionState = [...accordionState];
+    newAccordionState[panel] = isExpanded;
+    setAccordionState(newAccordionState);
+  };
+
   return (
-    <React.Fragment>
-      <List sx={{ mb: 2 }} className="space-y-4">
-        {messages.map(({ id, primary, secondary }) => (
-          <React.Fragment key={id}>
-            <Offer description={secondary} title={primary} />
-          </React.Fragment>
-        ))}
-      </List>
-    </React.Fragment>
+    <Fragment>
+      <Box className="banner static-beach_bar">
+        <div className="static-beach_bar__waves" />
+        <div className="static-beach_bar__sand static-beach_bar__sand--background" />
+        <div className="static-beach_bar__sand static-beach_bar__sand--foreground" />
+        <Container maxWidth="xl">
+          <Box className="w-full h-[250px] flex flex-col text-center justify-center items-center">
+            <Box className="flex z-10">
+              <Typography className="font-bukhari text-[4.5rem] leading-[4.5rem] text-[#121212]">
+                {router.query.category ? router.query.category : 'Listings'}
+              </Typography>
+            </Box>
+            <Paper className="max-w-[700px] p-5 mt-[27px] flex flex-row gap-3 shadow-2xl z-[1000]">
+              <TextField
+                label="What are you looking for?"
+                variant="outlined"
+                value=" "
+                className="w-[250px]"
+                inputProps={{ className: 'h-[6px]' }}
+              />
+              <Button variant="contained" startIcon={<Search />}>
+                Search
+              </Button>
+            </Paper>
+          </Box>
+        </Container>
+      </Box>
+
+      <Container maxWidth="xl" className="pt-10 flex flex-col gap-5">
+        <Box className="flex flex-row gap-5">
+          <Paper className="flex-1 flex h-[60px] items-center justify-center gap-3 px-5">
+            <Box className="flex flex-1 flex-row gap-2 items-center w-0">
+              <Typography className="font-bold">CATEGORIES:</Typography>
+              <IconButton>
+                <ArrowLeft />
+              </IconButton>
+              <Box className="overflow-x-hidden">
+                <Box className=" whitespace-nowrap">
+                  {categories.map((option) => (
+                    <Button color="secondary" key={option.label}>
+                      {option.label}
+                    </Button>
+                  ))}
+                </Box>
+              </Box>
+              <IconButton>
+                <ArrowRight />
+              </IconButton>
+            </Box>
+          </Paper>
+          <Paper className="flex h-[60px] items-center justify-center gap-3 px-5">
+            <Autocomplete
+              className="flex-1"
+              disablePortal
+              options={['Option 1', 'Option 2']}
+              defaultValue={'Option 1'}
+              disableClearable
+              popupIcon={null}
+              renderInput={(params) => <TextField {...params} variant="standard" className="w-[100px]" />}
+            />
+            <IconButton>
+              <FilterList></FilterList>
+            </IconButton>
+          </Paper>
+        </Box>
+        <Box className="flex flex-row gap-5">
+          <Box className="w-[250px]" sx={{ display: { sm: 'none', md: 'flex' } }}>
+            <Paper>
+              <Box className="flex flex-col p-5 w-[250px]">
+                <Box className="flex flex-row pb-5 items-center">
+                  <Typography className="font-bold flex-1">FILTERS</Typography>
+                  <IconButton>
+                    <FilterAltOff></FilterAltOff>
+                  </IconButton>
+                </Box>
+                <Typography className="font-bold">Price range (ETH)</Typography>
+                <Slider
+                  color="secondary"
+                  getAriaLabel={() => 'Minimum distance'}
+                  value={[10, 50]}
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
+                  onChange={() => {}}
+                  valueLabelDisplay="auto"
+                  marks={marks}
+                  disableSwap
+                />
+                <Divider className="my-2" />
+                <div>
+                  <Accordion expanded={acc1} onChange={handleChange(0)}>
+                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                      <Typography className="font-bold">Extra</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit
+                        amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                </div>
+              </Box>
+            </Paper>
+          </Box>
+          <Box className="flex flex-wrap flex-row gap-5 justify-evenly">
+            {messages.map(({ id, primary, secondary }) => (
+              <Fragment key={id}>
+                <OfferRow description={secondary} title={primary} />
+              </Fragment>
+            ))}
+          </Box>
+        </Box>
+      </Container>
+    </Fragment>
   );
 }
