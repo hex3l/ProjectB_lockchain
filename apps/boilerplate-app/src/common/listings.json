@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1",
+    "name": "DataBase Manager",
+    "description": "Need to store data? This is the service for you.",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/x_DataBaseManager.png"
+  },
+  {
+    "id": "2",
+    "name": ".Net Developer",
+    "description": "I can develop your .Net application.",
+    "price": "0.2",
+    "image": "/assets/defaultLogos/x_DataBaseManager.png"
+  },
+  {
+    "id": "3",
+    "name": "Logo Designer",
+    "description": "Do you need a logo? try this service.",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/x_LogoDesigner.png"
+  },
+  {
+    "id": "4",
+    "name": "Meme Designer",
+    "description": "Have you got an idea for a meme? I can make it for you.",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/x_memeDesigner.png"
+  },
+  {
+    "id": "5",
+    "name": "Pay To Do Nothing",
+    "description": "Too much money? I can help you.",
+    "price": "1",
+    "image": "/assets/defaultLogos/x_PatToDoNothing.png"
+  },
+  {
+    "id": "6",
+    "name": "Pentester",
+    "description": "Give me your website and I will try to hack it.",
+    "price": "0.5",
+    "image": "/assets/defaultLogos/x_Pentester.png"
+  },
+  {
+    "id": "7",
+    "name": "Python developer",
+    "description": " I can develop your Python application.",
+    "price": "0.2",
+    "image": "/assets/defaultLogos/x_PythonDeveloper.png"
+  },
+  {
+    "id": "8",
+    "name": "Not Ready",
+    "description": " Not Ready",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/x_NotReady.png"
+  }
+]
