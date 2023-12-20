@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { ArrowLeft, ArrowRight, FilterAltOff, FilterList, Search } from '@mui/icons-material';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -68,9 +73,9 @@ export function Listings() {
     setAccordionState(newAccordionState);
   };
 
-  const categoryScroll = useRef(null);
-  const scroll = (scrollOffset) => {
-    if (categoryScroll.current) categoryScroll.current.scrollLeft += scrollOffset;
+  const categoryScroll = useRef<any>(null);
+  const scroll = (scrollOffset: number) => {
+    if (categoryScroll.current) categoryScroll.current['scrollLeft'] += scrollOffset;
   };
 
   return (
