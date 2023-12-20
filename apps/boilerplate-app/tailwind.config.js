@@ -5,6 +5,7 @@ const config = require('config-tailwind/tailwind.config.js');
 module.exports = {
   presets: [config],
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  important: true,
   corePlugins: {
     preflight: false,
   },
