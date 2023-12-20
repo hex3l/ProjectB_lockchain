@@ -31,7 +31,7 @@ const Page = () => {
         <Box>
           <Paper variant="outlined">
             <Box className="flex md:flex-row flex-col">
-              <Box className="md:w-[400px] w-full bg-slate-900">
+              <Box className="md:w-[400px] md:h-[400px] w-full bg-slate-900">
                 <Slide>
                   <Box className="bg-slate-100 flex justify-center">
                     <img alt="post image" src={listing?.image} className="max-w-[400px]" />

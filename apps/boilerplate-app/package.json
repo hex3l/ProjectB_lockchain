@@ -2,6 +2,7 @@
   "name": "boilerplate-app",
   "version": "0.0.0",
   "scripts": {
+    "start": "next start",
     "build": "next build",
     "dev": "next dev --port 3100",
     "lint": "eslint --max-warnings 0 .",
