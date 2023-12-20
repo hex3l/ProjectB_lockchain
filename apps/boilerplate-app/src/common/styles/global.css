@@ -1,6 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'react-slideshow-image/dist/styles.css';
+
+html,
+body {
+  max-width: 100vw;
+}
 
 @font-face {
   font-family: bukhari-script;

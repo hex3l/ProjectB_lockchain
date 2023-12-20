@@ -16,5 +16,11 @@ module.exports = {
     fontFamily: {
       bukhari: ['bukhari-script'],
     },
+    screens: {
+      sx: 0,
+      md: '900px',
+      lg: '1100px',
+      xl: '1400px',
+    },
   },
 };

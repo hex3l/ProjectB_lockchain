@@ -95,13 +95,18 @@ function TopBar() {
                 {pages.map((page) => (
                   <MenuItem key={page.url}>
                     <Link href={page.url}>
-                      <Typography textAlign="center">{page.label}</Typography>
+                      <Typography textAlign="center" className="no-underline text-white hover:no-underline">
+                        {page.label}
+                      </Typography>
                     </Link>
                   </MenuItem>
                 ))}
               </Menu>
             </Box>
-            <ServiceBayLogo sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+
+            <Link href="/">
+              <ServiceBayLogo sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+            </Link>
             <Typography
               variant="h5"
               noWrap

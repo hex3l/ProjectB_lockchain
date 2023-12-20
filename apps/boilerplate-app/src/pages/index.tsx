@@ -1,27 +1,33 @@
-import { Brush, Camera, Code, Search, ViewQuilt, WhatshotOutlined } from '@mui/icons-material';
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/require-await */
+import { Brush, Camera, Code, Search, ViewQuilt } from '@mui/icons-material';
 import { Autocomplete, Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
-import { Offer } from 'modules/Listings/OfferBox';
+import { HotPicks } from 'modules/HotPicks';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
+
+import categories from '../common/categories.json';
 
 // import { Listings } from 'modules';
 
 const Home = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('All');
+
   const relevantCategories = useMemo(
     () => [
-      { label: 'Web Dev', icon: <ViewQuilt />, url: '/listings/web-design', color: '#FFC107' },
-      { label: 'Editing', icon: <Camera />, url: '/listings/editing', color: '#FF0000' },
+      { label: 'Web Dev', icon: <ViewQuilt />, url: '/listings/Web%20Development', color: '#FFC107' },
+      { label: 'Editing', icon: <Camera />, url: '/listings/Editing', color: '#FF0000' },
       {
         label: 'Graphics',
         icon: <Brush />,
-        url: '/listings/web-development',
+        url: '/listings/Graphics',
         color: '#ff359f',
       },
       {
         label: 'Software',
         icon: <Code />,
-        url: '/listings/web-development',
+        url: '/listings/Software',
         color: '#56ff7f',
       },
     ],
@@ -68,20 +74,23 @@ const Home = () => {
               <Box className="flex flex-col gap-3 justify-evenly text-left md:flex-row md:w-[660px]">
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">What are you looking for?</Typography>
-                  <TextField placeholder="Wordpress plugin" variant="outlined" className="w-full flex-1" />
+                  <TextField placeholder="TODO: search" variant="outlined" disabled className="w-full flex-1" />
                 </Box>
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">In which Category?</Typography>
                   <Autocomplete
                     className="flex-1"
                     disablePortal
-                    options={['Date', 'Price', 'Name']}
+                    onChange={async (event, option) => {
+                      setSelectedCategory(option);
+                    }}
+                    options={categories.map((el) => el.label)}
                     renderInput={(params) => <TextField {...params} placeholder="CMS development" />}
                   />
                 </Box>
                 <Box className="flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold"></Typography>
-                  <Button variant="contained" className="h-[56px]">
+                  <Button variant="contained" className="h-[56px]" href={`/listings/${selectedCategory}`}>
                     <Search></Search>
                   </Button>
                 </Box>
@@ -96,6 +105,7 @@ const Home = () => {
                     className="flex-1 h-[56px] shadow-2xl border-solid  border-2 hover:bg-transparent hover:border-white hover:text-[#fff]"
                     startIcon={category.icon}
                     sx={{ color: category.color, backgroundColor: '#181818' }}
+                    href={`${category.url}`}
                   >
                     {category.label}
                   </Button>
@@ -105,23 +115,7 @@ const Home = () => {
           </Box>
         </Container>
       </Box>
-      <Box className="shadow-s-top w-full">
-        <Container maxWidth="xl" className="pt-10">
-          <Typography className="flex justify-items-center pb-5 pl-3">
-            <WhatshotOutlined className="text-orange-600" /> Currently trending
-          </Typography>
-          <Box className="flex flex-wrap flex-row gap-10 justify-evenly">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
-              <Offer
-                key={index}
-                description={`Who wants to have a cookout this weekend? I just got some furniture
-              for my backyard and would love to fire up the grill.`}
-                title={'SummerBBQ'}
-              />
-            ))}
-          </Box>
-        </Container>
-      </Box>
+      <HotPicks />
     </>
   );
 }; /* <div>

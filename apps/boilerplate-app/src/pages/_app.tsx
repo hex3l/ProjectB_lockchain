@@ -28,8 +28,8 @@ const App = ({ Component, pageProps }: AppProps) => {
       <WagmiConfig config={config}>
         <ThemeProvider theme={theme}>
           <Head>
-            <title>Monorepo Boilerplate - App (Tailwind)</title>
-            <meta name="description" content="Monorepo Boilerplate - App (Tailwind)." />
+            <title>ServiceBay</title>
+            <meta name="description" content="Servicebay" />
             <meta name="version" content="1.0.0" />
             <link rel="icon" href="/favicon.ico" />
             <style>{`
