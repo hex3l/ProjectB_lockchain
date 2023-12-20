@@ -11,7 +11,7 @@
     "name": ".Net Developer",
     "description": "I can develop your .Net application.",
     "price": "0.2",
-    "image": "/assets/defaultLogos/x_DataBaseManager.png"
+    "image": "/assets/defaultLogos/x_dotNetDeveloper.png"
   },
   {
     "id": "3",
@@ -32,7 +32,7 @@
     "name": "Pay To Do Nothing",
     "description": "Too much money? I can help you.",
     "price": "1",
-    "image": "/assets/defaultLogos/x_PatToDoNothing.png"
+    "image": "/assets/defaultLogos/x_PayToDoNothing.png"
   },
   {
     "id": "6",
