@@ -11,7 +11,7 @@ type OfferTypes = {
 const OfferRow = ({ id, description, name, image, price }: OfferTypes) => {
   return (
     <Paper className="flex flex-row space-x-5 p-5" sx={{ p: '10px', width: '100%', minWidth: 0, height: '180px' }}>
-      <img src={image} alt="offer" className="md:max-w-[260px] max-w-[100px]" />
+      <img src={image} alt="offer" className="md:max-w-[260px] max-h-full" />
       <Box className="flex flex-col flex-1">
         <Box className="flex flex-row">
           <Box className="flex-1">
