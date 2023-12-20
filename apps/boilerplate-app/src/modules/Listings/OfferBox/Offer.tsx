@@ -15,7 +15,7 @@ const Offer = ({ id, description, name, image, price }: OfferTypes) => {
       sx={{ p: '7px', display: 'flex', alignItems: 'center', width: '300px', height: '430px' }}
     >
       <img src={image} alt="offer" width={285} height={285} />
-      <Box sx={{ pt: 0.5 }} className="flex-1">
+      <Box sx={{ pt: 0.5 }} className="flex-1 w-full">
         <Typography sx={{ fontWeight: 'bold', marginRight: 16 }}>{name}</Typography>
         <Typography>{description.length > 65 ? `${description.slice(0, 65)}...` : description}</Typography>
       </Box>
