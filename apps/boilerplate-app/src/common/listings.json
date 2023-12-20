@@ -54,5 +54,26 @@
     "description": " Not Ready",
     "price": "0.1",
     "image": "/assets/defaultLogos/x_NotReady.png"
+  },
+  {
+    "id": "9",
+    "name": "The inspirated Bay",
+    "description": " Team that can do everything.",
+    "price": "2",
+    "image": "/assets/defaultLogos/x_theInspiratedBay.png"
+  },
+  {
+    "id": "10",
+    "name": "Solidity Contract Developer",
+    "description": " I can develop your Solidity contract.",
+    "price": "0.5",
+    "image": "/assets/defaultLogos/x_solidityContractDeveloper.png"
+  },
+  {
+    "id": "11",
+    "name": "Oufit Maker",
+    "description": " Send me a photo and I will make you an outfit.",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/X_OutfitMaker.png"
   }
 ]
