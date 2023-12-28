@@ -1,10 +1,12 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, UseGuards, Req } from '@nestjs/common';
 
 import { Listing } from './listing.entity';
 import { ListingService } from './listing.service';
 import { CategoryService } from './categories/category.service';
 import { Category } from './categories/category.entity';
 import { ValidateListingDto } from './listingDto/validate-listing.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { RequestOptions } from 'https';
 
 @Controller('listing')
 export class ListingController {
@@ -28,13 +30,15 @@ export class ListingController {
     return this.categoryService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Post()
-  createListing(@Body() listingDto: ValidateListingDto): Promise<Listing> {
+  createListing(@Body() listingDto: ValidateListingDto, @Req() request: any): Promise<Listing> {
+    const { user } = request;
     const listing = new Listing();
     listing.title = listingDto.title;
     listing.description = listingDto.description;
     listing.image = listingDto.image;
-    //TODO:listing.id_creator = Middleware.getId;
+    listing.id_creator = user.id;
     listing.category = <any>{ id: listingDto.category };
     return this.listingService.save(listing);
   }
