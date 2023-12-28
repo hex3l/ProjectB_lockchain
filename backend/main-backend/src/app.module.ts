@@ -1,14 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth/auth.service';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './auth/jwt.strategy';
+import { JwtService } from '@nestjs/jwt';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configService } from './config.service';
 import { AuthModule } from './auth/auth.module';
+import { ListingModule } from './listings/listing.module';
+import { AuthGuard } from './auth/auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(configService.getTypeOrmConfig()), UserModule, AuthModule],
+  imports: [TypeOrmModule.forRoot(configService.getTypeOrmConfig()), UserModule, AuthModule, ListingModule],
+  providers: [
+    JwtService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}

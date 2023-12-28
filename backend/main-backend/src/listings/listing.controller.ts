@@ -1,12 +1,11 @@
-import { Controller, Get, Param, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
 
 import { Listing } from './listing.entity';
 import { ListingService } from './listing.service';
 import { CategoryService } from './categories/category.service';
 import { Category } from './categories/category.entity';
 import { ValidateListingDto } from './listingDto/validate-listing.dto';
-import { AuthGuard } from '../auth/auth.guard';
-import { RequestOptions } from 'https';
+import { Private } from '../auth/decorator/auth.decorator';
 
 @Controller('listing')
 export class ListingController {
@@ -30,7 +29,7 @@ export class ListingController {
     return this.categoryService.findAll();
   }
 
-  @UseGuards(AuthGuard)
+  @Private()
   @Post()
   createListing(@Body() listingDto: ValidateListingDto, @Req() request: any): Promise<Listing> {
     const { user } = request;
