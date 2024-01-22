@@ -26,6 +26,9 @@ contract DealHandler {
 
     }
 	//not entirely sure on what does indexed type do... //TOCHECK
+
+	// fra: sui deal penso basti lasciare l'id del deal aggioranto in modo che possiamo ripescarlo da soli dal mappings. 
+	// Credo sia necessario farsi passare un id dal backend in modo da poterlo associarre al deal sul db... vediamo che fare...
 	event Confirmed(uint  id,address  source, address target, uint256 indexed value);
 	event DeletedDeal(uint indexed pid);
 	event CreatedDeal(Deal indexed c);

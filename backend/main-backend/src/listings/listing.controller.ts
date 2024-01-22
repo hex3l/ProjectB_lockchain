@@ -6,6 +6,7 @@ import { CategoryService } from './categories/category.service';
 import { Category } from './categories/category.entity';
 import { ValidateListingDto } from './listingDto/validate-listing.dto';
 import { Private } from '../auth/decorator/auth.decorator';
+import { ListingsDto } from './listingDto/listings.dto';
 
 @Controller('listing')
 export class ListingController {
@@ -15,8 +16,9 @@ export class ListingController {
   ) {}
 
   @Get()
-  getLisitng(): Promise<Listing[]> {
-    return this.listingService.findAll();
+  getListing(@Param() listingsParams: ListingsDto): Promise<Listing[]> {
+    const { id_category, take, page } = listingsParams;
+    return this.listingService.findAll(id_category, take, page);
   }
 
   @Get('/:id')
