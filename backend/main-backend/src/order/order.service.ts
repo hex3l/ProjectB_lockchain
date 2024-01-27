@@ -19,8 +19,8 @@ export class OrderService {
   findAll({ source, target, status, page, take: queryTake }: OrdersFindDto, user: number): Promise<Order[]> {
     const take = queryTake || 10;
     const where = [];
-    if (source) where.push({ creator: { id: user }, status });
-    if (target) where.push({ listing: { creator: { id: user } }, status });
+    if (source || (!target && !source)) where.push({ creator: { id: user }, status });
+    if (target || (!target && !source)) where.push({ listing: { creator: { id: user } }, status });
     return this.offerRepository.find({
       where,
       select: {
