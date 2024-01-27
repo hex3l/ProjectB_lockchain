@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './message.entity';
 import { Listing } from '../listings/listing.entity';
+import { Order } from '../order/order.entity';
 
 @Injectable()
 export class MessageService {
@@ -23,8 +24,8 @@ export class MessageService {
     return this.messageRepository.save(lisiting);
   }
 
-  findAllByListing(id_listing: Listing): Promise<Message[]> {
-    return this.messageRepository.find({ where: { id_listing } });
+  findAllByListing(id_order: number): Promise<Message[]> {
+    return this.messageRepository.find({ where: { id_order } });
   }
 
   async deleteById(id: number): Promise<void> {

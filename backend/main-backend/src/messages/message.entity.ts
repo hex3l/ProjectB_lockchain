@@ -7,23 +7,27 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
-import { ListingInstance } from '../listing-instances/listing-instance.entity';
+
 import { User } from '../user/user.entity';
+import { Order } from '../order/order.entity';
+import { Numeric } from 'ethers';
 
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ListingInstance, (listing_instance) => listing_instance.id)
-  id_listing: ListingInstance;
+  @Column()
+  id_order: number;
+
+  @ManyToOne((type) => Order)
+  @JoinColumn({ name: 'id_order' })
+  order: Order;
 
   @OneToOne(() => User, (user) => user.id)
   id_sender: User;
-
-  @ManyToOne(() => ListingInstance, (listing_instance) => listing_instance.id)
-  id_listing_instance: ListingInstance;
 
   @Column()
   content: string;

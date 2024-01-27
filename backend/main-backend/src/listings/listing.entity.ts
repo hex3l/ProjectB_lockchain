@@ -10,8 +10,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { ListingInstance } from '../listing-instances/listing-instance.entity';
 import { Category } from './categories/category.entity';
+import { Order } from '../order/order.entity';
 
 @Entity()
 export class Listing {
@@ -44,8 +44,8 @@ export class Listing {
   @JoinColumn({ name: 'id_category' })
   category: Category;
 
-  @OneToMany(() => ListingInstance, (listing_instance) => listing_instance.id_listing)
-  listing_instances: ListingInstance[];
+  @OneToMany(() => Order, (order) => order.id_listing)
+  orders: Order[];
 
   @CreateDateColumn()
   created!: Date;

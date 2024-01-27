@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Listing } from '../listings/listing.entity';
-import { ListingInstance } from '../listing-instances/listing-instance.entity';
+import { Order } from '../order/order.entity';
 
 @Entity()
 export class User {
@@ -24,8 +24,8 @@ export class User {
   @Column({ nullable: true, default: null })
   email: string;
 
-  @OneToMany(() => ListingInstance, (listing_instance) => listing_instance.id_customer)
-  paid_listings: ListingInstance[];
+  @OneToMany(() => Order, (order) => order.id_creator)
+  paid_listings: Order[];
 
   @OneToMany(() => Listing, (listing) => listing.id_creator)
   listings: Listing[];

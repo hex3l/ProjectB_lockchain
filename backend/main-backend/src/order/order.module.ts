@@ -11,4 +11,4 @@ import { Order } from './order.entity';
   controllers: [OrderController],
   exports: [OrderService],
 })
-export class OfferModule {}
+export class OrderModule {}
