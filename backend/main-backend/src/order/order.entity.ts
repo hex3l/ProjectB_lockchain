@@ -24,6 +24,12 @@ export class Order {
   @JoinColumn({ name: 'id_listing' })
   listing: Listing;
 
+  @Column({ type: 'float', nullable: false })
+  price: number;
+
+  @Column({ type: 'int', nullable: false, default: OrderStatus.PENDING })
+  status: number;
+
   @Column({ type: 'int', nullable: false })
   id_creator: number;
 

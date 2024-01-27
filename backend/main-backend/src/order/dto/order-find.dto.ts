@@ -1,4 +1,4 @@
-import { IsBoolean, IsEthereumAddress, IsNumber, IsString, IsUrl, isNumber, isURL } from 'class-validator';
+import { IsArray, IsBoolean, IsEthereumAddress, IsNumber, IsString, IsUrl, isNumber, isURL } from 'class-validator';
 
 export class OrdersFindDto {
   @IsBoolean()
@@ -7,11 +7,8 @@ export class OrdersFindDto {
   @IsBoolean()
   target: boolean;
 
-  @IsBoolean()
-  confirmed: boolean;
-
-  @IsBoolean()
-  pending: boolean;
+  @IsArray()
+  status: Array<number>;
 
   @IsNumber()
   take: number;

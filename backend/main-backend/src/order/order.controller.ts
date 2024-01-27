@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { OrderVerifyDto } from './dto/order-verify.dto';
 import { Order } from './order.entity';
@@ -9,7 +9,8 @@ export class OrderController {
   constructor(private readonly offerService: OrderService) {}
 
   @Get()
-  findAll(@Body() ordersFind: OrdersFindDto): undefined {
+  findAll(@Body() ordersFind: OrdersFindDto, @Req() request: any): undefined {
+    const { user } = request;
     return;
   }
 
