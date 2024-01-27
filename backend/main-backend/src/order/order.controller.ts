@@ -30,9 +30,4 @@ export class OrderController {
     // Only a buyer can create
     return;
   }
-
-  @Post('/verify')
-  verifyOffer(@Body() offer: OrderVerifyDto): Promise<boolean> {
-    return this.offerService.verifyOne(offer);
-  }
 }
