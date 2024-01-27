@@ -9,9 +9,9 @@ export class OrderController {
   constructor(private readonly offerService: OrderService) {}
 
   @Get()
-  findAll(@Body() ordersFind: OrdersFindDto, @Req() request: any): undefined {
+  findAll(@Body() ordersFind: OrdersFindDto, @Req() request: any): Promise<Order[]> {
     const { user } = request;
-    return;
+    return this.offerService.findAll(ordersFind, user.id);
   }
 
   @Post()

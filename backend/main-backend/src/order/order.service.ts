@@ -21,7 +21,15 @@ export class OrderService {
     const where = [];
     if (source) where.push({ creator: { id: user }, status });
     if (target) where.push({ listing: { creator: { id: user } }, status });
-    return this.offerRepository.find({ where: {}, take: take, skip: take * (page - 1) });
+    return this.offerRepository.find({
+      where,
+      select: {
+        listing: { image: true, title: true, category: { name: true }, creator: { address: true, username: true } },
+      },
+      relations: { listing: true },
+      take: take,
+      skip: take * (page - 1),
+    });
   }
 
   async verifyOne({ id, from, to }: OrderVerifyDto): Promise<boolean> {

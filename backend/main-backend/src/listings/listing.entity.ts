@@ -26,13 +26,13 @@ export class Listing {
   creator: User;
 
   @Column()
-  title: String;
+  title: string;
 
   @Column()
-  description: String;
+  description: string;
 
   @Column()
-  image: String;
+  image: string;
 
   @Column()
   limit: number;
