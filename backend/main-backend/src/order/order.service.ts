@@ -40,6 +40,10 @@ export class OrderService {
     return !!offer;
   }
 
+  findById(id: number): Promise<Order> {
+    return this.offerRepository.findOneBy({ id });
+  }
+
   async deleteById(id: number): Promise<void> {
     await this.offerRepository.delete(id);
   }

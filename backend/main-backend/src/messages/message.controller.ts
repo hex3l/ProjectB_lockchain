@@ -11,9 +11,4 @@ export class MessageController {
   getOrder(@Param() params: { id_order: number }): Promise<Message[]> {
     return this.messageService.findAllByOrder(params.id_order);
   }
-
-  @Get('/:id')
-  getSingleMessage(@Param() params: { id: number }): Promise<Message> {
-    return this.messageService.findOne(params.id);
-  }
 }

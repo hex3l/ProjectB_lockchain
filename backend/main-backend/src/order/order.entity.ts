@@ -30,7 +30,7 @@ export class Order {
   @Column({ type: 'int', nullable: false, default: OrderStatus.PENDING })
   status: number;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: false }) //
   id_creator: number;
 
   @ManyToOne((type) => User)
