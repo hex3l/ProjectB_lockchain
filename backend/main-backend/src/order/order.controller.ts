@@ -15,16 +15,19 @@ export class OrderController {
 
   @Post()
   reject(): undefined {
+    // Only seller can reject
     return;
   }
 
   @Post()
   confirm(): undefined {
+    // Only seller can confirm
     return;
   }
 
   @Post()
   create(): undefined {
+    // Only a buyer can create
     return;
   }
 
