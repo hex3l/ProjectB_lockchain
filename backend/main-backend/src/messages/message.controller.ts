@@ -7,9 +7,9 @@ import { MessageService } from './message.service';
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
-  @Get()
-  getLisitng(): Promise<Message[]> {
-    return this.messageService.findAll();
+  @Get('/:id_order')
+  getOrder(@Param() params: { id_order: number }): Promise<Message[]> {
+    return this.messageService.findAllByOrder(params.id_order);
   }
 
   @Get('/:id')

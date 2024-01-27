@@ -24,7 +24,7 @@ export class MessageService {
     return this.messageRepository.save(lisiting);
   }
 
-  findAllByListing(id_order: number): Promise<Message[]> {
+  findAllByOrder(id_order: number): Promise<Message[]> {
     return this.messageRepository.find({ where: { id_order } });
   }
 
