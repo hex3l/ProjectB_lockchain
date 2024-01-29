@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
@@ -14,10 +15,6 @@ import {
   Button,
   Container,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Divider,
   IconButton,
   Paper,
@@ -25,18 +22,21 @@ import {
   TextField,
   Typography,
   styled,
+  useMediaQuery,
 } from '@mui/material';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
+
+import { Listing } from 'modules/Listing';
+import { theme } from 'theme.mui';
 
 import categories from '../../common/categories.json';
 import listings from '../../common/listings.json';
 
 import { OfferRow } from './OfferRow';
-import { useSearchParams } from 'next/navigation';
-import { Listing } from 'modules/Listing';
 
 const marks = [
   {
@@ -69,6 +69,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(() => ({
 
 // eslint-disable-next-line import/no-default-export
 export function Listings() {
+  const greaterThanMid = useMediaQuery(theme.breakpoints.up('md'));
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -231,7 +232,14 @@ export function Listings() {
           </Box>
         </Box>
       </Container>
-      <Dialog open={listingDialog} onClose={handleClose} scroll={'body'} sx={{ padding: 0 }} className="rounded-xl">
+      <Dialog
+        open={listingDialog}
+        onClose={handleClose}
+        scroll={'body'}
+        sx={{ padding: 0 }}
+        className="rounded-xl"
+        maxWidth={greaterThanMid ? 'desktop' : 'sm'}
+      >
         <Listing id_listing={parseInt(listing ?? '0', 10)} dialog closeDialog={handleClose} />
       </Dialog>
     </Fragment>

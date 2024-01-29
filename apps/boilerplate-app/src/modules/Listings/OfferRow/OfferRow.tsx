@@ -1,7 +1,8 @@
 import { FavoriteBorder } from '@mui/icons-material';
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
-import { addQueryParams } from 'modules/utils';
 import { useRouter } from 'next/navigation';
+
+import { addQueryParams } from 'modules/utils';
 
 type OfferTypes = {
   id: string;
