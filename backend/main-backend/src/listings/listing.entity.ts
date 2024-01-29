@@ -12,6 +12,7 @@ import {
 import { User } from '../user/user.entity';
 import { Category } from './categories/category.entity';
 import { Order } from '../order/order.entity';
+import { ListingStatus } from './static/listing-status.enum';
 
 @Entity()
 export class Listing {
@@ -21,7 +22,7 @@ export class Listing {
   @Column({ type: 'int', nullable: true })
   id_creator: number;
 
-  @ManyToOne((type) => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'id_creator' })
   creator: User;
 
@@ -31,16 +32,19 @@ export class Listing {
   @Column()
   description: string;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  price: number;
+
   @Column()
   image: string;
 
   @Column()
-  limit: number;
-
-  @Column()
   id_category: number;
 
-  @ManyToOne((type) => Category)
+  @Column({ type: 'int', nullable: false, default: ListingStatus.DRAFT })
+  status: ListingStatus;
+
+  @ManyToOne(() => Category)
   @JoinColumn({ name: 'id_category' })
   category: Category;
 

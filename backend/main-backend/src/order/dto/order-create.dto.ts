@@ -6,7 +6,4 @@ export class OrdersCreateDto {
 
   @IsNumber()
   price: number;
-
-  @IsNumber()
-  id_creator: number;
 }

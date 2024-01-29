@@ -38,7 +38,7 @@ class ConfigService {
       password: this.getValue('DB_PASSWORD'),
       database: this.getValue('DB_NAME'),
       synchronize: true,
-      logging: false,
+      logging: true,
       entities: ['**/*.entity{.ts,.js}'],
       migrationsTableName: 'migration',
       migrations: ['src/migration/*.ts'],

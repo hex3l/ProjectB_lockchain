@@ -1,5 +1,8 @@
 import { FavoriteBorder } from '@mui/icons-material';
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
+import { addQueryParams } from 'modules/utils';
+import { useRouter } from 'next/navigation';
+
 type OfferTypes = {
   id: string;
   description: string;
@@ -9,6 +12,8 @@ type OfferTypes = {
 };
 
 const OfferRow = ({ id, description, name, image, price }: OfferTypes) => {
+  const router = useRouter();
+
   return (
     <Paper className="flex flex-row space-x-5 p-5" sx={{ p: '10px', width: '100%', minWidth: 0, height: '180px' }}>
       <img src={image} alt="offer" className="md:max-w-[260px] max-h-full" />
@@ -32,10 +37,18 @@ const OfferRow = ({ id, description, name, image, price }: OfferTypes) => {
           <Box className="flex-1" />
           <Box className="flex flex-row space-x-2 items-center">
             <Typography className="font-bold">{price} ETH</Typography>
-            <Button href={`/listing/${id}`} variant="contained" className="md:flex hidden">
+            <Button
+              variant="contained"
+              className="md:flex hidden"
+              onClick={() => addQueryParams(router, 'listing', id)}
+            >
               View more
             </Button>
-            <Button href={`/listing/${id}`} variant="contained" className="flex md:hidden">
+            <Button
+              variant="contained"
+              className="flex md:hidden"
+              onClick={() => addQueryParams(router, 'listing', id)}
+            >
               Open
             </Button>
           </Box>

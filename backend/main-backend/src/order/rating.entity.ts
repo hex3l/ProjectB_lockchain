@@ -10,33 +10,33 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { Listing } from '../listings/listing.entity';
 import { OrderStatus } from './static/order-status.enum';
+import { Order } from './order.entity';
 
 @Entity()
-export class Order {
+export class Rating {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'int', nullable: false })
-  id_listing: number;
+  id_order: number;
 
-  @ManyToOne((type) => Listing)
-  @JoinColumn({ name: 'id_listing' })
-  listing: Listing;
+  @ManyToOne((type) => Order)
+  @JoinColumn({ name: 'id_order' })
+  order: Order;
 
-  @Column({ type: 'float', nullable: false })
-  price: number;
+  @Column({ type: 'int', nullable: false })
+  rating: number;
 
-  @Column({ type: 'int', nullable: false, default: OrderStatus.PENDING })
-  status: number;
+  @Column({ type: 'varchar', nullable: false })
+  comment: string;
 
-  @Column({ type: 'int', nullable: false }) //
-  id_creator: number;
+  @Column({ type: 'int', nullable: false })
+  id_seller: number;
 
   @ManyToOne((type) => User)
-  @JoinColumn({ name: 'id_creator' })
-  creator: User;
+  @JoinColumn({ name: 'id_seller' })
+  seller: User;
 
   @CreateDateColumn()
   created!: Date;

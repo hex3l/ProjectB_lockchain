@@ -21,7 +21,21 @@ export class ListingService {
   }
 
   findOne(id: number): Promise<Listing> {
-    return this.listingRepository.findOneBy({ id });
+    return this.listingRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        image: true,
+        price: true,
+        status: true,
+        category: { id: true, name: true },
+        updated: true,
+        creator: { address: true, created: true, rating: true },
+      },
+      relations: ['creator', 'category'],
+    });
   }
 
   save(lisiting: any): Promise<Listing> {

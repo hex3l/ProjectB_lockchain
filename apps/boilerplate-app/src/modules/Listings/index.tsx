@@ -13,6 +13,11 @@ import {
   Box,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   IconButton,
   Paper,
@@ -24,12 +29,14 @@ import {
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import { useRouter } from 'next/router';
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 import categories from '../../common/categories.json';
 import listings from '../../common/listings.json';
 
 import { OfferRow } from './OfferRow';
+import { useSearchParams } from 'next/navigation';
+import { Listing } from 'modules/Listing';
 
 const marks = [
   {
@@ -63,6 +70,32 @@ const AccordionDetails = styled(MuiAccordionDetails)(() => ({
 // eslint-disable-next-line import/no-default-export
 export function Listings() {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const listing = searchParams.get('listing');
+  const [listingDialog, setListingDialog] = useState(false);
+
+  useEffect(() => {
+    if (listing) {
+      setListingDialog(true);
+    } else {
+      setListingDialog(false);
+    }
+  }, [listing]);
+
+  const handleClose = () => {
+    const { pathname } = router;
+    setListingDialog(false);
+    router
+      .push(
+        {
+          pathname: pathname,
+        },
+        pathname,
+      )
+      .then(() => console.log('updated'))
+      .catch((err) => console.log(err));
+  };
 
   const [accordionState, setAccordionState] = useState([true, true, true]);
   const [acc1] = accordionState;
@@ -107,7 +140,6 @@ export function Listings() {
           </Box>
         </Container>
       </Box>
-
       <Container maxWidth="xl" className="pt-10 flex flex-col gap-5">
         <Box className="flex flex-col md:flex-row gap-5">
           <Paper className="flex-1 flex h-[60px] items-center justify-center gap-3 px-5">
@@ -199,6 +231,9 @@ export function Listings() {
           </Box>
         </Box>
       </Container>
+      <Dialog open={listingDialog} onClose={handleClose} scroll={'body'} sx={{ padding: 0 }} className="rounded-xl">
+        <Listing id_listing={parseInt(listing ?? '0', 10)} dialog closeDialog={handleClose} />
+      </Dialog>
     </Fragment>
   );
 }

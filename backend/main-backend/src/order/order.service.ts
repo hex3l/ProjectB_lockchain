@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './order.entity';
-import { OrderVerifyDto } from './dto/order-verify.dto';
 import { OrdersFindDto } from './dto/order-find.dto';
 
 @Injectable()
@@ -32,16 +31,15 @@ export class OrderService {
     });
   }
 
-  async verifyOne({ id, from, to }: OrderVerifyDto): Promise<boolean> {
-    const offer = await this.offerRepository.findOne({
-      where: { id, creator: { address: from }, listing: { creator: { address: to } } },
-    });
-
-    return !!offer;
-  }
-
   findById(id: number): Promise<Order> {
     return this.offerRepository.findOneBy({ id });
+  }
+
+  findByListing(id: number, user: number): Promise<Order> {
+    return this.offerRepository.findOne({
+      where: { listing: { id }, creator: { id: user } },
+      select: ['id', 'id_listing', 'price', 'status'],
+    });
   }
 
   async deleteById(id: number): Promise<void> {

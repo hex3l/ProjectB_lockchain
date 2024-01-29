@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Req, HttpException, HttpStatus } from '@nestjs/common';
 
 import { Listing } from './listing.entity';
 import { ListingService } from './listing.service';
@@ -22,8 +22,22 @@ export class ListingController {
   }
 
   @Get('/:id')
-  getSingleListing(@Param() params: { id: number }): Promise<Listing> {
-    return this.listingService.findOne(params.id);
+  async getSingleListing(@Param() params: { id: number }): Promise<Listing> {
+    const result = await this.listingService.findOne(params.id);
+
+    if (!result)
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          error: 'No listing found with the given id',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        {
+          cause: 'No listing found with the given id',
+        },
+      );
+
+    return result;
   }
 
   @Get('/categories')

@@ -1,53 +1,58 @@
 import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { OrderVerifyDto } from './dto/order-verify.dto';
 import { Order } from './order.entity';
 import { OrdersFindDto } from './dto/order-find.dto';
-import { userInfo } from 'os';
 import { OrdersCreateDto } from './dto/order-create.dto';
+import { OrderIdDto } from './dto/order-id.dto';
+import { OrderStatusChangeDto } from './dto/order-status-change.dto';
+import { OrderStatus } from './static/order-status.enum';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly offerService: OrderService) {}
+  constructor(private readonly orderService: OrderService) {}
 
   @Get()
   findAll(@Body() ordersFind: OrdersFindDto, @Req() request: any): Promise<Order[]> {
     const { user } = request;
-    return this.offerService.findAll(ordersFind, user.id);
+    return this.orderService.findAll(ordersFind, user.id);
   }
 
-  @Post()
-  reject(@Body() id_order: number, @Req() request: any) {
-    const { user } = request;
-    async function getOrder() {
-      const order = await this.offerService.findById(id_order);
-      if (request === order.listing.id_creator) {
-        order.status = 3; //da vedere lo stato reject
-      }
-      return this.offerService.save(order);
-    }
+  @Get('/listing/:id')
+  findByListing(@Param('id') id: number, @Req() request: any): Promise<Order> {
+    return this.orderService.findByListing(id, request.user.id);
   }
+
   // Only seller can reject
-
-  @Post()
-  confirm(@Body() id_order: number, @Req() request: any) {
+  @Post('/reject')
+  async reject(@Body() { id }: OrderIdDto, @Req() request: any): Promise<OrderStatusChangeDto> {
     const { user } = request;
-    async function getOrder() {
-      const order = await this.offerService.findById(id_order);
-      if (request === order.listing.id_creator) {
-        order.status = 2; //da vedere lo stato confirm
-      }
-      return this.offerService.save(order);
+    const order = await this.orderService.findById(id);
+    if (user === order.listing.id_creator) {
+      order.status = OrderStatus.REJECTED;
     }
-  } // Only seller can confirm
+    await this.orderService.save(order);
+    return { id: order.id, status: order.status };
+  }
 
-  @Post()
+  // Only seller can confirm
+  @Post('/confirm')
+  async confirm(@Body() { id }: OrderIdDto, @Req() request: any): Promise<OrderStatusChangeDto> {
+    const { user } = request;
+    const order = await this.orderService.findById(id);
+    if (user === order.listing.id_creator) {
+      order.status = OrderStatus.CONFIRMED;
+    }
+    await this.orderService.save(order);
+    return { id: order.id, status: order.status };
+  }
+
+  @Post('/create')
   create(@Body() orderCreate: OrdersCreateDto, @Req() request: any) {
     const { user } = request;
     const order = new Order();
-    order.id_creator = request.user.id;
+    order.id_creator = user;
     order.id_listing = orderCreate.id_listing;
     order.status = 1; //da vedere lo stato pending
-    return this.offerService.save(order);
+    return this.orderService.save(order);
   } // Only a buyer can create
 }
