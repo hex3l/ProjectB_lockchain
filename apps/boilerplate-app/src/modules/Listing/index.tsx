@@ -27,7 +27,7 @@ export const Listing = ({
 }: {
   id_listing: number;
   dialog?: boolean;
-  closeDialog: () => void;
+  closeDialog?: () => void;
 }) => {
   const [listing, setListing] = useState<ListingDto | undefined>(undefined);
 
