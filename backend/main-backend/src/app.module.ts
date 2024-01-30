@@ -8,9 +8,16 @@ import { ListingModule } from './listings/listing.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { OrderModule } from './order/order.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(configService.getTypeOrmConfig()), UserModule, AuthModule, ListingModule],
+  imports: [
+    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+    UserModule,
+    AuthModule,
+    ListingModule,
+    OrderModule,
+  ],
   providers: [
     JwtService,
     {

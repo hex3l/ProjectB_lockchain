@@ -19,6 +19,9 @@ export class ValidateListingDto {
   @IsNumber({}, { message: 'limit is not setted correctly' })
   limit: number;
 
+  @IsNumber({}, { message: 'price is not setted correctly' })
+  price: number;
+
   @IsNumber({}, { message: 'category not found' })
   category: number;
 }

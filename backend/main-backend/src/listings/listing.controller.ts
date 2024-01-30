@@ -53,7 +53,8 @@ export class ListingController {
     listing.title = listingDto.title;
     listing.description = listingDto.description;
     listing.image = listingDto.image;
-    listing.id_creator = user.id;
+    listing.price = listingDto.price;
+    listing.id_creator = user.id_user;
     listing.category = <any>{ id: listingDto.category };
     return this.listingService.save(listing);
   }

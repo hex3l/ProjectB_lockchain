@@ -1,18 +1,29 @@
-import { IsArray, IsBoolean, IsEthereumAddress, IsNumber, IsString, IsUrl, isNumber, isURL } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsBooleanString,
+  IsEthereumAddress,
+  IsNumber,
+  IsNumberString,
+  IsString,
+  IsUrl,
+  isNumber,
+  isURL,
+} from 'class-validator';
 
 export class OrdersFindDto {
-  @IsBoolean()
+  @IsBooleanString()
   source: boolean;
 
-  @IsBoolean()
+  @IsBooleanString()
   target: boolean;
 
-  @IsArray()
-  status: Array<number>;
+  @IsNumberString()
+  status: Array<number>; //perche' array?
 
-  @IsNumber()
+  @IsNumberString()
   take: number;
 
-  @IsNumber()
+  @IsNumberString()
   page: number;
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Order } from './order.entity';
 import { OrdersFindDto } from './dto/order-find.dto';
 
@@ -13,6 +13,10 @@ export class OrderService {
 
   save(lisiting: any): Promise<Order> {
     return this.offerRepository.save(lisiting);
+  }
+
+  update(id: any, order: any): Promise<UpdateResult> {
+    return this.offerRepository.update({ id }, order);
   }
 
   findAll({ source, target, status, page, take: queryTake }: OrdersFindDto, user: number): Promise<Order[]> {
@@ -32,7 +36,7 @@ export class OrderService {
   }
 
   findById(id: number): Promise<Order> {
-    return this.offerRepository.findOneBy({ id });
+    return this.offerRepository.findOne({ where: { id }, relations: ['listing'] });
   }
 
   findByListing(id: number, user: number): Promise<Order> {
