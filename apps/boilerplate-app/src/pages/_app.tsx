@@ -9,6 +9,7 @@ import { publicProvider } from 'wagmi/providers/public';
 
 import { BottomBar } from 'modules/BarBottom';
 import { TopBar } from 'modules/BarTop';
+import { ListingDialog } from 'modules/Listing/ListingDialog';
 import { theme } from 'theme.mui';
 import { GlobalStateProvider } from 'utils/GlobalState';
 
@@ -46,6 +47,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Box className="h-full overflow-auto">
             <TopBar />
             <Component {...pageProps} />
+            <ListingDialog />
             <BottomBar />
           </Box>
         </ThemeProvider>

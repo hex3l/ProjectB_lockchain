@@ -34,7 +34,7 @@ export const Listing = ({
   useEffect(() => {
     if (id_listing > 0) {
       (async () => {
-        const dbList = (await backendCall(`listing/${id_listing}`, {})) as ListingDto;
+        const dbList = (await backendCall(`listing/${id_listing}`, { cache: 'no-store' })) as ListingDto;
         setListing(dbList);
       })().catch((err) => {
         console.error(err);

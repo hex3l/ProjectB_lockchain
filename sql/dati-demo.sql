@@ -10,7 +10,6 @@ INSERT INTO public.category
 (4, 'Desktop dev', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL),
 (5, 'Video Editor', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL);
 
-
 INSERT INTO public.listing
 (id, id_creator, title, description, image, id_category, status, price, created, updated, "deletedAt") VALUES
 (1, 1, 'Meme Designer', 'Have you got an idea for a meme? I can make it for you.', '/assets/defaultLogos/x_memeDesigner.png', 1, 0, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),

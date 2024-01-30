@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -14,7 +15,6 @@ import {
   Box,
   Button,
   Container,
-  Dialog,
   Divider,
   IconButton,
   Paper,
@@ -22,19 +22,16 @@ import {
   TextField,
   Typography,
   styled,
-  useMediaQuery,
 } from '@mui/material';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
 
-import { Listing } from 'modules/Listing';
-import { theme } from 'theme.mui';
+import { ListingDto } from 'dto/ListingDto';
+import { backendCall } from 'utils';
 
 import categories from '../../common/categories.json';
-import listings from '../../common/listings.json';
 
 import { OfferRow } from './OfferRow';
 
@@ -69,34 +66,28 @@ const AccordionDetails = styled(MuiAccordionDetails)(() => ({
 
 // eslint-disable-next-line import/no-default-export
 export function Listings() {
-  const greaterThanMid = useMediaQuery(theme.breakpoints.up('md'));
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-  const listing = searchParams.get('listing');
-  const [listingDialog, setListingDialog] = useState(false);
+  const [listings, setListings] = useState<Array<ListingDto> | undefined>(undefined);
+
+  // TODO: add pagination
 
   useEffect(() => {
-    if (listing) {
-      setListingDialog(true);
-    } else {
-      setListingDialog(false);
-    }
-  }, [listing]);
+    (async () => {
+      const dbList = (await backendCall(
+        `listing?${new URLSearchParams({
+          page: '1',
+          take: '10',
+          id_category: '1',
+        })}`,
+        {},
+      )) as Array<ListingDto>;
 
-  const handleClose = () => {
-    const { pathname } = router;
-    setListingDialog(false);
-    router
-      .push(
-        {
-          pathname: pathname,
-        },
-        pathname,
-      )
-      .then(() => console.log('updated'))
-      .catch((err) => console.log(err));
-  };
+      setListings(dbList);
+    })().catch((err) => {
+      console.error(err);
+    });
+  }, []);
 
   const [accordionState, setAccordionState] = useState([true, true, true]);
   const [acc1] = accordionState;
@@ -224,24 +215,14 @@ export function Listings() {
             </Paper>
           </Box>
           <Box className="flex flex-wrap flex-row gap-5 justify-evenly">
-            {listings.map(({ id, ...listing }) => (
+            {listings?.map(({ id, ...listing }) => (
               <Fragment key={id}>
-                <OfferRow {...{ ...listing, id }} />
+                <OfferRow {...{ id, ...listing }} />
               </Fragment>
             ))}
           </Box>
         </Box>
       </Container>
-      <Dialog
-        open={listingDialog}
-        onClose={handleClose}
-        scroll={'body'}
-        sx={{ padding: 0 }}
-        className="rounded-xl"
-        maxWidth={greaterThanMid ? 'desktop' : 'sm'}
-      >
-        <Listing id_listing={parseInt(listing ?? '0', 10)} dialog closeDialog={handleClose} />
-      </Dialog>
     </Fragment>
   );
 }

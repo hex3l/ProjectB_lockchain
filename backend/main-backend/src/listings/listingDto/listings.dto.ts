@@ -1,10 +1,10 @@
-import { IsNumber, IsString, IsUrl, isNumber, isURL } from 'class-validator';
+import { IsNumber, IsNumberString, IsString, IsUrl, isNumber, isURL } from 'class-validator';
 
 export class ListingsDto {
-  @IsNumber()
+  @IsNumberString()
   id_category: number;
-  @IsNumber()
+  @IsNumberString()
   take: number;
-  @IsNumber()
+  @IsNumberString()
   page: number;
 }

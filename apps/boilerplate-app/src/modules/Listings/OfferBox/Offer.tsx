@@ -1,4 +1,7 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
+
+import { addQueryParams } from 'modules/utils';
 
 type OfferTypes = {
   id: string;
@@ -9,6 +12,8 @@ type OfferTypes = {
 };
 
 const Offer = ({ id, description, name, image, price }: OfferTypes) => {
+  const router = useRouter();
+
   return (
     <Paper
       className="flex flex-col"
@@ -23,10 +28,18 @@ const Offer = ({ id, description, name, image, price }: OfferTypes) => {
         <Box className="flex-1">
           <Typography className="flex flex-1 font-bold  justify-end">{price} ETH</Typography>
         </Box>
-        <Button href={`/listing/${id}`} variant="contained" className="md:flex hidden">
+        <Button
+          variant="contained"
+          className="md:flex hidden"
+          onClick={() => addQueryParams(router, 'listing', `${id}`)}
+        >
           View more
         </Button>
-        <Button href={`/listing/${id}`} variant="contained" className="flex md:hidden">
+        <Button
+          variant="contained"
+          className="flex md:hidden"
+          onClick={() => addQueryParams(router, 'listing', `${id}`)}
+        >
           Open
         </Button>
       </Box>

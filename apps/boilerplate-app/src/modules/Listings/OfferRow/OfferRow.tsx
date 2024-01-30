@@ -2,17 +2,10 @@ import { FavoriteBorder } from '@mui/icons-material';
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
+import { ListingDto } from 'dto/ListingDto';
 import { addQueryParams } from 'modules/utils';
 
-type OfferTypes = {
-  id: string;
-  description: string;
-  name: string;
-  image: string;
-  price: string;
-};
-
-const OfferRow = ({ id, description, name, image, price }: OfferTypes) => {
+const OfferRow = ({ id, description, title, image, price }: ListingDto) => {
   const router = useRouter();
 
   return (
@@ -21,7 +14,7 @@ const OfferRow = ({ id, description, name, image, price }: OfferTypes) => {
       <Box className="flex flex-col flex-1">
         <Box className="flex flex-row">
           <Box className="flex-1">
-            <Typography sx={{ fontWeight: 'bold' }}>{name}</Typography>
+            <Typography sx={{ fontWeight: 'bold' }}>{title}</Typography>
           </Box>
           <IconButton>
             <FavoriteBorder></FavoriteBorder>
@@ -41,14 +34,14 @@ const OfferRow = ({ id, description, name, image, price }: OfferTypes) => {
             <Button
               variant="contained"
               className="md:flex hidden"
-              onClick={() => addQueryParams(router, 'listing', id)}
+              onClick={() => addQueryParams(router, 'listing', `${id}`)}
             >
               View more
             </Button>
             <Button
               variant="contained"
               className="flex md:hidden"
-              onClick={() => addQueryParams(router, 'listing', id)}
+              onClick={() => addQueryParams(router, 'listing', `${id}`)}
             >
               Open
             </Button>

@@ -17,7 +17,10 @@ export class ListingService {
       query.where = { id_category };
     }
 
-    return this.listingRepository.find(query);
+    return this.listingRepository.find({
+      ...query,
+      select: ['id', 'title', 'description', 'image', 'price', 'status', 'updated'],
+    });
   }
 
   findOne(id: number): Promise<Listing> {

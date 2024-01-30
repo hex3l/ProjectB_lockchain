@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Req, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Query, Post, Param, Body, Req, HttpException, HttpStatus } from '@nestjs/common';
 
 import { Listing } from './listing.entity';
 import { ListingService } from './listing.service';
@@ -16,7 +16,7 @@ export class ListingController {
   ) {}
 
   @Get()
-  getListings(@Param() listingsParams: ListingsDto): Promise<Listing[]> {
+  getListings(@Query() listingsParams: ListingsDto): Promise<Listing[]> {
     const { id_category, take, page } = listingsParams;
     return this.listingService.findAll(id_category, take, page);
   }
