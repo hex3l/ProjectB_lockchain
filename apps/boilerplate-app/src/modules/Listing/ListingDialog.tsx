@@ -30,10 +30,13 @@ export const ListingDialog = () => {
   const handleClose = () => {
     const { pathname } = router;
     setListingDialog(false);
+    const query = router.query;
+    delete query.listing;
     router
       .push(
         {
-          pathname: pathname,
+          ...router,
+          query,
         },
         pathname,
       )

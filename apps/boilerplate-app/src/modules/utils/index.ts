@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { NextRouter } from 'next/router';
 
-export const addQueryParams = (router: AppRouterInstance, name: string, value: string) => {
-  // @ts-expect-error: Property 'query' does not exist on type 'Router'.
-  router.replace({
-    query: { [name]: value },
+export const addQueryParams = async (router: NextRouter, name: string, value: string) => {
+  await router.push({
+    ...router,
+    query: {
+      ...router.query,
+      [name]: value,
+    },
   });
 };

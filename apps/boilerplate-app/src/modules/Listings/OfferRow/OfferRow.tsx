@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { FavoriteBorder } from '@mui/icons-material';
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 import { ListingDto } from 'dto/ListingDto';
 import { addQueryParams } from 'modules/utils';
