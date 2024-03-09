@@ -14,12 +14,15 @@ export const ListingDialog = () => {
 
   const searchParams = useSearchParams();
   const listing = searchParams.get('listing');
+  const [idListing, setIdListing] = useState(0);
   const [listingDialog, setListingDialog] = useState(false);
 
   useEffect(() => {
     if (listing) {
+      setIdListing(parseInt(listing, 10));
       setListingDialog(true);
     } else {
+      setIdListing(0);
       setListingDialog(false);
     }
   }, [listing]);
@@ -38,17 +41,15 @@ export const ListingDialog = () => {
   };
 
   return (
-    listing && (
-      <Dialog
-        open={listingDialog}
-        onClose={handleClose}
-        scroll={'body'}
-        sx={{ padding: 0 }}
-        className="rounded-xl"
-        maxWidth={greaterThanMid ? 'desktop' : 'sm'}
-      >
-        <Listing id_listing={parseInt(listing, 10)} dialog closeDialog={handleClose} />
-      </Dialog>
-    )
+    <Dialog
+      open={listingDialog}
+      onClose={handleClose}
+      scroll={'body'}
+      sx={{ padding: 0 }}
+      className="rounded-xl"
+      maxWidth={greaterThanMid ? 'desktop' : 'md'}
+    >
+      <Listing id_listing={idListing} dialog closeDialog={handleClose} />
+    </Dialog>
   );
 };

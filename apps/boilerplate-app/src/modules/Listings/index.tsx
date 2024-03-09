@@ -29,7 +29,7 @@ import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
 
 import { ListingDto } from 'dto/ListingDto';
-import { backendCall } from 'utils';
+import { useBackendCall } from 'utils/useBackendCall';
 
 import categories from '../../common/categories.json';
 
@@ -67,6 +67,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(() => ({
 // eslint-disable-next-line import/no-default-export
 export function Listings() {
   const router = useRouter();
+  const backendCall = useBackendCall();
 
   const [listings, setListings] = useState<Array<ListingDto> | undefined>(undefined);
 

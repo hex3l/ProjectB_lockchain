@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import { Slide } from 'react-slideshow-image';
 
 import { ListingDto } from 'dto/ListingDto';
-import { backendCall } from 'utils';
+import { useBackendCall } from 'utils/useBackendCall';
 
 export const Listing = ({
   id_listing,
@@ -30,6 +30,8 @@ export const Listing = ({
   closeDialog?: () => void;
 }) => {
   const [listing, setListing] = useState<ListingDto | undefined>(undefined);
+
+  const backendCall = useBackendCall();
 
   useEffect(() => {
     if (id_listing > 0) {

@@ -36,6 +36,8 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
   );
 
   const { disconnect } = useDisconnect();
+  // We need to log the user in again, how
+  if (setState) setState({ ...state, auth: { jwt: null } });
 
   const [authNounce, setAuthNounce] = useState<undefined | string>(undefined);
   const { data, isError, isSuccess, signMessage, reset } = useSignMessage({ message: authNounce });
