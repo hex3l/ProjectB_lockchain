@@ -8,6 +8,8 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Category } from './categories/category.entity';
@@ -50,6 +52,9 @@ export class Listing {
 
   @OneToMany(() => Order, (order) => order.id_listing)
   orders: Order[];
+
+  @ManyToMany(() => User, (user) => user.favorites)
+  favorites: User[];
 
   @CreateDateColumn()
   created!: Date;

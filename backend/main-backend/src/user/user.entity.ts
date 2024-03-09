@@ -7,6 +7,8 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
   VirtualColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Listing } from '../listings/listing.entity';
 import { Order } from '../order/order.entity';
@@ -37,6 +39,10 @@ export class User {
 
   @OneToMany(() => Listing, (listing) => listing.id_creator)
   listings: Listing[];
+
+  @ManyToMany(() => Listing, (listing) => listing.favorites)
+  @JoinTable()
+  favorites: Listing[];
 
   @CreateDateColumn()
   created!: Date;
