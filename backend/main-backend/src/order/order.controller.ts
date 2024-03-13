@@ -59,7 +59,7 @@ export class OrderController {
 
   @Private()
   @Post('/create')
-  create(@Body() orderCreate: OrdersCreateDto, @Req() request: any) {
+  async create(@Body() orderCreate: OrdersCreateDto, @Req() request: any) {
     const { user } = request;
     const order = new Order();
 
@@ -70,7 +70,7 @@ export class OrderController {
     order.status = OrderStatus.PENDING; //da vedere lo stato pending
     console.log(order);
 
-    if (this.orderService.findByListing(order.id_listing, order.id_creator)) {
+    if (await this.orderService.findByListing(order.id_listing, order.id_creator)) {
       throw new Error('You already bought this listing');
     }
     return this.orderService.save(order);
