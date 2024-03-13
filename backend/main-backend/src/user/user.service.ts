@@ -33,11 +33,11 @@ export class UserService {
   }
 
   addFavorite(user: any, listing: any): void {
-    this.userRepository.createQueryBuilder().relation(User, 'favorites').of(user.id_user).remove(listing);
+    this.userRepository.createQueryBuilder().relation(User, 'favorites').of(user.id_user).add(listing);
   }
 
   removeFavorite(user: any, listing: any): void {
-    this.userRepository.createQueryBuilder().relation(User, 'favorites').of(user.id_user).add(listing);
+    this.userRepository.createQueryBuilder().relation(User, 'favorites').of(user.id_user).remove(listing);
   }
 
   update(user: any): Promise<User> {

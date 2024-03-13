@@ -69,6 +69,10 @@ export class OrderController {
     order.price = orderCreate.price;
     order.status = OrderStatus.PENDING; //da vedere lo stato pending
     console.log(order);
+
+    if (this.orderService.findByListing(order.id_listing, order.id_creator)) {
+      throw new Error('You already bought this listing');
+    }
     return this.orderService.save(order);
   } // Only a buyer can create
 }

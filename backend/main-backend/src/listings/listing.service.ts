@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Listing } from './listing.entity';
 
 @Injectable()
@@ -10,11 +10,13 @@ export class ListingService {
     private listingRepository: Repository<Listing>,
   ) {}
 
-  findAll(id_category: number, take: number, page: number): Promise<Listing[]> {
+  findAll(id_category: number, search: string, take: number, page: number): Promise<Listing[]> {
     const query: FindManyOptions<Listing> = { take, skip: take * (page - 1) };
 
-    if (id_category) {
-      query.where = { id_category };
+    if (id_category || search) {
+      query.where = {};
+      if (id_category) query.where = { id_category };
+      if (search) query.where.title = Like(`%${search}%`);
     }
 
     return this.listingRepository.find({

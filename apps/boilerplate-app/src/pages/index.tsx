@@ -13,6 +13,7 @@ import categories from '../common/categories.json';
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>('All');
+  const [search, setSearch] = useState<string | undefined>(undefined);
 
   const relevantCategories = useMemo(
     () => [
@@ -74,7 +75,15 @@ const Home = () => {
               <Box className="flex flex-col gap-3 justify-evenly text-left md:flex-row md:w-[660px]">
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">What are you looking for?</Typography>
-                  <TextField placeholder="TODO: search" variant="outlined" disabled className="w-full flex-1" />
+                  <TextField
+                    placeholder="search your mother.."
+                    variant="outlined"
+                    className="w-full flex-1"
+                    value={search}
+                    onChange={async (event) => {
+                      setSearch(event.target.value);
+                    }}
+                  />
                 </Box>
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">In which Category?</Typography>
@@ -90,7 +99,11 @@ const Home = () => {
                 </Box>
                 <Box className="flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold"></Typography>
-                  <Button variant="contained" className="h-[56px]" href={`/listings/${selectedCategory}`}>
+                  <Button
+                    variant="contained"
+                    className="h-[56px]"
+                    href={`/listings/${selectedCategory}?search=${search}`}
+                  >
                     <Search></Search>
                   </Button>
                 </Box>

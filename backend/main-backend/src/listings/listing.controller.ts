@@ -17,8 +17,8 @@ export class ListingController {
 
   @Get()
   getListings(@Query() listingsParams: ListingsDto): Promise<Listing[]> {
-    const { id_category, take, page } = listingsParams;
-    return this.listingService.findAll(id_category, take, page);
+    const { id_category, take, page, search } = listingsParams;
+    return this.listingService.findAll(id_category, search, take, page);
   }
 
   @Get('/:id')
