@@ -1,3 +1,4 @@
+import { useSnackbar } from 'notistack';
 import { useCallback, useContext } from 'react';
 import { useDisconnect } from 'wagmi';
 
@@ -13,12 +14,13 @@ import { GlobalStateContext } from './GlobalState';
  */
 export const useBackendCall = () => {
   const { state, setState } = useContext(GlobalStateContext);
+
   const { disconnect } = useDisconnect();
+  const { enqueueSnackbar } = useSnackbar();
 
   const backendCall = useCallback(
     async (relpath: string, params: RequestInit = {}) => {
       const { headers } = params;
-      console.log('backendCall');
       let reqHeaders = {};
       if (headers) reqHeaders = clone(headers);
       delete params.headers;
@@ -36,17 +38,29 @@ export const useBackendCall = () => {
       if (!res.ok) {
         switch (res.status) {
           case 401:
+            console.log('User is not logged into backend');
             // We need to log the user in again, how
             if (setState) setState({ ...state, auth: { jwt: null } });
             disconnect();
+            enqueueSnackbar('You have been disconnected! Please log in again.', { variant: 'error' });
+            setTimeout(() => {
+              const loginBtn = document.getElementById('loginButton');
+              console.log('loginBtn', loginBtn);
+              loginBtn?.click();
+            }, 1000);
+            break;
         }
         // This will activate the closest `error.js` Error Boundary
         throw new Error('Failed to fetch data');
       }
-
-      return res.json();
+      try {
+        const result = await res.text();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        if (result.length > 2) return JSON.parse(result);
+      } catch {}
+      return undefined;
     },
-    [disconnect, setState, state],
+    [disconnect, enqueueSnackbar, setState, state],
   );
 
   return backendCall;

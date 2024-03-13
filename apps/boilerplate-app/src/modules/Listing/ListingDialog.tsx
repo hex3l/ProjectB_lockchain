@@ -1,7 +1,7 @@
 import { Dialog, useMediaQuery } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { theme } from 'theme.mui';
 
@@ -27,7 +27,7 @@ export const ListingDialog = () => {
     }
   }, [listing]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     const { pathname } = router;
     setListingDialog(false);
     const query = router.query;
@@ -41,7 +41,7 @@ export const ListingDialog = () => {
         pathname,
       )
       .catch((err) => console.log(err));
-  };
+  }, [router]);
 
   return (
     <Dialog

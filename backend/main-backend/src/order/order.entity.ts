@@ -21,7 +21,7 @@ export class Order {
   @Column({ type: 'int', nullable: false })
   id_listing: number;
 
-  @ManyToOne((type) => Listing)
+  @ManyToOne((type) => Listing, (listing) => listing.orders)
   @JoinColumn({ name: 'id_listing' })
   listing: Listing;
 

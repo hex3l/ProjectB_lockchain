@@ -19,6 +19,7 @@
   "dependencies": {
     "config-mui": "*",
     "config-tailwind": "*",
+    "notistack": "^3.0.1",
     "react-parallax-tilt": "1.7.170",
     "react-slideshow-image": "^4.3.0",
     "trpc-api-boilerplate": "1.0.15",

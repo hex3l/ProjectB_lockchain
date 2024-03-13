@@ -2,6 +2,7 @@
 import { Box, Container, CssBaseline, ThemeProvider } from '@mui/material';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import { SnackbarProvider } from 'notistack';
 import * as React from 'react';
 import { localhost } from 'viem/chains';
 import { WagmiConfig, createConfig, configureChains } from 'wagmi';
@@ -44,12 +45,14 @@ const App = ({ Component, pageProps }: AppProps) => {
             `}</style>
           </Head>
           <CssBaseline />
-          <Box className="h-full overflow-auto">
-            <TopBar />
-            <Component {...pageProps} />
-            <ListingDialog />
-            <BottomBar />
-          </Box>
+          <SnackbarProvider maxSnack={3}>
+            <Box className="h-full overflow-auto">
+              <TopBar />
+              <Component {...pageProps} />
+              <ListingDialog />
+              <BottomBar />
+            </Box>
+          </SnackbarProvider>
         </ThemeProvider>
       </WagmiConfig>
     </GlobalStateProvider>

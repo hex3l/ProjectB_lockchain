@@ -120,7 +120,7 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
   return (
     <>
       {(!isConnected || !syncInProgress) && (
-        <Button variant="contained" color="secondary" onClick={() => handleWalletConnection()}>
+        <Button variant="contained" color="secondary" id="loginButton" onClick={() => handleWalletConnection()}>
           Connect your wallet
         </Button>
       )}
