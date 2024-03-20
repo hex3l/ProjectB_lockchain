@@ -9,9 +9,13 @@ import {
   VirtualColumn,
   ManyToMany,
   JoinTable,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Listing } from '../listings/listing.entity';
 import { Order } from '../order/order.entity';
+import { type } from 'os';
+import { Message } from '../messages/message.entity';
 
 @Entity()
 export class User {
@@ -43,6 +47,9 @@ export class User {
   @ManyToMany(() => Listing, (listing) => listing.favorites)
   @JoinTable()
   favorites: Listing[];
+
+  @OneToMany(() => Message, (message) => message.id_sender)
+  messages: Message[];
 
   @CreateDateColumn()
   created!: Date;

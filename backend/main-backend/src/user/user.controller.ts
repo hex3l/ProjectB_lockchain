@@ -29,10 +29,17 @@ export class UserController {
   }
 
   @Private()
+  @Get('/favorite/:id')
+  getFavorite(@Param() params: { id: number }, @Req() request: any): Promise<Listing> {
+    const { user } = request;
+    return this.userService.findFavorite(user.id_user, params.id);
+  }
+
+  @Private()
   @Post('/remove')
   removeFavorite(@Body() { listing_id }, @Req() request: any): Promise<User> {
     const { user } = request;
-    this.userService.addFavorite(user, listing_id);
+    this.userService.removeFavorite(user, listing_id);
     return request.user;
   }
 

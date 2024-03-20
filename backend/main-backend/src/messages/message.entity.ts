@@ -8,6 +8,7 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from '../user/user.entity';
@@ -22,12 +23,16 @@ export class Message {
   @Column()
   id_order: number;
 
-  @ManyToOne((type) => Order)
+  @ManyToOne((type) => Order, (order) => order.messages)
   @JoinColumn({ name: 'id_order' })
   order: Order;
 
-  @OneToOne(() => User, (user) => user.id)
-  id_sender: User;
+  @ManyToOne((type) => User, (user) => user.messages)
+  @JoinColumn({ name: 'id_sender' })
+  sender: User;
+
+  @Column()
+  id_sender: number;
 
   @Column()
   content: string;

@@ -16,6 +16,19 @@ export class MessageService {
     return this.messageRepository.find();
   }
 
+  async verify_users(id_user: number, id_order: number): Promise<boolean> {
+    const message = await this.messageRepository.findOne({
+      where: { id_order },
+      relations: { order: { listing: true } },
+    });
+    if (message !== undefined) {
+      if (message.order.listing.id_creator === id_user || message.order.id_creator === id_user) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   findOne(id: number): Promise<Message> {
     return this.messageRepository.findOneBy({ id });
   }
@@ -25,7 +38,8 @@ export class MessageService {
   }
 
   findAllByOrder(id_order: number): Promise<Message[]> {
-    return this.messageRepository.find({ where: { id_order } });
+    console.log(id_order);
+    return this.messageRepository.findBy({ id_order });
   }
 
   async deleteById(id: number): Promise<void> {

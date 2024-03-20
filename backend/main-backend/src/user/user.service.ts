@@ -33,6 +33,8 @@ export class UserService {
   }
 
   addFavorite(user: any, listing: any): void {
+    console.log(user);
+    console.log(listing);
     this.userRepository.createQueryBuilder().relation(User, 'favorites').of(user.id_user).add(listing);
   }
 
@@ -42,6 +44,15 @@ export class UserService {
 
   update(user: any): Promise<User> {
     return this.userRepository.save(user);
+  }
+
+  async findFavorite(user: any, listing: any): Promise<Listing> {
+    const { favorites } = await this.userRepository.findOne({
+      where: { id: user },
+      relations: ['favorites'],
+      select: ['favorites'],
+    });
+    return favorites.find((fav) => fav.id == listing);
   }
 
   async findOneByAddress(address: string): Promise<User> {
