@@ -13,10 +13,12 @@ export class MessageController {
 
   @Private()
   @Get('/:id_order')
-  getOrder(@Param() params: { id_order: number }, @Req() request: any): Promise<Message[]> {
+  async getOrder(@Param() params: { id_order: number }, @Req() request: any): Promise<Message[]> {
     const { user } = request;
     console.log('sono qui dentro order_id');
-    if (!this.messageService.verify_users(user.id_user, params.id_order)) throw new Error('Order not found');
+    console.log("il risultato e' " + this.messageService.verify_users(user.id_user, params.id_order));
+    const verify = await this.messageService.verify_users(user.id_user, params.id_order);
+    if (!verify) throw new Error('Order not found');
     console.log('confermato utente');
     return this.messageService.findAllByOrder(params.id_order);
   }

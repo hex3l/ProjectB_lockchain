@@ -21,7 +21,9 @@ export class MessageService {
       where: { id_order },
       relations: { order: { listing: true } },
     });
+    console.log(id_user, message.order.listing.id_creator, message.order.id_creator);
     if (message !== undefined) {
+      console.log(message.order.listing.id_creator === id_user || message.order.id_creator === id_user);
       if (message.order.listing.id_creator === id_user || message.order.id_creator === id_user) {
         return true;
       }
