@@ -46,7 +46,7 @@ const Page = () => {
           <Box sx={{ p: 3 }}>
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
               {listings.map(({ id, ...listing }) => (
-                <Offer description={''} name={''} image={''} price={''} key={id} {...{ ...listing, id }} />
+                <Offer key={id} {...{ ...listing, id }} />
               ))}
             </Box>
           </Box>
@@ -55,7 +55,7 @@ const Page = () => {
           <Box sx={{ p: 3 }}>
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
               {listingsFav.map(({ id, ...listing }) => (
-                <Offer description={''} name={''} image={''} price={''} key={id} {...{ ...listing, id }} />
+                <Offer key={id} {...{ ...listing, id }} />
               ))}
             </Box>
           </Box>
@@ -64,7 +64,7 @@ const Page = () => {
           <Box sx={{ p: 3 }}>
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
               {listingsMy.map(({ id, ...listing }) => (
-                <Offer description={''} name={''} image={''} price={''} key={id} {...{ ...listing, id }} />
+                <Offer key={id} {...{ ...listing, id }} />
               ))}
             </Box>
           </Box>
