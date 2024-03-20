@@ -25,10 +25,9 @@ import {
 } from '@mui/material';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import { ListingDto } from 'dto/ListingDto';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
-
-import { ListingDto } from 'dto/ListingDto';
 import { useBackendCall } from 'utils/useBackendCall';
 
 import categories from '../../common/categories.json';

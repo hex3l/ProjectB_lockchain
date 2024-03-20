@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "name": "Meme Designer",
+    "description": "Have you got an idea for a meme? I can make it for you.",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/x_memeDesigner.png"
+  },
+  {
+    "id": "2",
+    "name": "The inspirated Bay",
+    "description": " Team that can do everything.",
+    "price": "2",
+    "image": "/assets/defaultLogos/x_theInspirateBay.png"
+  }
+]

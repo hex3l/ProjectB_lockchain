@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "name": "Meme Designer",
+    "description": "Have you got an idea for a meme? I can make it for you.",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/x_memeDesigner.png"
+  },
+  {
+    "id": "2",
+    "name": "The inspirated Bay",
+    "description": " Team that can do everything.",
+    "price": "2",
+    "image": "/assets/defaultLogos/x_theInspirateBay.png"
+  },
+  {
+    "id": "3",
+    "name": "Pentester",
+    "description": "Give me your website and I will try to hack it.",
+    "price": "0.5",
+    "image": "/assets/defaultLogos/x_Pentester.png"
+  },
+  {
+    "id": "4",
+    "name": "Pay To Do Nothing",
+    "description": "Too much money? I can help you.",
+    "price": "1",
+    "image": "/assets/defaultLogos/x_PayToDoNothing.png"
+  },
+  {
+    "id": "5",
+    "name": "Logo Designer",
+    "description": "Do you need a logo? try this service.",
+    "price": "0.1",
+    "image": "/assets/defaultLogos/x_LogoDesigner.png"
+  }
+]
