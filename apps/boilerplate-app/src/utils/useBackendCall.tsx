@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { useSnackbar } from 'notistack';
 import { useCallback, useContext } from 'react';
 import { useDisconnect } from 'wagmi';
@@ -51,7 +55,14 @@ export const useBackendCall = () => {
             break;
         }
         // This will activate the closest `error.js` Error Boundary
-        throw new Error('Failed to fetch data');
+        let response;
+        try {
+          response = await res.json();
+        } catch {
+          enqueueSnackbar(`Failed to fetch data`, { variant: 'error' });
+        }
+        enqueueSnackbar(`${response.error}`, { variant: 'error' });
+        throw new Error(`Fetch ${response?.error ?? 'error'}`);
       }
       try {
         const result = await res.text();

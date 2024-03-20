@@ -6,6 +6,7 @@
 import { CircularProgress } from '@mui/material';
 import Button from '@mui/material/Button';
 import { InjectedConnector } from '@wagmi/core';
+import { useSnackbar } from 'notistack';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
 
@@ -36,6 +37,7 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
   );
 
   const { disconnect } = useDisconnect();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [authNounce, setAuthNounce] = useState<undefined | string>(undefined);
   const { data, isError, isSuccess, signMessage, reset } = useSignMessage({ message: authNounce });
@@ -77,6 +79,7 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
         })
         .catch((error) => {
           resetSync();
+          enqueueSnackbar('An error occurred, please try again.', { variant: 'error' });
           console.log(error);
         });
     }
@@ -106,9 +109,11 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
       requestToken()
         .then((accessToken) => {
           setJWT(accessToken);
+          enqueueSnackbar('Legged in succesfully', { variant: 'success' });
         })
         .catch((error) => {
           resetSync();
+          enqueueSnackbar('An error occurred, please try again.', { variant: 'error' });
           console.log(error);
         });
     }

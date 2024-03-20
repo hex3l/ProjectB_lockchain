@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Req, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Req, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { Order } from './order.entity';
 import { OrdersFindDto } from './dto/order-find.dto';
@@ -71,7 +71,16 @@ export class OrderController {
     console.log(order);
 
     if (await this.orderService.findByListing(order.id_listing, order.id_creator)) {
-      throw new Error('You already bought this listing');
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'You already bought this listing',
+        },
+        HttpStatus.CONFLICT,
+        {
+          cause: 'You already bought this listing',
+        },
+      );
     }
     return this.orderService.save(order);
   } // Only a buyer can create

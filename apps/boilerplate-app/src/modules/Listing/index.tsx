@@ -20,6 +20,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import { Dispatch, SetStateAction, memo, useCallback, useEffect, useState } from 'react';
 import { Slide } from 'react-slideshow-image';
 
@@ -140,7 +141,7 @@ const ListingComponent = ({
                     <Button
                       variant="contained"
                       startIcon={<ShoppingBasket />}
-                      disabled={listingOrder?.status !== undefined}
+                      disabled={interaction === Interaction.OFFER || listingOrder?.status !== undefined}
                       onClick={() => setInteraction(Interaction.BUY)}
                     >
                       Buy
@@ -191,6 +192,7 @@ const MakeAnOffer = ({
   setInteraction: Dispatch<SetStateAction<string | boolean>>;
 }) => {
   const backendCall = useBackendCall();
+  const { enqueueSnackbar } = useSnackbar();
   const [confirmatin, setConfirmation] = useState(false);
   const [offerAmount, setOfferAmount] = useState<number | null>(null);
 
@@ -200,11 +202,12 @@ const MakeAnOffer = ({
       body: JSON.stringify({ id_listing, price: offerAmount }),
     })
       .then(() => {
+        enqueueSnackbar('Your offer has been sent to the seller, wait for a response!', { variant: 'success' });
         setConfirmation(false);
         setInteraction(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.log(err);
       });
   }, [backendCall, offerAmount, setInteraction]);
 

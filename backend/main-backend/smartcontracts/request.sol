@@ -14,6 +14,7 @@ contract DealHandler {
     //once the offer has been confirmed, the web app should contact the oracle to write [id, source, target, amount]
     //when the buyer sends his money, the confirmation can only invole deal id attribute
     bool payed;
+    bool valid;
   }
 
   // List of all deals
@@ -64,7 +65,7 @@ contract DealHandler {
   //
   function createDeal(uint amount, address _target, uint dealID, address _source) public payable onlyAlive {
     require(msg.sender == owner, 'You are not the owner');
-    deals[dealID] = Deal(amount, payable(_source), payable(_target), false, false, false);
+    deals[dealID] = Deal(amount, payable(_source), payable(_target), false, false, false, true);
     emit CreatedDeal(dealID);
   }
 
@@ -127,6 +128,21 @@ contract DealHandler {
     deals[_id].target.transfer(deals[_id].amount);
     delete deals[_id];
     emit DeletedDeal(_id);
+  }
+
+  ////////////////////////////////////////
+  // Obtain locally deal information
+  function getDeal(uint _id) public view returns (uint, address, address, bool, bool, bool) {
+    require(deals[_id].valid == true, 'No associated deals with this id');
+
+    return (
+      deals[_id].amount,
+      deals[_id].source,
+      deals[_id].target,
+      deals[_id].sourceConfirmation,
+      deals[_id].targetConfirmation,
+      deals[_id].payed
+    );
   }
 
   //Big-ass red button to stop the deal in case of << exotic >> events
