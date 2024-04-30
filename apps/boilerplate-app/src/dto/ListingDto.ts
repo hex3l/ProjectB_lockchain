@@ -12,4 +12,5 @@ export type ListingDto = {
     created: Date;
     rating: number;
   };
+  favorite: boolean;
 };

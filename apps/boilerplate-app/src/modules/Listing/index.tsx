@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 import { Close, FavoriteBorder, Flag, LocalOffer, Share, ShoppingBasket } from '@mui/icons-material';
+import Favorite from '@mui/icons-material/Favorite';
 import {
   Avatar,
   Box,
@@ -20,6 +21,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { is } from 'date-fns/locale';
 import { useSnackbar } from 'notistack';
 import { Dispatch, SetStateAction, memo, useCallback, useEffect, useState } from 'react';
 import { Slide } from 'react-slideshow-image';
@@ -47,6 +49,7 @@ const ListingComponent = ({
   const [listingOrder, setListingOrder] = useState<ListingOrderDto | undefined>(undefined);
   const [interaction, setInteraction] = useState<string | boolean>(false);
   const [fetchError, setFetchError] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(listing?.favorite);
 
   const backendCall = useBackendCall();
 
@@ -91,15 +94,22 @@ const ListingComponent = ({
                   </Stack>
                   <Paper className="flex flex-end items-center h-[60px] justify-center gap-1 px-3">
                     <IconButton
-                      onClick={async () => {
-                        const data = await backendCall(`user/add`, {
-                          method: 'POST',
-                          body: JSON.stringify({ listing_id: id_listing }),
-                        });
-                        console.log(id_listing);
+                      onClick={() => {
+                        if (isFavorited) {
+                          const data = backendCall(`user/remove`, {
+                            method: 'POST',
+                            body: JSON.stringify({ listing_id: id_listing }),
+                          });
+                        } else {
+                          const data = backendCall(`user/add`, {
+                            method: 'POST',
+                            body: JSON.stringify({ listing_id: id_listing }),
+                          });
+                        }
+                        setIsFavorited(!isFavorited);
                       }}
                     >
-                      <FavoriteBorder />
+                      {isFavorited ? <Favorite /> : <FavoriteBorder />}
                     </IconButton>
                     <IconButton aria-label="share">
                       <Share />

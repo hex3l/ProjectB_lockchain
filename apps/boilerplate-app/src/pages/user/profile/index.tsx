@@ -2,9 +2,10 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { Avatar, Box, Container, Divider, Tab, Tabs, Typography } from '@mui/material';
-import { Offer } from 'modules/Listings/OfferBox/Offer';
 import { useState } from 'react';
 import React from 'react';
+
+import { Offer } from 'modules/Listings/OfferBox/Offer';
 
 import listingsFav from '../../../common/listingFav.json';
 import listingsMy from '../../../common/listingMy.json';
