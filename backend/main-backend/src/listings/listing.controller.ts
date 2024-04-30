@@ -7,6 +7,7 @@ import { Category } from './categories/category.entity';
 import { ValidateListingDto } from './listingDto/validate-listing.dto';
 import { Private } from '../auth/decorator/auth.decorator';
 import { ListingsDto } from './listingDto/listings.dto';
+import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
 
 @Controller('listing')
 export class ListingController {
@@ -22,8 +23,9 @@ export class ListingController {
   }
 
   @Get('/:id')
-  async getSingleListing(@Param() params: { id: number }): Promise<Listing> {
-    const result = await this.listingService.findOne(params.id);
+  async getSingleListing(@Param() params: { id: number }, @Req() request: any): Promise<ListingWithFavoriteDto> {
+    const { user } = request;
+    const result = await this.listingService.findOne(params.id, user?.id_user);
 
     if (!result)
       throw new HttpException(

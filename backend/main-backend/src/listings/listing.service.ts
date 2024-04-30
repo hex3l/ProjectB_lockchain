@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Listing } from './listing.entity';
+import { User } from '../user/user.entity';
+import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
 
 @Injectable()
 export class ListingService {
@@ -25,8 +27,8 @@ export class ListingService {
     });
   }
 
-  findOne(id: number): Promise<Listing> {
-    return this.listingRepository.findOne({
+  async findOne(id: number, id_user: number): Promise<ListingWithFavoriteDto> {
+    const dbResult = await this.listingRepository.findOne({
       where: { id },
       select: {
         id: true,
@@ -41,6 +43,16 @@ export class ListingService {
       },
       relations: ['creator', 'category'],
     });
+
+    const result: Listing & { favorite: boolean } = { ...dbResult, favorite: false };
+
+    if (!!id_user) {
+      const favorite = await this.listingRepository.findOne({ where: { id, favorites: { id: id_user } } });
+
+      result.favorite = !!favorite;
+    }
+
+    return result;
   }
 
   save(lisiting: any): Promise<Listing> {

@@ -20,13 +20,13 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!isPrivate) {
-      return true;
-    }
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
+      if (!isPrivate) {
+        return true;
+      }
       throw new UnauthorizedException();
     }
     try {
