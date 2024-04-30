@@ -109,7 +109,7 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
       requestToken()
         .then((accessToken) => {
           setJWT(accessToken);
-          enqueueSnackbar('Legged in succesfully', { variant: 'success' });
+          enqueueSnackbar('Login succesful', { variant: 'success' });
         })
         .catch((error) => {
           resetSync();

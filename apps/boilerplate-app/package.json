@@ -50,5 +50,8 @@
     "eslint-plugin-storybook": "0.6.15",
     "eslint-plugin-testing-library": "6.0.2",
     "utils-test": "*"
+  },
+  "volta": {
+    "node": "20.8.0"
   }
 }

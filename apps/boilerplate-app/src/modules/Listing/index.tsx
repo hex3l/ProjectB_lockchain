@@ -217,7 +217,7 @@ const MakeAnOffer = ({
       .catch((err) => {
         console.log(err);
       });
-  }, [backendCall, offerAmount, setInteraction]);
+  }, [backendCall, enqueueSnackbar, id_listing, offerAmount, setInteraction]);
 
   return (
     <Box
