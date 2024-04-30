@@ -52,7 +52,7 @@ export const useBackendCall = () => {
               console.log('loginBtn', loginBtn);
               loginBtn?.click();
             }, 1000);
-            break;
+            return undefined;
         }
         // This will activate the closest `error.js` Error Boundary
         let response;

@@ -36,23 +36,17 @@ export class UserController {
   }
 
   @Private()
-  @Post('/remove')
-  removeFavorite(@Body() { listing_id }, @Req() request: any): Promise<User> {
-    const { user } = request;
-    this.userService.removeFavorite(user, listing_id);
-    return request.user;
-  }
-
-  @Private()
-  @Post('/add')
-  async createFavorite(@Body() { listing_id }, @Req() request: any): Promise<User> {
+  @Post('/favorite')
+  async createFavorite(@Body() { listing_id }, @Req() request: any): Promise<boolean> {
     const { user } = request;
     if ((await this.userService.findFavorite(user.id_user, listing_id)) === undefined) {
       console.log('Adding favorite');
       console.log(listing_id);
       this.userService.addFavorite(user, listing_id);
-      return request.user;
-    } else console.log('Already favorited');
-    return request.user;
+      return true;
+    } else {
+      this.userService.removeFavorite(user, listing_id);
+      return false;
+    }
   }
 }

@@ -49,9 +49,10 @@ const ListingComponent = ({
   const [listingOrder, setListingOrder] = useState<ListingOrderDto | undefined>(undefined);
   const [interaction, setInteraction] = useState<string | boolean>(false);
   const [fetchError, setFetchError] = useState(false);
-  const [isFavorited, setIsFavorited] = useState(listing?.favorite);
+  const [isFavorited, setIsFavorited] = useState<boolean>(!!listing?.favorite);
 
   const backendCall = useBackendCall();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (!listing && !fetchError) {
@@ -74,6 +75,26 @@ const ListingComponent = ({
     }
   }, [backendCall, closeDialog, fetchError, id_listing, listing]);
 
+  const favorite = useCallback(async () => {
+    const data: unknown = await backendCall(`user/favorite`, {
+      method: 'POST',
+      body: JSON.stringify({ listing_id: id_listing }),
+    });
+    if (data !== undefined) {
+      const result = !!data;
+      setIsFavorited(result);
+    }
+  }, [backendCall, id_listing]);
+
+  const report = useCallback(() => {
+    enqueueSnackbar({ message: 'Thank you for the report!', variant: 'info' });
+  }, [enqueueSnackbar]);
+
+  const share = useCallback(async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    enqueueSnackbar({ message: 'URL copied to clipboard', variant: 'success' });
+  }, [enqueueSnackbar]);
+
   return (
     listing && (
       <Container maxWidth="xl" className={`flex flex-col px-0 ${!dialog ? 'pt-10 pb-10 gap-5' : ''}`}>
@@ -95,26 +116,20 @@ const ListingComponent = ({
                   <Paper className="flex flex-end items-center h-[60px] justify-center gap-1 px-3">
                     <IconButton
                       onClick={() => {
-                        if (isFavorited) {
-                          const data = backendCall(`user/remove`, {
-                            method: 'POST',
-                            body: JSON.stringify({ listing_id: id_listing }),
-                          });
-                        } else {
-                          const data = backendCall(`user/add`, {
-                            method: 'POST',
-                            body: JSON.stringify({ listing_id: id_listing }),
-                          });
-                        }
-                        setIsFavorited(!isFavorited);
+                        favorite().catch((err) => console.error(err));
                       }}
                     >
                       {isFavorited ? <Favorite /> : <FavoriteBorder />}
                     </IconButton>
-                    <IconButton aria-label="share">
+                    <IconButton
+                      aria-label="share"
+                      onClick={() => {
+                        share().catch((err) => console.error(err));
+                      }}
+                    >
                       <Share />
                     </IconButton>
-                    <IconButton aria-label="report">
+                    <IconButton aria-label="report" onClick={() => report()}>
                       <Flag />
                     </IconButton>
                   </Paper>
