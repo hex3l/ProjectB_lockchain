@@ -90,7 +90,15 @@ const ListingComponent = ({
                     <Chip label={listing.category.name} color="info" size="small" />
                   </Stack>
                   <Paper className="flex flex-end items-center h-[60px] justify-center gap-1 px-3">
-                    <IconButton>
+                    <IconButton
+                      onClick={async () => {
+                        const data = await backendCall(`user/add`, {
+                          method: 'POST',
+                          body: JSON.stringify({ listing_id: id_listing }),
+                        });
+                        console.log(id_listing);
+                      }}
+                    >
                       <FavoriteBorder />
                     </IconButton>
                     <IconButton aria-label="share">

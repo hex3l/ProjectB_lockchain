@@ -45,9 +45,14 @@ export class UserController {
 
   @Private()
   @Post('/add')
-  createFavorite(@Body() { listing_id }, @Req() request: any): Promise<User> {
+  async createFavorite(@Body() { listing_id }, @Req() request: any): Promise<User> {
     const { user } = request;
-    this.userService.addFavorite(user, listing_id);
+    if ((await this.userService.findFavorite(user.id_user, listing_id)) === undefined) {
+      console.log('Adding favorite');
+      console.log(listing_id);
+      this.userService.addFavorite(user, listing_id);
+      return request.user;
+    } else console.log('Already favorited');
     return request.user;
   }
 }

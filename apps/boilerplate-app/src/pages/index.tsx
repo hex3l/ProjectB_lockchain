@@ -76,7 +76,7 @@ const Home = () => {
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">What are you looking for?</Typography>
                   <TextField
-                    placeholder="search your mother.."
+                    placeholder="Write something..."
                     variant="outlined"
                     className="w-full flex-1"
                     value={search}
