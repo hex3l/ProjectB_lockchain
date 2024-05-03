@@ -7,6 +7,5 @@ export class ListingsDto {
   take: number;
   @IsNumberString()
   page: number;
-  @IsString()
-  search: string;
+  search: string | undefined | null;
 }

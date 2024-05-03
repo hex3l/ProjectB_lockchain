@@ -102,7 +102,7 @@ const Home = () => {
                   <Button
                     variant="contained"
                     className="h-[56px]"
-                    href={`/listings/${selectedCategory}?search=${search}`}
+                    href={`/listings/${selectedCategory}${search ? `?search=${search}` : ''}`}
                   >
                     <Search></Search>
                   </Button>

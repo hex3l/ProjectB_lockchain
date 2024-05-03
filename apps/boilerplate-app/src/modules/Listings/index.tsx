@@ -25,7 +25,6 @@ import {
 } from '@mui/material';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
 
@@ -67,24 +66,18 @@ const AccordionDetails = styled(MuiAccordionDetails)(() => ({
 export function Listings() {
   const router = useRouter();
   const backendCall = useBackendCall();
-  const searchParams = useSearchParams();
 
   const [listings, setListings] = useState<Array<ListingDto> | undefined>(undefined);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(router.query.category?.toString() ?? 'All');
-  const [search, setSearch] = useState<string | null>(searchParams.get('search'));
+  const [search, setSearch] = useState<string | null | undefined>(undefined);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
   console.log('categories', categories);
   console.log('selectedCategory', selectedCategory);
   console.log('routerquery', router.query.category);
 
-  // TODO: add pagination
-  const params = new URLSearchParams(router.asPath.split(/\?/)[1]);
-
   useEffect(() => {
-    if (window?.location?.href) {
-      setSearch(params.get('search'));
-    }
-  }, [params?.get('search')]);
+    setSearch(Array.isArray(router.query.search) ? router.query.search[0] : router.query.search ?? null);
+  }, [router.query.search]);
 
   useEffect(() => {
     (async () => {
@@ -97,21 +90,23 @@ export function Listings() {
 
   useEffect(() => {
     (async () => {
-      console.log('selectedCategory', selectedCategory);
-      console.log('search', search);
-      const queryParams: Record<string, string> = {
-        category: selectedCategory?.toString() ?? 'All',
-        take: '10',
-        page: '1',
-      };
-      if (params.get('search')) queryParams.search = params.get('search') ?? '';
-      const dbList = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
+      if (search !== undefined) {
+        console.log('selectedCategory', selectedCategory);
+        console.log('search', search);
+        const queryParams: Record<string, string> = {
+          category: selectedCategory?.toString() ?? 'All',
+          take: '10',
+          page: '1',
+        };
+        if (search) queryParams.search = search;
+        const dbList = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
 
-      setListings(dbList);
+        setListings(dbList);
+      }
     })().catch((err) => {
       console.error(err);
     });
-  }, [search]);
+  }, [search, selectedCategory]);
 
   const [accordionState, setAccordionState] = useState([true, true, true]);
   const [acc1] = accordionState;
@@ -166,7 +161,7 @@ export function Listings() {
               </IconButton>
               <Box className="overflow-x-hidden" ref={categoryScroll}>
                 <Box className=" whitespace-nowrap">
-                  {categories.map((option) => (
+                  {categories?.map((option) => (
                     <Button
                       color="secondary"
                       key={option.name}
