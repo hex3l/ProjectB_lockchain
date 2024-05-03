@@ -25,15 +25,14 @@ import {
 } from '@mui/material';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import { ListingDto } from 'dto/ListingDto';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { Fragment, use, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+
+import { ListingDto } from 'dto/ListingDto';
 import { useBackendCall } from 'utils/useBackendCall';
 
 import { OfferRow } from './OfferRow';
-import { string } from 'zod';
-import { set } from 'date-fns';
-import { useSearchParams } from 'next/navigation';
 
 const marks = [
   {
