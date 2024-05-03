@@ -18,8 +18,13 @@ export class ListingController {
 
   @Get()
   getAllListings(@Query() listingsParams: ListingsDto): Promise<Listing[]> {
-    const { id_category, take, page, search } = listingsParams;
-    return this.listingService.findAll(id_category, search, take, page);
+    const { category, take, page, search } = listingsParams;
+    return this.listingService.findAll(category, search, take, page);
+  }
+
+  @Get('/categories')
+  getCategories(): Promise<Category[]> {
+    return this.categoryService.findAll();
   }
 
   @Get('/:id')
@@ -40,11 +45,6 @@ export class ListingController {
       );
 
     return result;
-  }
-
-  @Get('/categories')
-  getCategories(): Promise<Category[]> {
-    return this.categoryService.findAll();
   }
 
   @Private()

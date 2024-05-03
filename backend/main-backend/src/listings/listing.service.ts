@@ -4,20 +4,26 @@ import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Listing } from './listing.entity';
 import { User } from '../user/user.entity';
 import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
+import { Category } from './categories/category.entity';
 
 @Injectable()
 export class ListingService {
   constructor(
     @InjectRepository(Listing)
     private listingRepository: Repository<Listing>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
   ) {}
 
-  findAll(id_category: number, search: string, take: number, page: number): Promise<Listing[]> {
+  async findAll(category: string, search: string, take: number, page: number): Promise<Listing[]> {
     const query: FindManyOptions<Listing> = { take, skip: take * (page - 1) };
 
-    if (id_category || search) {
+    if (category || search) {
       query.where = {};
-      if (id_category) query.where = { id_category };
+      if (category && category !== 'All') {
+        const { id } = await this.categoryRepository.findOne({ where: { name: category } });
+        query.where.id_category = id;
+      }
       if (search) query.where.title = Like(`%${search}%`);
     }
 

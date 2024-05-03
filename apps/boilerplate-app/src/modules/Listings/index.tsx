@@ -27,12 +27,13 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import { ListingDto } from 'dto/ListingDto';
 import { useRouter } from 'next/router';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, use, useEffect, useRef, useState } from 'react';
 import { useBackendCall } from 'utils/useBackendCall';
 
-import categories from '../../common/categories.json';
-
 import { OfferRow } from './OfferRow';
+import { string } from 'zod';
+import { set } from 'date-fns';
+import { useSearchParams } from 'next/navigation';
 
 const marks = [
   {
@@ -67,27 +68,51 @@ const AccordionDetails = styled(MuiAccordionDetails)(() => ({
 export function Listings() {
   const router = useRouter();
   const backendCall = useBackendCall();
+  const searchParams = useSearchParams();
 
   const [listings, setListings] = useState<Array<ListingDto> | undefined>(undefined);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(router.query.category?.toString() ?? 'All');
+  const [search, setSearch] = useState<string | null>(searchParams.get('search'));
+  const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
+  console.log('categories', categories);
+  console.log('selectedCategory', selectedCategory);
+  console.log('routerquery', router.query.category);
 
   // TODO: add pagination
+  const params = new URLSearchParams(router.asPath.split(/\?/)[1]);
+
+  useEffect(() => {
+    if (window?.location?.href) {
+      setSearch(params.get('search'));
+    }
+  }, [params?.get('search')]);
 
   useEffect(() => {
     (async () => {
-      const dbList = (await backendCall(
-        `listing?${new URLSearchParams({
-          page: '1',
-          take: '10',
-          id_category: '1',
-        })}`,
-        {},
-      )) as Array<ListingDto>;
+      const categories = (await backendCall(`listing/categories`)) as Array<{ id: number; name: string }>;
+      setCategories(categories);
+    })().catch((err) => {
+      console.error(err);
+    });
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      console.log('selectedCategory', selectedCategory);
+      console.log('search', search);
+      const queryParams: Record<string, string> = {
+        category: selectedCategory?.toString() ?? 'All',
+        take: '10',
+        page: '1',
+      };
+      if (params.get('search')) queryParams.search = params.get('search') ?? '';
+      const dbList = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
 
       setListings(dbList);
     })().catch((err) => {
       console.error(err);
     });
-  }, []);
+  }, [search]);
 
   const [accordionState, setAccordionState] = useState([true, true, true]);
   const [acc1] = accordionState;
@@ -145,12 +170,13 @@ export function Listings() {
                   {categories.map((option) => (
                     <Button
                       color="secondary"
-                      key={option.label}
+                      key={option.name}
                       onClick={async () => {
-                        await router.push(`/listings/${option.label}`);
+                        setSelectedCategory(option.name);
+                        await router.push(`/listings/${option.name}`);
                       }}
                     >
-                      {option.label}
+                      {option.name}
                     </Button>
                   ))}
                 </Box>
@@ -165,7 +191,7 @@ export function Listings() {
               className="flex-1"
               disablePortal
               options={['Title', 'Date', 'Price']}
-              defaultValue={'TODO: orderby'}
+              defaultValue={'Title'}
               disableClearable
               popupIcon={null}
               renderInput={(params) => <TextField {...params} variant="standard" className="flex-col md:w-[100px]" />}
