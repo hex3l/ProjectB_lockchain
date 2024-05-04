@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Listing } from './listing.entity';
-import { User } from '../user/user.entity';
 import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
 import { Category } from './categories/category.entity';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ListingService {
@@ -13,8 +13,7 @@ export class ListingService {
     private listingRepository: Repository<Listing>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userService: UserService,
   ) {}
 
   async findAll(category: string, search: string, take: number, page: number, address: string): Promise<Listing[]> {
@@ -27,7 +26,7 @@ export class ListingService {
         query.where.id_category = id;
       }
       if (address) {
-        const { id } = await this.userRepository.findOne({ where: { address } });
+        const { id } = await this.userService.findOneByAddress(address);
         query.where.id_creator = id;
       }
       if (search) query.where.title = Like(`%${search}%`);
