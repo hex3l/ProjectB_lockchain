@@ -2,18 +2,24 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Brush, Camera, Code, Search, ViewQuilt } from '@mui/icons-material';
 import { Autocomplete, Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { HotPicks } from 'modules/HotPicks';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-
-import categories from '../common/categories.json';
+import { useBackendCall } from 'utils/useBackendCall';
 
 // import { Listings } from 'modules';
 
 const Home = () => {
+  const backendCall = useBackendCall();
   const [selectedCategory, setSelectedCategory] = useState<string | null>('All');
   const [search, setSearch] = useState<string | undefined>(undefined);
+  const [categories, setCategories] = useState<
+    Array<{
+      id: number;
+      name: string;
+    }>
+  >([]);
 
   const relevantCategories = useMemo(
     () => [
@@ -34,6 +40,15 @@ const Home = () => {
     ],
     [],
   );
+
+  useEffect(() => {
+    (async () => {
+      const categories = (await backendCall(`listing/categories`)) as Array<{ id: number; name: string }>;
+      setCategories(categories);
+    })().catch((err) => {
+      console.error(err);
+    });
+  }, []);
 
   return (
     <>
@@ -93,7 +108,7 @@ const Home = () => {
                     onChange={async (event, option) => {
                       setSelectedCategory(option);
                     }}
-                    options={categories.map((el) => el.label)}
+                    options={categories.map((el) => el.name)}
                     renderInput={(params) => <TextField {...params} placeholder="CMS development" />}
                   />
                 </Box>
@@ -138,5 +153,4 @@ const Home = () => {
   <Skeleton width="60%" />
 </Box>
 </div>*/
-
 export default Home;
