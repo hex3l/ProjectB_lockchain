@@ -13,16 +13,22 @@ export class ListingService {
     private listingRepository: Repository<Listing>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  async findAll(category: string, search: string, take: number, page: number): Promise<Listing[]> {
+  async findAll(category: string, search: string, take: number, page: number, address: string): Promise<Listing[]> {
     const query: FindManyOptions<Listing> = { take, skip: take * (page - 1) };
 
-    if (category || search) {
+    if (category || search || address) {
       query.where = {};
       if (category && category !== 'All') {
         const { id } = await this.categoryRepository.findOne({ where: { name: category } });
         query.where.id_category = id;
+      }
+      if (address) {
+        const { id } = await this.userRepository.findOne({ where: { address } });
+        query.where.id_creator = id;
       }
       if (search) query.where.title = Like(`%${search}%`);
     }
