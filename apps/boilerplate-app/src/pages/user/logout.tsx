@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Typography } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useDisconnect } from 'wagmi';
@@ -10,11 +11,13 @@ const Page = () => {
   const { disconnect } = useDisconnect();
 
   useEffect(() => {
-    disconnect();
     const newState = clone(state) as GlobalStateData;
     newState.auth = { jwt: null };
-    if (setState) setState(newState);
     localStorage.removeItem('token');
+    setTimeout(() => {
+      if (setState) setState(newState);
+      disconnect();
+    }, 50);
   }, []);
 
   return (

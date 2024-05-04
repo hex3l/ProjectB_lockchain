@@ -71,9 +71,6 @@ export function Listings() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(router.query.category?.toString() ?? 'All');
   const [search, setSearch] = useState<string | null | undefined>(undefined);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
-  console.log('categories', categories);
-  console.log('selectedCategory', selectedCategory);
-  console.log('routerquery', router.query.category);
 
   useEffect(() => {
     setSearch(Array.isArray(router.query.search) ? router.query.search[0] : router.query.search ?? null);

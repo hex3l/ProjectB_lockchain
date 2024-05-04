@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-throw-literal */
@@ -130,7 +131,7 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
         </Button>
       )}
       {isConnected && syncInProgress && (
-        <Button variant="contained" color="secondary" endIcon={<CircularProgress size="20px" color="warning" />}>
+        <Button variant="contained" color="secondary" endIcon={<CircularProgress size="20px" color="primary" />}>
           Loading data
         </Button>
       )}
