@@ -1,27 +1,56 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { Avatar, Box, Container, Divider, Tab, Tabs, Typography } from '@mui/material';
-import { useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import React from 'react';
+import { useAccount } from 'wagmi';
 
-import { Offer } from 'modules/Listings/OfferBox/Offer';
-
-import listingsFav from '../../../common/listingFav.json';
-import listingsMy from '../../../common/listingMy.json';
-import listings from '../../../common/listings copy.json';
+import { ListingDto } from 'dto/ListingDto';
+import { OfferRow } from 'modules/Listings/OfferRow';
+import { useBackendCall } from 'utils/useBackendCall';
 
 const Page = () => {
+  const backendCall = useBackendCall();
+  const [listingsFav, setListingsFav] = useState<Array<ListingDto>>([]);
+  const [listingsMy, setListingsMy] = useState<Array<ListingDto>>([]);
+  const [purchased, setPurchased] = useState<Array<ListingDto>>([]);
+  const { address } = useAccount();
   const [value, setValue] = useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  useEffect(() => {
+    (async () => {
+      const favorites = (await backendCall(`user/favorites`)) as Array<ListingDto>;
+      setListingsFav(favorites);
+    })().catch((err) => {
+      console.error(err);
+    });
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const queryParams: Record<string, string> = {
+        take: '10',
+        page: '1',
+      };
+      if (address) queryParams.address = address;
+      const my = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
+      console.log(my);
+      setListingsMy(my);
+    })().catch((err) => {
+      console.error(err);
+    });
+  }, []);
+
   return (
     <Container fixed>
       <Box className="flex flex-row gap-3 pt-3">
         <Avatar sx={{ width: 96, height: 96 }} />
         <Box className="flex flex-col md:flex-none flex-1 justify-center">
-          <Typography>0xb1053CA73a40d24FDb6A24Cb536651C0A58C4381</Typography>
+          <Typography>{address}</Typography>
           <Divider />
           <Typography variant="caption" display="block" gutterBottom>
             Seller since 2021
@@ -46,8 +75,10 @@ const Page = () => {
         {value === 0 && (
           <Box sx={{ p: 3 }}>
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-              {listings.map(({ id, ...listing }) => (
-                <Offer key={id} {...{ ...listing, id }} />
+              {purchased.map(({ id, ...listing }) => (
+                <Fragment key={id}>
+                  <OfferRow {...{ id, ...listing }} />
+                </Fragment>
               ))}
             </Box>
           </Box>
@@ -56,7 +87,9 @@ const Page = () => {
           <Box sx={{ p: 3 }}>
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
               {listingsFav.map(({ id, ...listing }) => (
-                <Offer key={id} {...{ ...listing, id }} />
+                <Fragment key={id}>
+                  <OfferRow {...{ id, ...listing }} />
+                </Fragment>
               ))}
             </Box>
           </Box>
@@ -65,7 +98,9 @@ const Page = () => {
           <Box sx={{ p: 3 }}>
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
               {listingsMy.map(({ id, ...listing }) => (
-                <Offer key={id} {...{ ...listing, id }} />
+                <Fragment key={id}>
+                  <OfferRow {...{ id, ...listing }} />
+                </Fragment>
               ))}
             </Box>
           </Box>
