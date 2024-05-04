@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -14,6 +15,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  CircularProgress,
   Container,
   Divider,
   IconButton,
@@ -68,13 +70,16 @@ export function Listings() {
   const backendCall = useBackendCall();
 
   const [listings, setListings] = useState<Array<ListingDto> | undefined>(undefined);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(router.query.category?.toString() ?? 'All');
   const [search, setSearch] = useState<string | null | undefined>(undefined);
+  const [category, setCategory] = useState<string | null | undefined>(undefined);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
 
   useEffect(() => {
-    setSearch(Array.isArray(router.query.search) ? router.query.search[0] : router.query.search ?? null);
-  }, [router.query.search]);
+    if (typeof window !== 'undefined' && router.query.category) {
+      setSearch(Array.isArray(router.query.search) ? router.query.search[0] : router.query.search ?? null);
+      setCategory(Array.isArray(router.query.category) ? router.query.category[0] : router.query.category ?? null);
+    }
+  }, [router.query.search, router.query.category]);
 
   useEffect(() => {
     (async () => {
@@ -87,15 +92,15 @@ export function Listings() {
 
   useEffect(() => {
     (async () => {
-      if (search !== undefined) {
-        console.log('selectedCategory', selectedCategory);
+      if (search !== undefined && category !== undefined) {
+        console.log('category', category);
         console.log('search', search);
         const queryParams: Record<string, string> = {
-          category: selectedCategory?.toString() ?? 'All',
           take: '10',
           page: '1',
         };
         if (search) queryParams.search = search;
+        if (category) queryParams.category = category;
         const dbList = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
 
         setListings(dbList);
@@ -103,7 +108,7 @@ export function Listings() {
     })().catch((err) => {
       console.error(err);
     });
-  }, [search, selectedCategory]);
+  }, [search, category]);
 
   const [accordionState, setAccordionState] = useState([true, true, true]);
   const [acc1] = accordionState;
@@ -129,7 +134,7 @@ export function Listings() {
           <Box className="w-full h-[250px] flex flex-col text-center justify-center items-center">
             <Box className="flex z-10">
               <Typography className="font-bukhari md:text-[4.5rem] md:leading-[4.5rem] text-[2.5rem] leading-[2.5rem] text-[#121212]">
-                {router.query.category ? router.query.category : 'Listings'}
+                {category ? category : <CircularProgress className="text-[#121212]" />}
               </Typography>
             </Box>
             <Paper className="max-w-[700px] p-5 mt-[27px] flex flex-col md:flex-row gap-3 shadow-2xl z-[1000]">
@@ -163,7 +168,7 @@ export function Listings() {
                       color="secondary"
                       key={option.name}
                       onClick={async () => {
-                        setSelectedCategory(option.name);
+                        setCategory(option.name);
                         await router.push(`/listings/${option.name}`);
                       }}
                     >
