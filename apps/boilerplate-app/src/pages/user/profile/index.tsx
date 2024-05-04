@@ -32,18 +32,20 @@ const Page = () => {
 
   useEffect(() => {
     (async () => {
-      const queryParams: Record<string, string> = {
-        take: '10',
-        page: '1',
-      };
-      if (address) queryParams.address = address;
-      const my = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
-      console.log(my);
-      setListingsMy(my);
+      if (address) {
+        const queryParams: Record<string, string> = {
+          take: '10',
+          page: '1',
+        };
+        queryParams.address = address;
+        const my = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
+        console.log(my);
+        setListingsMy(my);
+      }
     })().catch((err) => {
       console.error(err);
     });
-  }, []);
+  }, [address, backendCall]);
 
   return (
     <Container fixed>

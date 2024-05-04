@@ -65,9 +65,9 @@ export const useBackendCall = () => {
         throw new Error(`Fetch ${response?.error ?? 'error'}`);
       }
       try {
-        const result = await res.text();
+        const result = await res.json();
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        if (result.length > 2) return JSON.parse(result);
+        if (result) return result;
       } catch {}
       return undefined;
     },
