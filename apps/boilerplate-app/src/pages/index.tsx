@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Brush, Camera, Code, Search, ViewQuilt } from '@mui/icons-material';
 import { Autocomplete, Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 
 import { HotPicks } from 'modules/HotPicks';
@@ -13,6 +14,7 @@ import { useBackendCall } from 'utils/useBackendCall';
 
 const Home = () => {
   const backendCall = useBackendCall();
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string | null>('All');
   const [search, setSearch] = useState<string | undefined>(undefined);
   const [categories, setCategories] = useState<
@@ -121,7 +123,7 @@ const Home = () => {
                   <Button
                     variant="contained"
                     className="h-[56px]"
-                    href={`/listings/${selectedCategory}${search ? `?search=${search}` : ''}`}
+                    onClick={() => router.push(`/listings/${selectedCategory}${search ? `?search=${search}` : ''}`)}
                   >
                     <Search></Search>
                   </Button>

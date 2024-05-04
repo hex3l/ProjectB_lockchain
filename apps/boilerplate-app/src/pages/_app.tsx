@@ -16,15 +16,15 @@ import { GlobalStateProvider } from 'utils/GlobalState';
 
 import 'common/styles/global.css';
 
+const { chains, publicClient, webSocketPublicClient } = configureChains([localhost], [publicProvider()]);
+
+const config = createConfig({
+  autoConnect: true,
+  publicClient,
+  webSocketPublicClient,
+});
+
 const App = ({ Component, pageProps }: AppProps) => {
-  const { chains, publicClient, webSocketPublicClient } = configureChains([localhost], [publicProvider()]);
-
-  const config = createConfig({
-    autoConnect: true,
-    publicClient,
-    webSocketPublicClient,
-  });
-
   return (
     <GlobalStateProvider>
       <WagmiConfig config={config}>
@@ -35,7 +35,6 @@ const App = ({ Component, pageProps }: AppProps) => {
             <meta name="version" content="1.0.0" />
             <link rel="icon" href="/favicon.ico" />
             <style>{`
-              html,
               body,
               body > div:first-child,
               div#__next,
@@ -48,6 +47,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <SnackbarProvider maxSnack={3}>
             <Box className="h-full overflow-auto">
               <TopBar />
+              <div className="md:h-[68px] sm:h-[63px] h-[55px]" />
               <Component {...pageProps} />
               <ListingDialog />
               <BottomBar />

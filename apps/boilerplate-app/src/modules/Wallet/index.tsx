@@ -72,7 +72,7 @@ const Wallet = () => {
   }, []);
 
   // ///////////////////////////////////////////////////////////////
-  // Handle connection logic and retries until it can connect with metamask
+  // Handle connection logic when a token exists and retries until it can connect with metamask
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');

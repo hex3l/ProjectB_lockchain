@@ -37,7 +37,7 @@ function TopBar() {
 
   return (
     <>
-      <AppBar position="sticky" sx={{ top: 0 }}>
+      <AppBar sx={{ position: 'fixed', top: 0 }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Link href="/">
