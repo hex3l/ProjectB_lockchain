@@ -43,8 +43,11 @@ const Home = () => {
 
   useEffect(() => {
     (async () => {
-      const categories = (await backendCall(`listing/categories`)) as Array<{ id: number; name: string }>;
-      setCategories(categories);
+      const categories: unknown = await backendCall(`listing/categories`);
+      if (categories) {
+        const categoriesData = categories as Array<{ id: number; name: string }>;
+        setCategories(categoriesData);
+      }
     })().catch((err) => {
       console.error(err);
     });
