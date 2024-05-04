@@ -39,6 +39,7 @@ export const ListingDialog = () => {
           query,
         },
         pathname,
+        { scroll: false },
       )
       .catch((err) => console.log(err));
   }, [router]);

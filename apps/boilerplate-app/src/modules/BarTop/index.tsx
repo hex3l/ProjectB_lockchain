@@ -17,11 +17,7 @@ import { Wallet } from 'modules/Wallet';
 const pages = [
   {
     label: 'Listings',
-    url: '/listings',
-    childrens: [
-      { label: 'Active', url: '/listings/active' },
-      { label: 'Manage listings', url: '/listings/mylistings' },
-    ],
+    url: '/listings/All',
   },
 ];
 

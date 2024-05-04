@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -5,9 +6,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import styled from '@emotion/styled';
-import { Avatar, Badge, Button, CircularProgress, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
+import { Avatar, Badge, Button, CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { InjectedConnector } from '@wagmi/core';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { useAccount, useConnect } from 'wagmi';
 
@@ -15,11 +16,8 @@ import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { GlobalStateContext } from 'utils/GlobalState';
 
 import { WalletLogin } from './WalletLogin';
+import { Logout } from '@mui/icons-material';
 
-const loggedInSettings = [
-  { label: 'Profile', url: '/user/profile' },
-  { label: 'Logout', url: '/user/logout' },
-];
 const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
     backgroundColor: '#44b700',
@@ -49,6 +47,7 @@ const StyledBadge = styled(Badge)(() => ({
   },
 }));
 const Wallet = () => {
+  const router = useRouter();
   const { state, setState } = useContext(GlobalStateContext);
   const { jwt } = state.auth;
   const [enableWalletSync, setEnableWalletSync] = useState(false);
@@ -57,10 +56,6 @@ const Wallet = () => {
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -88,22 +83,18 @@ const Wallet = () => {
   }, [status]);
   // ///////////////////////////////////////////////////////////////
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
   if (!enableWalletSync) return <></>;
 
   return (
     <>
       {jwt ? (
         <>
-          <Tooltip title="Open profile links">
-            <>
+          <div className="flex flex-row space-x-1">
+            <Tooltip title="Open profile">
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleOpenUserMenu}
+                onClick={() => router.push('/user/profile')}
                 sx={{ p: 0 }}
                 className="text-[13px] p-1 flex flex-row"
               >
@@ -129,34 +120,13 @@ const Wallet = () => {
                   {address ? `${address.substring(0, 5)}...${address.substring(35, address.length)}` : ''}
                 </>
               </Button>
-            </>
-          </Tooltip>
-          <Menu
-            sx={{ mt: '45px' }}
-            id="menu-appbar"
-            anchorEl={anchorElUser}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={Boolean(anchorElUser)}
-            onClose={handleCloseUserMenu}
-          >
-            {loggedInSettings.map((setting) => (
-              <MenuItem key={setting.label} onClick={handleCloseUserMenu}>
-                <Link href={setting.url}>
-                  <Typography textAlign="center" className="no-underline text-white hover:no-underline">
-                    {setting.label}
-                  </Typography>
-                </Link>
-              </MenuItem>
-            ))}
-          </Menu>
+            </Tooltip>
+            <Tooltip title="Logout">
+              <IconButton>
+                <Logout />
+              </IconButton>
+            </Tooltip>
+          </div>
         </>
       ) : (
         <WalletLogin jwt={jwt} />

@@ -9,4 +9,7 @@ module.exports = {
   },
 
   extends: ['eslint-config-base'],
+  rules: {
+    'no-misused-promises': 'off',
+  },
 };
