@@ -16,6 +16,7 @@ import { useAccount, useConnect } from 'wagmi';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { GlobalStateContext } from 'utils/GlobalState';
+import { useBackendCall } from 'utils/useBackendCall';
 
 import { WalletLogin } from './WalletLogin';
 
@@ -50,8 +51,10 @@ const StyledBadge = styled(Badge)(() => ({
 const Wallet = () => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const backendCall = useBackendCall();
   const { state, setState } = useContext(GlobalStateContext);
   const { jwt } = state.auth;
+
   const [enableWalletSync, setEnableWalletSync] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [avatarColor, setAvatarColor] = useState('#000');
@@ -59,6 +62,18 @@ const Wallet = () => {
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (async () => {
+        if (state.auth.jwt && !state.auth.abi && status === 'connected') {
+          const abi = await backendCall('user/abi');
+          state.auth.abi = abi;
+          if (setState) setState(state);
+        }
+      })().catch((error) => console.log(error));
+    }
+  }, [status]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -130,7 +145,7 @@ const Wallet = () => {
               </Button>
             </Tooltip>
             <Tooltip title="Logout">
-              <IconButton>
+              <IconButton onClick={() => router.push('/user/logout')}>
                 <Logout />
               </IconButton>
             </Tooltip>

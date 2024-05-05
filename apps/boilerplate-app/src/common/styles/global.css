@@ -144,3 +144,17 @@ Can be optimized by creating an SVG with sad path and using an animation similar
   background: linear-gradient(200deg, #f5fccd 0%, #ff7d66 400%);
   clip-path: path('M 0 300 L 0 100 C 450 125 500 50 650 150 C 750 250 850 150 1200 350');
 }
+
+.is-sticky-topbar {
+  position: fixed;
+  top: 88px;
+  z-index: 999;
+  animation: 500ms ease-in-out 0s normal none 1 running fadeInDown;
+}
+
+.is-sticky-sidebar {
+  position: fixed;
+  top: 168px;
+  z-index: 999;
+  animation: 500ms ease-in-out 0s normal none 1 running fadeInDown;
+}

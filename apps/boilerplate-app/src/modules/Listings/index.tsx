@@ -124,6 +124,62 @@ export function Listings() {
     if (categoryScroll.current) categoryScroll.current['scrollLeft'] += scrollOffset;
   };
 
+  // ///////////////////////////////////////////////////////////////
+  // Handle sticky sidebar
+  const [sidebarTop, setSidebarTop] = useState<number | undefined>(undefined);
+  const [topbarTop, setTopbarTop] = useState<number | undefined>(undefined);
+  const [topbarWidth, setTopbarWidth] = useState<number | undefined>(undefined);
+  const [topbarHeight, setTopbarHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const sidebar = document.querySelector('.sidebar')?.getBoundingClientRect();
+    const topbar = document.querySelector('.topbar')?.getBoundingClientRect();
+    setSidebarTop(sidebar?.top ?? undefined);
+    setTopbarTop(topbar?.top ?? undefined);
+    setTopbarWidth(topbar?.width ?? undefined);
+    setTopbarHeight(topbar?.height ?? undefined);
+  }, []);
+
+  const isStickySidebar = () => {
+    const sidebar = document.querySelector('.sidebar');
+    const scrollTop = window.scrollY;
+    if (scrollTop >= (sidebarTop ?? 0) - 168) {
+      sidebar?.classList.add('is-sticky-sidebar');
+    } else {
+      sidebar?.classList.remove('is-sticky-sidebar');
+    }
+  };
+
+  useEffect(() => {
+    if (!sidebarTop) return;
+
+    window.addEventListener('scroll', isStickySidebar);
+    return () => {
+      window.removeEventListener('scroll', isStickySidebar);
+    };
+  }, [sidebarTop]);
+
+  const isStickyTopbar = () => {
+    const sidebar = document.querySelector('.topbar');
+    const scrollTop = window.scrollY;
+    if (scrollTop >= (topbarTop ?? 0) - 88) {
+      sidebar?.classList.add('is-sticky-topbar');
+    } else {
+      sidebar?.classList.remove('is-sticky-topbar');
+    }
+  };
+
+  useEffect(() => {
+    if (!topbarTop) return;
+
+    window.addEventListener('scroll', isStickyTopbar);
+    return () => {
+      window.removeEventListener('scroll', isStickyTopbar);
+    };
+  }, [topbarTop]);
+
+  // ///////////////////////////////////////////////////////////////
+
   return (
     <Fragment>
       <Box className="banner static-beach_bar">
@@ -154,52 +210,64 @@ export function Listings() {
         </Container>
       </Box>
       <Container maxWidth="xl" className="pt-10 flex flex-col gap-5">
-        <Box className="flex flex-col md:flex-row gap-5">
-          <Paper className="flex-1 flex h-[60px] items-center justify-center gap-3 px-5">
-            <Typography className="font-bold md:flex hidden">CATEGORIES</Typography>
-            <Box className="flex flex-1 flex-row gap-2 items-center w-0">
-              <IconButton onClick={() => scroll(-100)}>
-                <ArrowLeft />
-              </IconButton>
-              <Box className="overflow-x-hidden" ref={categoryScroll}>
-                <Box className=" whitespace-nowrap">
-                  {categories?.map((option) => (
-                    <Button
-                      color="secondary"
-                      key={option.name}
-                      onClick={async () => {
-                        setCategory(option.name);
-                        await router.push(`/listings/${option.name}`);
-                      }}
-                    >
-                      {option.name}
-                    </Button>
-                  ))}
+        <Box className="flex flex-col md:flex-row">
+          <Box
+            className="flex flex-col md:flex-row"
+            sx={{
+              height: topbarHeight ? `${topbarHeight}px !important` : 0,
+            }}
+          />
+          <Box
+            className="topbar flex flex-col md:flex-row gap-5"
+            sx={{ width: topbarWidth ? `${topbarWidth}px !important` : '100%' }}
+          >
+            <Paper className=" flex-1 flex h-[60px] items-center justify-center gap-3 px-5">
+              <Typography className="font-bold md:flex hidden">CATEGORIES</Typography>
+              <Box className="flex flex-1 flex-row gap-2 items-center w-0">
+                <IconButton onClick={() => scroll(-100)}>
+                  <ArrowLeft />
+                </IconButton>
+                <Box className="overflow-x-hidden" ref={categoryScroll}>
+                  <Box className=" whitespace-nowrap">
+                    {categories?.map((option) => (
+                      <Button
+                        color="secondary"
+                        key={option.name}
+                        onClick={async () => {
+                          setCategory(option.name);
+                          await router.push(`/listings/${option.name}`);
+                        }}
+                      >
+                        {option.name}
+                      </Button>
+                    ))}
+                  </Box>
                 </Box>
+                <IconButton onClick={() => scroll(100)}>
+                  <ArrowRight />
+                </IconButton>
               </Box>
-              <IconButton onClick={() => scroll(100)}>
-                <ArrowRight />
+            </Paper>
+            <Paper className="flex h-[60px] items-center justify-center gap-3 px-5">
+              <Autocomplete
+                className="flex-1"
+                disablePortal
+                options={['Title', 'Date', 'Price']}
+                defaultValue={'Title'}
+                disableClearable
+                popupIcon={null}
+                renderInput={(params) => <TextField {...params} variant="standard" className="flex-col md:w-[100px]" />}
+              />
+              <IconButton>
+                <FilterList></FilterList>
               </IconButton>
-            </Box>
-          </Paper>
-          <Paper className="flex h-[60px] items-center justify-center gap-3 px-5">
-            <Autocomplete
-              className="flex-1"
-              disablePortal
-              options={['Title', 'Date', 'Price']}
-              defaultValue={'Title'}
-              disableClearable
-              popupIcon={null}
-              renderInput={(params) => <TextField {...params} variant="standard" className="flex-col md:w-[100px]" />}
-            />
-            <IconButton>
-              <FilterList></FilterList>
-            </IconButton>
-          </Paper>
+            </Paper>
+          </Box>
         </Box>
         <Box className="flex flex-row gap-5">
-          <Box className="w-[250px]" sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Paper>
+          <Box className="h-full flex-col" sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <Box className="w-[250px]" />
+            <Paper className="sidebar">
               <Box className="flex flex-col p-5 w-[250px]">
                 <Box className="flex flex-row pb-5 items-center">
                   <Typography className="font-bold flex-1">FILTERS</Typography>

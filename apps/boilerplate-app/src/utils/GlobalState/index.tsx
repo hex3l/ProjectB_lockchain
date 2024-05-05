@@ -4,6 +4,7 @@ import React, { createContext, useState } from 'react';
 export const emptyGlobalState: GlobalStateData = {
   auth: {
     jwt: null,
+    abi: null,
   },
 };
 
@@ -27,6 +28,7 @@ type GlobalStateProviderProps = {
 export type GlobalStateData = {
   auth: {
     jwt: string | null;
+    abi: any;
   };
 };
 

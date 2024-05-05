@@ -3,9 +3,8 @@ import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { Listing } from '../listings/listing.entity';
-import { ListingController } from '../listings/listing.controller';
-import { ListingService } from '../listings/listing.service';
 import { Private } from '../auth/decorator/auth.decorator';
+import * as contract from '../../truffle/build/contracts/DealHandler.json';
 
 @Controller('user')
 export class UserController {
@@ -14,6 +13,12 @@ export class UserController {
   @Get()
   getUser(): Promise<User[]> {
     return this.userService.findAll();
+  }
+
+  @Private()
+  @Get('/abi')
+  getAbi(@Req() request: any): any {
+    return contract.abi;
   }
 
   @Private()
