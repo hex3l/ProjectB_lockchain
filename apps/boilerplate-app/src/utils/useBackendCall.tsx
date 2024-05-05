@@ -44,13 +44,15 @@ export const useBackendCall = () => {
           case 401:
             console.log('User is not logged into backend');
             // We need to log the user in again, how
-            if (setState) setState({ ...state, auth: { jwt: null } });
-            disconnect();
-            enqueueSnackbar('You have been disconnected! Please log in again.', { variant: 'error' });
             setTimeout(() => {
-              const loginBtn = document.getElementById('loginButton');
-              console.log('loginBtn', loginBtn);
-              loginBtn?.click();
+              localStorage.removeItem('token');
+              if (setState) setState({ ...state, auth: { jwt: null } });
+              disconnect();
+              enqueueSnackbar('You have been disconnected! Please log in again.', { variant: 'error' });
+              setTimeout(() => {
+                const loginBtn = document.getElementById('loginButton');
+                loginBtn?.click();
+              }, 1000);
             }, 1000);
             return undefined;
         }

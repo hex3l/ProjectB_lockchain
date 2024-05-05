@@ -6,9 +6,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import styled from '@emotion/styled';
+import { Logout } from '@mui/icons-material';
 import { Avatar, Badge, Button, CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { InjectedConnector } from '@wagmi/core';
 import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 import { useAccount, useConnect } from 'wagmi';
 
@@ -16,7 +18,6 @@ import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { GlobalStateContext } from 'utils/GlobalState';
 
 import { WalletLogin } from './WalletLogin';
-import { Logout } from '@mui/icons-material';
 
 const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
@@ -48,9 +49,11 @@ const StyledBadge = styled(Badge)(() => ({
 }));
 const Wallet = () => {
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const { state, setState } = useContext(GlobalStateContext);
   const { jwt } = state.auth;
   const [enableWalletSync, setEnableWalletSync] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [avatarColor, setAvatarColor] = useState('#000');
   const { address, status } = useAccount();
   const { connect } = useConnect({
@@ -72,7 +75,12 @@ const Wallet = () => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       if (token && ['disconnected', 'disconnecting'].includes(status)) {
+        if (isConnecting) return;
+        setIsConnecting(true);
+        enqueueSnackbar('Detected a previous session, reconnecting with your wallet...', { variant: 'info' });
         connect();
+      } else {
+        setIsConnecting(false);
       }
       if (!state.auth.jwt) {
         state.auth.jwt = token;
