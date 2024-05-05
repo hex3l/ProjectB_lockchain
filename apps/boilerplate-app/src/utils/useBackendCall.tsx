@@ -46,7 +46,7 @@ export const useBackendCall = () => {
             // We need to log the user in again, how
             setTimeout(() => {
               localStorage.removeItem('token');
-              if (setState) setState({ ...state, auth: { jwt: null } });
+              if (setState) setState({ ...state, auth: { ...state.auth, jwt: null } });
               disconnect();
               enqueueSnackbar('You have been disconnected! Please log in again.', { variant: 'error' });
               setTimeout(() => {
