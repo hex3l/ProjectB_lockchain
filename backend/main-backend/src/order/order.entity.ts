@@ -34,7 +34,7 @@ export class Order {
   price: number;
 
   @Column({ type: 'int', nullable: false, default: OrderStatus.PENDING })
-  status: number;
+  status: OrderStatus;
 
   @Column({ type: 'int', nullable: false }) //
   id_creator: number;
