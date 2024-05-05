@@ -13,6 +13,6 @@ import { UserModule } from '../user/user.module';
   imports: [TypeOrmModule.forFeature([Listing, Category]), UserModule],
   providers: [ListingService, CategoryService],
   controllers: [ListingController],
-  exports: [],
+  exports: [ListingService],
 })
 export class ListingModule {}

@@ -11,7 +11,10 @@ import { ListingService } from '../listings/listing.service';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly listingService: ListingService,
+  ) {}
 
   @Private()
   @Get()
@@ -81,6 +84,10 @@ export class OrderController {
           cause: 'You already bought this listing',
         },
       );
+    }
+    const listing = await this.listingService.findOne(order.id_listing, null);
+    if (listing.price == order.price) {
+      order.status = OrderStatus.CONFIRMED;
     }
     return this.orderService.save(order);
   } // Only a buyer can create
