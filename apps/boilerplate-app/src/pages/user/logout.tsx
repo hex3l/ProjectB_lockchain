@@ -12,7 +12,7 @@ const Page = () => {
 
   useEffect(() => {
     const newState = clone(state) as GlobalStateData;
-    newState.auth = { jwt: null };
+    newState.auth = { jwt: null, abi: null };
     localStorage.removeItem('token');
     setTimeout(() => {
       if (setState) setState(newState);
