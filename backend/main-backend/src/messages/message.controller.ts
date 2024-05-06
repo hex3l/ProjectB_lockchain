@@ -24,14 +24,17 @@ export class MessageController {
   }
 
   @Private()
-  @Post()
-  createMessage(@Body() messageDto: ValidateMessageDto, @Req() request: any): Promise<Message> {
+  @Post('/:id_order/create')
+  createMessage(
+    @Body() messageDto: ValidateMessageDto,
+    @Param() params: { id_order: number },
+    @Req() request: any,
+  ): Promise<Message> {
     const { user } = request;
     const message = new Message();
     message.content = messageDto.content;
-    message.id_order = messageDto.order;
+    message.id_order = params.id_order;
     message.id_sender = user.id_user;
-    message.creation_date = new Date();
     console.log(message);
     return this.messageService.save(message);
   }

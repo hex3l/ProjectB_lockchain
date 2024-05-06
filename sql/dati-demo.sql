@@ -27,3 +27,4 @@ INSERT INTO public.listing
 (10, 2, 'Solidity Contract Developer', 'I can develop your Solidity contract.', '/assets/defaultLogos/x_solidityContractDeveloper.png', 5, 0, 0.5, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (11, 2, 'Oufit Maker', 'Send me a photo and I will make you an outfit.', '/assets/defaultLogos/X_OutfitMaker.png', 3, 0, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (12, 1, 'Plumber service', 'Plumber for you and your wife', '/assets/defaultLogos/x_plumber.png', 3, 0, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL);
+

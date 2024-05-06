@@ -6,12 +6,4 @@ export class ValidateMessageDto {
     message: 'message content not valid',
   })
   content: string;
-
-  @IsNumber(
-    {},
-    {
-      message: 'description not valid',
-    },
-  )
-  order: number;
 }

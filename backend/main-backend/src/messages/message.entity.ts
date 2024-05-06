@@ -37,9 +37,6 @@ export class Message {
   @Column()
   content: string;
 
-  @Column()
-  creation_date: Date;
-
   @CreateDateColumn()
   created!: Date;
 
