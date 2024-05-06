@@ -34,7 +34,7 @@ export class Listing {
   @Column()
   description: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'float8' })
   price: number;
 
   @Column()

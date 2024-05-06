@@ -8,17 +8,20 @@ import { ValidateListingDto } from './listingDto/validate-listing.dto';
 import { Private } from '../auth/decorator/auth.decorator';
 import { ListingsDto } from './listingDto/listings.dto';
 import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
+import { ContractService } from '../contract/contract.service';
 
 @Controller('listing')
 export class ListingController {
   constructor(
     private readonly listingService: ListingService,
     private readonly categoryService: CategoryService,
+    private readonly contractService: ContractService,
   ) {}
 
   @Get()
   getAllListings(@Query() listingsParams: ListingsDto): Promise<Listing[]> {
     const { category, address, take, page, search } = listingsParams;
+    this.contractService.getDeal(1);
     return this.listingService.findAll(category, search, take, page, address);
   }
 

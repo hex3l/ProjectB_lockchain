@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
@@ -175,7 +176,12 @@ const ListingComponent = ({
                       variant="contained"
                       startIcon={<ShoppingBasket />}
                       disabled={interaction === Interaction.OFFER || listingOrder?.status !== undefined}
-                      onClick={() => setInteraction(Interaction.BUY)}
+                      onClick={() =>
+                        backendCall(`order/create`, {
+                          method: 'POST',
+                          body: JSON.stringify({ id_listing, price: parseFloat(`${listing.price}`) }),
+                        })
+                      }
                     >
                       Buy
                     </Button>

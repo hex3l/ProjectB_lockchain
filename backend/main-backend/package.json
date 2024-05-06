@@ -26,7 +26,8 @@
     "pg": "^8.4.0",
     "pg-protocol": "^1.6.0",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "0.3.17"
+    "typeorm": "0.3.17",
+    "web3": "^4.8.0"
   },
   "devDependencies": {
     "@nestjs/mapped-types": "^2.0.3",

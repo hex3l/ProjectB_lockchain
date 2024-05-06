@@ -63,8 +63,7 @@ export const useBackendCall = () => {
         } catch {
           enqueueSnackbar(`Failed to fetch data`, { variant: 'error' });
         }
-        enqueueSnackbar(`${response.error}`, { variant: 'error' });
-        throw new Error(`Fetch ${response?.error ?? 'error'}`);
+        enqueueSnackbar(`${response?.error}`, { variant: 'error' });
       }
       try {
         const result = await res.json();

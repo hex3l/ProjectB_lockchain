@@ -8,9 +8,10 @@ import { Category } from './categories/category.entity';
 import { CategoryService } from './categories/category.service';
 import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
+import { ContractModule } from '../contract/contract.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Listing, Category]), UserModule],
+  imports: [TypeOrmModule.forFeature([Listing, Category]), UserModule, ContractModule],
   providers: [ListingService, CategoryService],
   controllers: [ListingController],
   exports: [ListingService],

@@ -8,12 +8,14 @@ import { OrderStatusChangeDto } from './dto/order-status-change.dto';
 import { OrderStatus } from './static/order-status.enum';
 import { Private } from '../auth/decorator/auth.decorator';
 import { ListingService } from '../listings/listing.service';
+import { ContractService } from '../contract/contract.service';
 
 @Controller('order')
 export class OrderController {
   constructor(
     private readonly orderService: OrderService,
     private readonly listingService: ListingService,
+    private readonly contractService: ContractService,
   ) {}
 
   @Private()
@@ -89,6 +91,21 @@ export class OrderController {
     if (listing.price == order.price) {
       order.status = OrderStatus.CONFIRMED;
     }
-    return this.orderService.save(order);
+
+    const savedOrder = await this.orderService.save(order);
+
+    if (listing.price == order.price) {
+      const result = await this.contractService.createDeal(
+        savedOrder.id,
+        order.price,
+        listing.creator.address,
+        user.address,
+      );
+      console.log('createDeal result', result);
+      const res = await this.contractService.getDeal(savedOrder.id);
+      console.log('getDeal result', res);
+    }
+
+    return savedOrder;
   } // Only a buyer can create
 }
