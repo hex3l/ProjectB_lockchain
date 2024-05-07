@@ -1,36 +1,46 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
-import { Close, FavoriteBorder, Flag, LocalOffer, Share, ShoppingBasket } from '@mui/icons-material';
+import { FavoriteBorder, Flag, LocalOffer, Share, ShoppingBasket } from '@mui/icons-material';
 import Favorite from '@mui/icons-material/Favorite';
 import {
   Avatar,
   Box,
   Button,
   Chip,
+  CircularProgress,
   Container,
-  Dialog,
   Divider,
-  FilledInput,
-  FormControl,
   IconButton,
-  InputAdornment,
-  InputLabel,
   Paper,
   Rating,
   Stack,
   Typography,
 } from '@mui/material';
-import { is } from 'date-fns/locale';
+import { watchContractEvent } from '@wagmi/core';
 import { useSnackbar } from 'notistack';
-import { Dispatch, SetStateAction, memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useContext, useEffect, useState } from 'react';
 import { Slide } from 'react-slideshow-image';
+import { parseEther } from 'viem';
+import { useConfig, useWriteContract } from 'wagmi';
 
 import { OrderStatus } from 'common/consts/order-status.enum';
 import { ListingDto } from 'dto/ListingDto';
 import { ListingOrderDto } from 'dto/ListingOrderDto';
+import { GlobalStateContext } from 'utils/GlobalState';
 import { useBackendCall } from 'utils/useBackendCall';
+
+import { ConfirmationDialog } from './ConfirmationDIalog';
+import { MakeAnOffer } from './MakeAnOffer';
 
 export const Interaction = {
   OFFER: 'offer',
@@ -46,8 +56,11 @@ const ListingComponent = ({
   dialog?: boolean;
   closeDialog?: () => void;
 }) => {
+  const { state, setState } = useContext(GlobalStateContext);
+  const { abi, contract } = state.auth;
   const [listing, setListing] = useState<ListingDto | undefined>(undefined);
   const [listingOrder, setListingOrder] = useState<ListingOrderDto | undefined>(undefined);
+  const { id, price } = listingOrder ?? {};
   const [interaction, setInteraction] = useState<string | boolean>(false);
   const [fetchError, setFetchError] = useState(false);
   const [isFavorited, setIsFavorited] = useState<boolean>(!!listing?.favorite);
@@ -95,6 +108,76 @@ const ListingComponent = ({
     await navigator.clipboard.writeText(window.location.href);
     enqueueSnackbar({ message: 'URL copied to clipboard', variant: 'success' });
   }, [enqueueSnackbar]);
+
+  // //////////////////////////////////////////////////////////////////////////
+  // Handle buy
+  const [confirmBuy, setConfirmBuy] = useState(false);
+  const [awaitChain, setAwaitChain] = useState(false);
+  const [processPayment, setProcessPayment] = useState(false);
+  const { writeContract } = useWriteContract();
+
+  const payDeal = useCallback(() => {
+    console.log(id, price);
+    if (contract && id && price)
+      writeContract(
+        {
+          abi,
+          address: contract,
+          functionName: 'payDeal',
+          args: [BigInt(id)],
+          value: parseEther(`${price}`),
+        },
+        { onError: (err) => console.error(err) },
+      );
+  }, [abi, contract, id, price, writeContract]);
+
+  const config = useConfig();
+  useEffect(() => {
+    if (id && contract && abi) {
+      console.log('WATCHING CONTRACT');
+      const onLogs = async (logs: any) => {
+        console.log('logs', logs);
+        for (const log of logs) {
+          switch (log.eventName) {
+            case 'CreatedDeal':
+              if (log.args.id === listingOrder?.id) setProcessPayment(true);
+              setAwaitChain(false);
+              payDeal();
+              break;
+          }
+        }
+      };
+      const watchConfig = {
+        address: contract,
+        abi,
+        onLogs,
+      };
+
+      return watchContractEvent(config, watchConfig);
+    }
+  }, [payDeal, contract, abi, id]);
+
+  const confirm = useCallback(async () => {
+    const result = await backendCall(`order/create`, {
+      method: 'POST',
+      body: JSON.stringify({ id_listing, price: parseFloat(`${listing?.price}`) }),
+    }).catch((err) => {
+      console.log(err);
+    });
+    setListingOrder(result as ListingOrderDto);
+    enqueueSnackbar('Order created, waiting for oracle chain event...', { variant: 'success' });
+    setTimeout(() => {
+      setAwaitChain(true);
+      backendCall(`order/pay`, {
+        method: 'POST',
+        body: JSON.stringify({ id_order: result.id }),
+      }).catch((err) => {
+        setAwaitChain(false);
+        setConfirmBuy(false);
+        enqueueSnackbar('An error occured, order is unpayable!', { variant: 'error' });
+      });
+    }, 2000);
+  }, [backendCall, enqueueSnackbar, id_listing, listing?.price]);
 
   return (
     listing && (
@@ -176,12 +259,7 @@ const ListingComponent = ({
                       variant="contained"
                       startIcon={<ShoppingBasket />}
                       disabled={interaction === Interaction.OFFER || listingOrder?.status !== undefined}
-                      onClick={() =>
-                        backendCall(`order/create`, {
-                          method: 'POST',
-                          body: JSON.stringify({ id_listing, price: parseFloat(`${listing.price}`) }),
-                        })
-                      }
+                      onClick={() => setConfirmBuy(true)}
                     >
                       Buy
                     </Button>
@@ -214,135 +292,28 @@ const ListingComponent = ({
             </Box>
           </Paper>
         </Box>
+        <ConfirmationDialog open={confirmBuy} setOpen={setConfirmBuy} confirm={confirm} amount={listing.price}>
+          {(processPayment || awaitChain) && (
+            <div className="flex flex-row justify-center items-center">
+              <CircularProgress />
+            </div>
+          )}
+          {processPayment ? (
+            <>
+              <Typography>Procede with payment...</Typography>
+            </>
+          ) : awaitChain ? (
+            <>
+              <Typography>Contract preparation, awaiting oracle...</Typography>
+            </>
+          ) : (
+            <>
+              <Typography>Confirm your purchase for {listing.price} ETH?</Typography>
+            </>
+          )}
+        </ConfirmationDialog>
       </Container>
     )
-  );
-};
-
-const MakeAnOffer = ({
-  className,
-  placeholder,
-  id_listing,
-  setInteraction,
-}: {
-  className: string;
-  placeholder: number;
-  id_listing: number;
-  setInteraction: Dispatch<SetStateAction<string | boolean>>;
-}) => {
-  const backendCall = useBackendCall();
-  const { enqueueSnackbar } = useSnackbar();
-  const [confirmatin, setConfirmation] = useState(false);
-  const [offerAmount, setOfferAmount] = useState<number | null>(null);
-
-  const confirm = useCallback(async () => {
-    await backendCall(`order/create`, {
-      method: 'POST',
-      body: JSON.stringify({ id_listing, price: offerAmount }),
-    })
-      .then(() => {
-        enqueueSnackbar('Your offer has been sent to the seller, wait for a response!', { variant: 'success' });
-        setConfirmation(false);
-        setInteraction(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [backendCall, enqueueSnackbar, id_listing, offerAmount, setInteraction]);
-
-  return (
-    <Box
-      className={`h-0 ${className} overflow-hidden w-full`}
-      sx={{
-        transition: 'height 0.30s linear',
-      }}
-    >
-      <Box className="py-2 px-5 flex-col w-full space-y-2 bg-[#00897b] rounded-lg">
-        <Box className="f-full flex flex-row items-center">
-          <Box className="flex-1 font-bold">Choose how much you want to offer</Box>
-          <IconButton onClick={() => setInteraction(false)}>
-            <Close />
-          </IconButton>
-        </Box>
-        <FormControl fullWidth variant="filled">
-          <InputLabel htmlFor="filled-adornment-amount">Amount</InputLabel>
-          <FilledInput
-            id="filled-adornment-amount"
-            color="primary"
-            value={offerAmount}
-            type="number"
-            placeholder={`${placeholder}`}
-            onChange={(ev) => {
-              console.log(ev.target.value);
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-              if (parseFloat(ev.target.value ?? '0') <= placeholder)
-                setOfferAmount(ev.target.value ? parseFloat(ev.target.value) : null);
-            }}
-            startAdornment={<InputAdornment position="start">ETH</InputAdornment>}
-          />
-        </FormControl>
-        <Button
-          variant="contained"
-          startIcon={<LocalOffer />}
-          color="primary"
-          disabled={offerAmount === null}
-          onClick={() => setConfirmation(true)}
-          fullWidth
-        >
-          Make Offer
-        </Button>
-        <ConfirmationDialog
-          open={confirmatin}
-          setOpen={setConfirmation}
-          confirm={confirm}
-          title="Confirm your offer to the seller?"
-          amount={offerAmount ?? 0}
-        />
-      </Box>
-    </Box>
-  );
-};
-
-const ConfirmationDialog = ({
-  isOffer,
-  open,
-  setOpen,
-  confirm,
-  title,
-  amount,
-}: {
-  isOffer?: boolean;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  confirm: () => Promise<void>;
-  title: string;
-  amount: number;
-}) => {
-  return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
-      <Box className="flex flex-col gap-3 p-5">
-        <Typography className="font-bold text-lg">
-          {`You are ${isOffer ? 'offering' : 'paying'} ${amount} ETH`}
-        </Typography>
-        <Typography>{title}</Typography>
-        <Box className="flex flex-row gap-3">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
-              confirm();
-            }}
-            fullWidth
-          >
-            Confirm
-          </Button>
-          <Button variant="contained" color="secondary" onClick={() => setOpen(false)} fullWidth>
-            Back
-          </Button>
-        </Box>
-      </Box>
-    </Dialog>
   );
 };
 

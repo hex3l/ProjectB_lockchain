@@ -6,10 +6,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CircularProgress } from '@mui/material';
 import Button from '@mui/material/Button';
-import { InjectedConnector } from '@wagmi/core';
 import { useSnackbar } from 'notistack';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 
 import { clone } from 'utils';
 import { GlobalStateData, GlobalStateContext } from 'utils/GlobalState';
@@ -23,9 +23,7 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
   const [syncInProgress, setSetsyncInProgress] = useState(false);
 
   const { address, isConnected } = useAccount();
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  });
+  const { connect } = useConnect();
 
   const setJWT = useCallback(
     (token: string) => {
@@ -41,12 +39,12 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [authNounce, setAuthNounce] = useState<undefined | string>(undefined);
-  const { data, isError, isSuccess, signMessage, reset } = useSignMessage({ message: authNounce });
+  const { data, isError, isSuccess, signMessage, reset } = useSignMessage();
 
   // STEP 1: on user click on button start wallet connection
   const handleWalletConnection = () => {
     if (!isConnected) {
-      connect();
+      connect({ connector: injected() });
     }
   };
 
@@ -88,7 +86,7 @@ const WalletLogin = ({ jwt }: WalletLoginProps): JSX.Element => {
 
   // STEP 3: once we have a nounce we sign it with the wallet
   useEffect(() => {
-    if (authNounce && !jwt) signMessage();
+    if (authNounce && !jwt) signMessage({ message: authNounce });
   }, [authNounce]);
 
   // STEP 4: when the nonce is signed we send it to the server to get a JWT token and store it in localstorage

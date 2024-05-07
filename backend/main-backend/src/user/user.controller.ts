@@ -5,10 +5,14 @@ import { UserService } from './user.service';
 import { Listing } from '../listings/listing.entity';
 import { Private } from '../auth/decorator/auth.decorator';
 import * as contract from '../../truffle/build/contracts/DealHandler.json';
+import { ContractService } from '../contract/contract.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly contractService: ContractService,
+  ) {}
 
   @Get()
   getUser(): Promise<User[]> {
@@ -18,7 +22,7 @@ export class UserController {
   @Private()
   @Get('/abi')
   getAbi(@Req() request: any): any {
-    return contract.abi;
+    return this.contractService.getContractDetails();
   }
 
   @Private()

@@ -63,7 +63,7 @@ contract DealHandler {
 
   // Creates a virtual deal for the transaction
   //
-  function createDeal(uint amount, address _target, uint dealID, address _source) public payable onlyAlive {
+  function createDeal( uint dealID, uint amount,  address _source, address _target) public payable onlyAlive {
     require(msg.sender == owner, 'You are not the owner');
     deals[dealID] = Deal(amount, payable(_source), payable(_target), false, false, false, true);
     emit CreatedDeal(dealID);

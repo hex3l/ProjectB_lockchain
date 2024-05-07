@@ -13,15 +13,21 @@ export class ContractService {
     this.web3 = new Web3(provider);
     this.account = this.web3.eth.accounts.privateKeyToAccount(process.env.ETH_ACCOUNT);
     this.web3.eth.defaultAccount = this.account.address;
-    this.contract = new Contract(dealHandlerContract.abi, process.env.CONTRACT_ADDRESS);
+    this.contract = new Contract(dealHandlerContract.abi, dealHandlerContract.networks[5777].address);
     this.contract.setProvider(provider);
     this.contract.defaultAccount = this.account.address;
+  }
+
+  getContractDetails() {
+    return {
+      contract: dealHandlerContract.networks[5777].address,
+      abi: dealHandlerContract.abi,
+    };
   }
 
   async getDeal(dealId: number): Promise<{ data: void | [] | (unknown[] & []); error: any | undefined }> {
     try {
       const result = await this.contract.methods.getDeal(dealId).call();
-      console.log(result);
       return { data: result, error: undefined };
     } catch (error) {
       console.log(error);
@@ -29,10 +35,10 @@ export class ContractService {
     }
   }
 
-  async createDeal(dealId: number, amount: number, source: Address, target: Address) {
+  async createDeal(dealId: number, amount: number, source: string, target: string) {
     try {
       const result = await this.contract.methods
-        .createDeal(this.web3.utils.toWei(amount, 'ether'), source, dealId, target)
+        .createDeal(dealId, this.web3.utils.toWei(amount, 'ether'), source, target)
         .send({ value: '1', gas: '6721975' });
       return { data: result, error: undefined };
     } catch (error) {

@@ -5,6 +5,7 @@ export const emptyGlobalState: GlobalStateData = {
   auth: {
     jwt: null,
     abi: null,
+    contract: null,
   },
 };
 
@@ -29,6 +30,7 @@ export type GlobalStateData = {
   auth: {
     jwt: string | null;
     abi: any;
+    contract: `0x${string}` | null;
   };
 };
 

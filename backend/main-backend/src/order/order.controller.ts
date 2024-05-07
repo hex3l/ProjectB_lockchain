@@ -75,7 +75,7 @@ export class OrderController {
     order.status = OrderStatus.PENDING; //da vedere lo stato pending
     console.log(order);
 
-    if (await this.orderService.findByListing(order.id_listing, order.id_creator)) {
+    if (await this.orderService.findByListing(order.id_listing)) {
       throw new HttpException(
         {
           status: HttpStatus.CONFLICT,
@@ -87,6 +87,7 @@ export class OrderController {
         },
       );
     }
+
     const listing = await this.listingService.findOne(order.id_listing, null);
     if (listing.price == order.price) {
       order.status = OrderStatus.CONFIRMED;
@@ -94,18 +95,41 @@ export class OrderController {
 
     const savedOrder = await this.orderService.save(order);
 
-    if (listing.price == order.price) {
-      const result = await this.contractService.createDeal(
-        savedOrder.id,
-        order.price,
-        listing.creator.address,
-        user.address,
+    return savedOrder;
+  } // Only a buyer can create
+
+  @Private()
+  @Post('/pay')
+  async pay(@Body() body: { id_order: number }, @Req() request: any) {
+    const { user } = request;
+    const order = new Order();
+    order.id = body.id_order;
+    order.status = OrderStatus.CONFIRMED;
+
+    const dbOrder = await this.orderService.findById(order.id);
+    if (!dbOrder) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          error: 'This order is unpayable',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        {
+          cause: 'This order is unpayable',
+        },
       );
-      console.log('createDeal result', result);
-      const res = await this.contractService.getDeal(savedOrder.id);
-      console.log('getDeal result', res);
     }
 
-    return savedOrder;
+    const result = await this.contractService.createDeal(
+      dbOrder.id,
+      dbOrder.price,
+      user.address,
+      dbOrder.listing.creator.address,
+    );
+    console.log('createDeal result', result);
+    const res = await this.contractService.getDeal(dbOrder.id);
+    console.log('getDeal result', res);
+
+    return;
   } // Only a buyer can create
 }

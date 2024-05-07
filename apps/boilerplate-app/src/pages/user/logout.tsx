@@ -12,12 +12,12 @@ const Page = () => {
 
   useEffect(() => {
     const newState = clone(state) as GlobalStateData;
-    newState.auth = { jwt: null, abi: null };
+    newState.auth = { jwt: null, abi: null, contract: null };
     localStorage.removeItem('token');
     setTimeout(() => {
       if (setState) setState(newState);
       disconnect();
-    }, 50);
+    }, 500);
   }, []);
 
   return (

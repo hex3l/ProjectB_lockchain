@@ -36,12 +36,12 @@ export class OrderService {
   }
 
   findById(id: number): Promise<Order> {
-    return this.offerRepository.findOne({ where: { id }, relations: ['listing'] });
+    return this.offerRepository.findOne({ where: { id }, relations: ['listing', 'listing.creator'] });
   }
 
-  findByListing(id: number, user: number): Promise<Order> {
+  findByListing(id: number, user?: number): Promise<Order> {
     return this.offerRepository.findOne({
-      where: { listing: { id }, creator: { id: user } },
+      where: { listing: { id }, id_creator: user },
       select: ['id', 'id_listing', 'price', 'status'],
     });
   }

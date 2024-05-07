@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -8,11 +9,10 @@
 import styled from '@emotion/styled';
 import { Logout } from '@mui/icons-material';
 import { Avatar, Badge, Button, CircularProgress, IconButton, Tooltip } from '@mui/material';
-import { InjectedConnector } from '@wagmi/core';
 import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount } from 'wagmi';
+// import { injected } from 'wagmi/connectors';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { GlobalStateContext } from 'utils/GlobalState';
@@ -50,25 +50,24 @@ const StyledBadge = styled(Badge)(() => ({
 }));
 const Wallet = () => {
   const router = useRouter();
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
   const backendCall = useBackendCall();
   const { state, setState } = useContext(GlobalStateContext);
   const { jwt } = state.auth;
 
   const [enableWalletSync, setEnableWalletSync] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
+  // const [isConnecting, setIsConnecting] = useState(false);
   const [avatarColor, setAvatarColor] = useState('#000');
   const { address, status } = useAccount();
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  });
+  // const { connect } = useConnect();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       (async () => {
         if (state.auth.jwt && !state.auth.abi && status === 'connected') {
-          const abi = await backendCall('user/abi');
+          const { abi, contract } = await backendCall('user/abi');
           state.auth.abi = abi;
+          state.auth.contract = contract;
           if (setState) setState(state);
         }
       })().catch((error) => console.log(error));
@@ -84,19 +83,21 @@ const Wallet = () => {
     }
   }, []);
 
-  // ///////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////
   // Handle connection logic when a token exists and retries until it can connect with metamask
+
+  console.log('wallet doing stuff', status);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
-      if (token && ['disconnected', 'disconnecting'].includes(status)) {
+      /* if (token && status === 'disconnected') {
         if (isConnecting) return;
         setIsConnecting(true);
         enqueueSnackbar('Detected a previous session, reconnecting with your wallet...', { variant: 'info' });
-        connect();
-      } else {
+        connect({ connector: injected() });
+      } else if (status === 'connected' || status === 'reconnecting') {
         setIsConnecting(false);
-      }
+      }*/
       if (!state.auth.jwt) {
         state.auth.jwt = token;
         if (setState) setState(state);
@@ -104,7 +105,7 @@ const Wallet = () => {
       }
     }
   }, [status]);
-  // ///////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////*/
 
   if (!enableWalletSync) return <></>;
 
@@ -122,7 +123,7 @@ const Wallet = () => {
                 className="text-[13px] p-1 flex flex-row"
               >
                 <>
-                  {status !== 'connected' ? (
+                  {!['connected', 'reconnecting'].includes(status) ? (
                     <CircularProgress color="secondary" className="h-8 w-8" />
                   ) : (
                     <StyledBadge
