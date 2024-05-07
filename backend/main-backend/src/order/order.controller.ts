@@ -126,6 +126,20 @@ export class OrderController {
       user.address,
       dbOrder.listing.creator.address,
     );
+    if (result.error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.PRECONDITION_FAILED,
+          error: 'Blockchain not available',
+        },
+        HttpStatus.PRECONDITION_FAILED,
+        {
+          cause: 'Blockchain not available',
+        },
+      );
+    }
+    dbOrder.status = OrderStatus.ON_CHAIN;
+    await this.orderService.save(dbOrder);
     console.log('createDeal result', result);
     const res = await this.contractService.getDeal(dbOrder.id);
     console.log('getDeal result', res);

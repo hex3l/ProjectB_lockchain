@@ -112,8 +112,6 @@ const ListingComponent = ({
   // //////////////////////////////////////////////////////////////////////////
   // Handle buy
   const [confirmBuy, setConfirmBuy] = useState(false);
-  const [awaitChain, setAwaitChain] = useState(false);
-  const [processPayment, setProcessPayment] = useState(false);
   const { writeContract } = useWriteContract();
 
   const payDeal = useCallback(() => {
@@ -140,9 +138,13 @@ const ListingComponent = ({
         for (const log of logs) {
           switch (log.eventName) {
             case 'CreatedDeal':
-              if (log.args.id === listingOrder?.id) setProcessPayment(true);
-              setAwaitChain(false);
+              if (listingOrder) setListingOrder({ ...listingOrder, status: 2 });
               payDeal();
+              break;
+            case 'Payed':
+              if (listingOrder) setListingOrder({ ...listingOrder, status: 3 });
+              setConfirmBuy(false);
+              enqueueSnackbar('Order payed succesfully', { variant: 'success' });
               break;
           }
         }
@@ -167,15 +169,14 @@ const ListingComponent = ({
     setListingOrder(result as ListingOrderDto);
     enqueueSnackbar('Order created, waiting for oracle chain event...', { variant: 'success' });
     setTimeout(() => {
-      setAwaitChain(true);
       backendCall(`order/pay`, {
         method: 'POST',
         body: JSON.stringify({ id_order: result.id }),
       }).catch((err) => {
-        setAwaitChain(false);
-        setConfirmBuy(false);
         enqueueSnackbar('An error occured, order is unpayable!', { variant: 'error' });
+        setConfirmBuy(false);
       });
+      if (result) setListingOrder({ ...(result as ListingOrderDto), status: 1 });
     }, 2000);
   }, [backendCall, enqueueSnackbar, id_listing, listing?.price]);
 
@@ -293,16 +294,16 @@ const ListingComponent = ({
           </Paper>
         </Box>
         <ConfirmationDialog open={confirmBuy} setOpen={setConfirmBuy} confirm={confirm} amount={listing.price}>
-          {(processPayment || awaitChain) && (
+          {listingOrder && listingOrder.status >= 1 && (
             <div className="flex flex-row justify-center items-center">
               <CircularProgress />
             </div>
           )}
-          {processPayment ? (
+          {listingOrder?.status === 2 ? (
             <>
               <Typography>Procede with payment...</Typography>
             </>
-          ) : awaitChain ? (
+          ) : listingOrder?.status === 1 ? (
             <>
               <Typography>Contract preparation, awaiting oracle...</Typography>
             </>
