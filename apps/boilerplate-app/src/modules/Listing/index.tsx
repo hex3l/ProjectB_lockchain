@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -10,22 +11,9 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
-import { FavoriteBorder, Flag, LocalOffer, Share, ShoppingBasket } from '@mui/icons-material';
+import { FavoriteBorder, Flag, Share } from '@mui/icons-material';
 import Favorite from '@mui/icons-material/Favorite';
-import {
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Container,
-  Divider,
-  IconButton,
-  Paper,
-  Rating,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Avatar, Box, Chip, Container, Divider, IconButton, Paper, Rating, Stack, Typography } from '@mui/material';
 import { watchContractEvent } from '@wagmi/core';
 import { useSnackbar } from 'notistack';
 import { memo, useCallback, useContext, useEffect, useState } from 'react';
@@ -39,13 +27,9 @@ import { ListingOrderDto } from 'dto/ListingOrderDto';
 import { GlobalStateContext } from 'utils/GlobalState';
 import { useBackendCall } from 'utils/useBackendCall';
 
-import { ConfirmationDialog } from './ConfirmationDIalog';
-import { MakeAnOffer } from './MakeAnOffer';
-
-export const Interaction = {
-  OFFER: 'offer',
-  BUY: 'buy',
-};
+import { CreateOffer } from './components/CreateOffer';
+import { OrderManager } from './components/OrderManager';
+import { PaymentDialog } from './components/PaymentDialog';
 
 const ListingComponent = ({
   id_listing,
@@ -56,12 +40,11 @@ const ListingComponent = ({
   dialog?: boolean;
   closeDialog?: () => void;
 }) => {
-  const { state, setState } = useContext(GlobalStateContext);
+  const { state } = useContext(GlobalStateContext);
   const { abi, contract } = state.auth;
   const [listing, setListing] = useState<ListingDto | undefined>(undefined);
   const [listingOrder, setListingOrder] = useState<ListingOrderDto | undefined>(undefined);
   const { id, price } = listingOrder ?? {};
-  const [interaction, setInteraction] = useState<string | boolean>(false);
   const [fetchError, setFetchError] = useState(false);
   const [isFavorited, setIsFavorited] = useState<boolean>(!!listing?.favorite);
 
@@ -111,10 +94,24 @@ const ListingComponent = ({
 
   // //////////////////////////////////////////////////////////////////////////
   // Handle buy
-  const [confirmBuy, setConfirmBuy] = useState(false);
+  const paymentDialogState = useState(false);
+  const [confirmBuy, setConfirmBuy] = paymentDialogState;
   const { writeContract } = useWriteContract();
 
-  const payDeal = useCallback(() => {
+  // Creates deal on chain by calling the pay endpoint
+  const setupPayment = useCallback(({ order }: { order: ListingOrderDto }) => {
+    backendCall(`order/pay`, {
+      method: 'POST',
+      body: JSON.stringify({ id_order: order.id }),
+    }).catch((err) => {
+      enqueueSnackbar('An error occured, order is unpayable!', { variant: 'error' });
+      setConfirmBuy(false);
+    });
+    setListingOrder({ ...order, status: 1 });
+  }, []);
+
+  // Triggers payment through metamask
+  const payOrder = useCallback(() => {
     console.log(id, price);
     if (contract && id && price)
       writeContract(
@@ -132,17 +129,16 @@ const ListingComponent = ({
   const config = useConfig();
   useEffect(() => {
     if (id && contract && abi) {
-      console.log('WATCHING CONTRACT');
       const onLogs = async (logs: any) => {
-        console.log('logs', logs);
         for (const log of logs) {
+          console.log('Blockchain event:', log.eventName);
           switch (log.eventName) {
             case 'CreatedDeal':
-              if (listingOrder) setListingOrder({ ...listingOrder, status: 2 });
-              payDeal();
+              if (listingOrder) setListingOrder({ ...listingOrder, status: OrderStatus.ON_CHAIN });
+              payOrder();
               break;
             case 'Payed':
-              if (listingOrder) setListingOrder({ ...listingOrder, status: 3 });
+              if (listingOrder) setListingOrder({ ...listingOrder, status: OrderStatus.ACTIVE });
               setConfirmBuy(false);
               enqueueSnackbar('Order payed succesfully', { variant: 'success' });
               break;
@@ -157,28 +153,24 @@ const ListingComponent = ({
 
       return watchContractEvent(config, watchConfig);
     }
-  }, [payDeal, contract, abi, id]);
+  }, [payOrder, contract, abi, id]);
 
+  // Creates the buy order on backend, triggering the whole flow
   const confirm = useCallback(async () => {
-    const result = await backendCall(`order/create`, {
-      method: 'POST',
-      body: JSON.stringify({ id_listing, price: parseFloat(`${listing?.price}`) }),
-    }).catch((err) => {
-      console.log(err);
-    });
-    setListingOrder(result as ListingOrderDto);
-    enqueueSnackbar('Order created, waiting for oracle chain event...', { variant: 'success' });
-    setTimeout(() => {
-      backendCall(`order/pay`, {
+    try {
+      const result = (await backendCall(`order/create`, {
         method: 'POST',
-        body: JSON.stringify({ id_order: result.id }),
-      }).catch((err) => {
-        enqueueSnackbar('An error occured, order is unpayable!', { variant: 'error' });
-        setConfirmBuy(false);
-      });
-      if (result) setListingOrder({ ...(result as ListingOrderDto), status: 1 });
-    }, 2000);
-  }, [backendCall, enqueueSnackbar, id_listing, listing?.price]);
+        body: JSON.stringify({ id_listing, price: parseFloat(`${listing?.price}`) }),
+      })) as ListingOrderDto;
+      setListingOrder(result);
+      enqueueSnackbar('Order created, waiting for oracle chain event...', { variant: 'success' });
+      setTimeout(() => {
+        setupPayment({ order: result });
+      }, 2000);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [backendCall, enqueueSnackbar, setupPayment, id_listing, listing?.price]);
 
   return (
     listing && (
@@ -226,51 +218,10 @@ const ListingComponent = ({
                     Published on {new Date(listing.updated).toLocaleDateString()}
                   </Typography>
                   <Typography className="flex-1">{listing.description}</Typography>
-                  <Box className="flex md:flex-row flex-col gap-1">
-                    <Box className="flex-1">
-                      <Typography sx={{ fontSize: '24px' }} className="mr-5">
-                        {listing.price} ETH
-                      </Typography>
-                    </Box>
-
-                    <Button
-                      variant="contained"
-                      startIcon={<LocalOffer />}
-                      color="secondary"
-                      disabled={interaction === Interaction.OFFER}
-                      onClick={() => setInteraction(Interaction.OFFER)}
-                    >
-                      {listingOrder?.status !== undefined
-                        ? listingOrder.status < 5
-                          ? `View your ${listingOrder.status < 2 ? 'offer' : 'order'} of ${
-                              listingOrder.price
-                            }ETH that is ${OrderStatus[`${listingOrder.status}` as keyof typeof OrderStatus]}`
-                          : listingOrder.status < 100
-                          ? 'Order Completed'
-                          : 'Order Rejected'
-                        : 'Make an Offer'}
-                    </Button>
-                    <MakeAnOffer
-                      placeholder={listing.price}
-                      id_listing={id_listing}
-                      className={`flex md:hidden h-0 ${interaction === Interaction.OFFER && 'h-[180px]'}`}
-                      setInteraction={setInteraction}
-                    />
-                    <Button
-                      variant="contained"
-                      startIcon={<ShoppingBasket />}
-                      disabled={interaction === Interaction.OFFER || listingOrder?.status !== undefined}
-                      onClick={() => setConfirmBuy(true)}
-                    >
-                      Buy
-                    </Button>
-                  </Box>
-                  <MakeAnOffer
-                    placeholder={listing.price}
-                    id_listing={id_listing}
-                    className={`md:flex hidden h-0 ${interaction === Interaction.OFFER && 'h-[180px]'}`}
-                    setInteraction={setInteraction}
-                  />
+                  {!listingOrder && <CreateOffer listing={listing} setConfirmBuy={setConfirmBuy} />}
+                  {listingOrder && (
+                    <OrderManager listing={listing} listingOrder={listingOrder} setConfirmBuy={setConfirmBuy} />
+                  )}
                   <Divider className="pt-3" />
                   <Box className="flex flex-row gap-3 pt-3">
                     <Avatar />
@@ -293,26 +244,14 @@ const ListingComponent = ({
             </Box>
           </Paper>
         </Box>
-        <ConfirmationDialog open={confirmBuy} setOpen={setConfirmBuy} confirm={confirm} amount={listing.price}>
-          {listingOrder && listingOrder.status >= 1 && (
-            <div className="flex flex-row justify-center items-center">
-              <CircularProgress />
-            </div>
-          )}
-          {listingOrder?.status === 2 ? (
-            <>
-              <Typography>Procede with payment...</Typography>
-            </>
-          ) : listingOrder?.status === 1 ? (
-            <>
-              <Typography>Contract preparation, awaiting oracle...</Typography>
-            </>
-          ) : (
-            <>
-              <Typography>Confirm your purchase for {listing.price} ETH?</Typography>
-            </>
-          )}
-        </ConfirmationDialog>
+        <PaymentDialog
+          paymentDialogState={paymentDialogState}
+          confirm={confirm}
+          listing={listing}
+          listingOrder={listingOrder}
+          payOrder={payOrder}
+          setupPayment={setupPayment}
+        />
       </Container>
     )
   );

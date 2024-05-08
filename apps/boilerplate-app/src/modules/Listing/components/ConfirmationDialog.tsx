@@ -9,6 +9,7 @@ export const ConfirmationDialog = ({
   setOpen,
   confirm,
   amount,
+  lockControls,
 }: {
   children?: React.ReactNode;
   isOffer?: boolean;
@@ -16,6 +17,7 @@ export const ConfirmationDialog = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   confirm: () => Promise<void>;
   amount: number;
+  lockControls?: boolean;
 }) => {
   const [disableInteraction, setDisableInteraction] = useState(false);
   const confirmWrapper = () => {
@@ -35,7 +37,7 @@ export const ConfirmationDialog = ({
             variant="contained"
             color="primary"
             onClick={() => confirmWrapper()}
-            disabled={disableInteraction}
+            disabled={lockControls ?? disableInteraction}
             fullWidth
           >
             Confirm
@@ -44,7 +46,7 @@ export const ConfirmationDialog = ({
             variant="contained"
             color="secondary"
             onClick={() => setOpen(false)}
-            disabled={disableInteraction}
+            disabled={lockControls ?? disableInteraction}
             fullWidth
           >
             Back

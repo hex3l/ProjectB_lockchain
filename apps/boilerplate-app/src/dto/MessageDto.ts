@@ -2,6 +2,8 @@
 export type MessageDto = {
   id: number;
   content: string;
-  sender: string;
-  timestamp: Date;
+  sender: {
+    address: string;
+  };
+  created: string;
 };

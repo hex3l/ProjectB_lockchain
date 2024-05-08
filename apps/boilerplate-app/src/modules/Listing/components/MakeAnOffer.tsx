@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 import { useBackendCall } from 'utils/useBackendCall';
 
-import { ConfirmationDialog } from './ConfirmationDIalog';
+import { ConfirmationDialog } from './ConfirmationDialog';
 
 export const MakeAnOffer = ({
   className,

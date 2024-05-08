@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './message.entity';
-import { Listing } from '../listings/listing.entity';
 import { Order } from '../order/order.entity';
 
 @Injectable()
@@ -10,6 +9,8 @@ export class MessageService {
   constructor(
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+    @InjectRepository(Order)
+    private orderRepository: Repository<Order>,
   ) {}
 
   findAll(): Promise<Message[]> {
@@ -17,15 +18,12 @@ export class MessageService {
   }
 
   async verify_users(id_user: number, id_order: number): Promise<boolean> {
-    const message = await this.messageRepository.findOne({
-      where: { id_order },
-      relations: { order: { listing: true } },
+    const order = await this.orderRepository.findOne({
+      where: { id: id_order },
+      relations: { listing: true },
     });
-    if (message !== null) {
-      console.log(message.order.listing.id_creator === id_user || message.order.id_creator === id_user);
-      if (message.order.listing.id_creator === id_user || message.order.id_creator === id_user) {
-        return true;
-      }
+    if (order !== null && (order.id_creator === id_user || order.listing.id_creator === id_user)) {
+      return true;
     }
     return false;
   }
@@ -40,7 +38,11 @@ export class MessageService {
 
   findAllByOrder(id_order: number): Promise<Message[]> {
     console.log(id_order);
-    return this.messageRepository.findBy({ id_order });
+    return this.messageRepository.find({
+      where: { id_order },
+      relations: { sender: true },
+      select: { content: true, id: true, created: true, sender: { address: true } },
+    });
   }
 
   async deleteById(id: number): Promise<void> {

@@ -11,6 +11,7 @@
 import { Box, Button, Container, Paper, TextField } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import { useAccount } from 'wagmi';
 
 import { MessageDto } from 'dto/MessageDto';
 import { useBackendCall } from 'utils/useBackendCall';
@@ -18,6 +19,7 @@ import { useBackendCall } from 'utils/useBackendCall';
 const Page = () => {
   const backendCall = useBackendCall();
   const router = useRouter();
+  const { address } = useAccount();
   const { id } = router.query;
   const [orderID, setOrderID] = useState<string | undefined>(undefined);
   const [messageList, setMessageList] = useState<Array<MessageDto>>([]);
@@ -29,24 +31,23 @@ const Page = () => {
       if (orderID !== undefined && update) {
         setUpdate(false);
         const result = (await backendCall(`message/${orderID}`)) as Array<MessageDto>;
-        setMessageList(result);
-        console.log(orderID);
+        setMessageList(result.reverse());
       }
     })();
   }, [orderID, update]); // Run this effect only once when the component mounts
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && id) {
-      setOrderID(id as string);
+    if (typeof window !== 'undefined' && router.query.id) {
+      setOrderID(router.query.id as string);
     }
   }, [id]);
 
   const sendMessage = useCallback(() => {
     void (async () => {
-      const result = (await backendCall(`message/${orderID}/create`, {
+      await backendCall(`message/${orderID}/create`, {
         method: 'POST',
         body: JSON.stringify({ content: newMessage }),
-      })) as Array<MessageDto>;
+      });
       setUpdate(true);
       setNewMessage('');
     })();
@@ -64,35 +65,56 @@ const Page = () => {
           </Box>
         </Container>
       </Box>
-      <Container maxWidth="xl" className="pt-10 flex flex-col gap-5">
-        <Box className="flex flex-col md:flex-row"></Box>
-        <Box className="flex flex-row gap-5">
-          <Box className="h-full flex-col" sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Box className="w-[250px]" />
-          </Box>
-          <Box className="flex flex-wrap flex-row gap-5 justify-evenly">
-            {messageList.map(({ id, ...message }) => (
+      <Container maxWidth="md" className="pt-10 flex flex-col gap-5">
+        <Paper className="flex flex-col gap-5 p-5">
+          <Box className="flex flex-col-reverse gap-y-5 max-h-[300px] overflow-auto p-3">
+            {messageList?.map(({ id, ...message }) => (
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              <Fragment key={id}>
-                <Box className="message-box">{message.content}</Box>
-              </Fragment>
+              <Message
+                key={id}
+                message={message.content}
+                right={message.sender.address === address}
+                timestamp={message.created}
+              />
             ))}
+            <div className="w-full flex justify-center text-[10px]">Start of chat with 0xh19fb18hd18h9</div>
           </Box>
-          <TextField
-            id="message"
-            label="Message"
-            variant="outlined"
-            onChange={(ev) => setNewMessage(ev.target.value)}
-            value={newMessage}
-          />
-          <Box className="flex flex-row justify-center">
-            <Button onClick={() => sendMessage()} className="btn btn-primary">
-              Send
-            </Button>
+
+          <Box className="flex flex-row gap-x-5">
+            <Box className="flex-1">
+              <TextField
+                id="message"
+                label="Message"
+                variant="outlined"
+                fullWidth
+                onChange={(ev) => setNewMessage(ev.target.value)}
+                value={newMessage}
+              />
+            </Box>
+            <Box className="flex flex-row justify-center">
+              <Button onClick={() => sendMessage()} className="btn btn-primary">
+                Send
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        </Paper>
       </Container>
     </Fragment>
+  );
+};
+
+const Message = ({ message, timestamp, right }: { message: string; timestamp: string; right: boolean }) => {
+  return (
+    <Box className={`flex ${right ? 'justify-end' : 'justify-start'}`}>
+      <Box className={`flex flex-col`}>
+        <Box className={``}>
+          <Box className={`w-auto rounded-lg ${right ? 'bg-green-600 text-end' : 'bg-yellow-700'} p-2`}>{message}</Box>
+        </Box>
+        <Box className="w-auto text-[8px]">
+          {new Date(timestamp).toLocaleDateString()} {new Date(timestamp).toLocaleTimeString()}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
