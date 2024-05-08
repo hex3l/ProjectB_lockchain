@@ -8,13 +8,13 @@ export enum OrderStatus {
   REJECTED = 100,
 }
 export const OrderStatusFromNumber = {
-  '0': OrderStatus.PENDING,
-  '1': OrderStatus.CONFIRMED,
-  '2': OrderStatus.ON_CHAIN,
-  '3': OrderStatus.ACTIVE,
-  '4': OrderStatus.FINALIZED,
-  '5': OrderStatus.REIMBURSED,
-  '100': OrderStatus.REJECTED,
+  0: OrderStatus.PENDING,
+  1: OrderStatus.CONFIRMED,
+  2: OrderStatus.ON_CHAIN,
+  3: OrderStatus.ACTIVE,
+  4: OrderStatus.FINALIZED,
+  5: OrderStatus.REIMBURSED,
+  100: OrderStatus.REJECTED,
 };
 export const OrderStatusName = {
   [OrderStatus.PENDING]: 'pending', // Order created on db (if an offer has been made)

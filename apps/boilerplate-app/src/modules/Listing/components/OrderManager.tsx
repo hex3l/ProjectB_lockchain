@@ -25,6 +25,7 @@ export const OrderManager = ({
   setConfirmBuy: Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
+  const orderStatus: OrderStatus = OrderStatusFromNumber[listingOrder.status as keyof typeof OrderStatusFromNumber];
   return (
     <>
       <Box className="flex md:flex-row flex-col gap-1">
@@ -36,7 +37,7 @@ export const OrderManager = ({
 
         <Box className="">
           <Typography sx={{ fontSize: '24px' }} className="mr-5">
-            Status: {`${OrderStatusName[OrderStatusFromNumber[`${listingOrder.status}`]]}`}
+            Status: {`${OrderStatusName[orderStatus]}`}
           </Typography>
         </Box>
 
