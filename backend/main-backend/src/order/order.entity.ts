@@ -36,6 +36,12 @@ export class Order {
   @Column({ type: 'int', nullable: false, default: OrderStatus.PENDING })
   status: OrderStatus;
 
+  @Column({ type: 'boolean', nullable: false, default: false })
+  seller_confirmation: boolean;
+
+  @Column({ type: 'boolean', nullable: false, default: false })
+  buyer_confirmation: boolean;
+
   @Column({ type: 'int', nullable: false }) //
   id_creator: number;
 
