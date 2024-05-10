@@ -19,8 +19,8 @@ export const OrderStatusFromNumber = {
 export const OrderStatusName = {
   [OrderStatus.PENDING]: 'pending', // Order created on db (if an offer has been made)
   [OrderStatus.CONFIRMED]: 'confirmed', // Push Order on chain (when seller accepts the offer or it is an instant buy, offer has same price as listing)
-  [OrderStatus.ON_CHAIN]: 'on chain', // Event from chain confirms order creatin
-  [OrderStatus.ACTIVE]: 'active', // Event Buyer pays out the order
+  [OrderStatus.ON_CHAIN]: 'waiting for payment', // Event from chain confirms order creatin
+  [OrderStatus.ACTIVE]: 'payed', // Event Buyer pays out the order
   [OrderStatus.FINALIZED]: 'finalized', // Event Both have confirmed the order (or through dispute but payed to seller)
   [OrderStatus.REIMBURSED]: 'reimbursed', // Event Seller has been reimbursed due to dispute
   [OrderStatus.REJECTED]: 'rejected', // When PNEDING is not accepted by seller

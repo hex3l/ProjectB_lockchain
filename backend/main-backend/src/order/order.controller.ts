@@ -140,9 +140,6 @@ export class OrderController {
     }
     dbOrder.status = OrderStatus.ON_CHAIN;
     await this.orderService.save(dbOrder);
-    console.log('createDeal result', result);
-    const res = await this.contractService.getDeal(dbOrder.id);
-    console.log('getDeal result', res);
 
     return;
   } // Only a buyer can create

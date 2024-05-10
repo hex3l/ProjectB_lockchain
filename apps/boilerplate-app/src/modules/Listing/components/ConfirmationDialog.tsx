@@ -10,6 +10,7 @@ export const ConfirmationDialog = ({
   confirm,
   amount,
   lockControls,
+  hideControls,
 }: {
   children?: React.ReactNode;
   isOffer?: boolean;
@@ -18,6 +19,7 @@ export const ConfirmationDialog = ({
   confirm: () => Promise<void>;
   amount: number;
   lockControls?: boolean;
+  hideControls?: boolean;
 }) => {
   const [disableInteraction, setDisableInteraction] = useState(false);
   const confirmWrapper = () => {
@@ -32,26 +34,30 @@ export const ConfirmationDialog = ({
           {`You are ${isOffer ? 'offering' : 'paying'} ${amount} ETH`}
         </Typography>
         {children}
-        <Box className="flex flex-row gap-3">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => confirmWrapper()}
-            disabled={lockControls ?? disableInteraction}
-            fullWidth
-          >
-            Confirm
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => setOpen(false)}
-            disabled={lockControls ?? disableInteraction}
-            fullWidth
-          >
-            Back
-          </Button>
-        </Box>
+        {!hideControls && (
+          <>
+            <Box className="flex flex-row gap-3">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => confirmWrapper()}
+                disabled={lockControls ?? disableInteraction}
+                fullWidth
+              >
+                Confirm
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => setOpen(false)}
+                disabled={lockControls ?? disableInteraction}
+                fullWidth
+              >
+                Back
+              </Button>
+            </Box>
+          </>
+        )}
       </Box>
     </Dialog>
   );

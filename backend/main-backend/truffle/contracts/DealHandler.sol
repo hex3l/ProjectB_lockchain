@@ -26,12 +26,13 @@ contract DealHandler {
   }
 
   //not entirely sure on what does indexed type do... //TOCHECK
-  event Confirmed(uint id, address source, address target, uint256 indexed value);
-  event DeletedDeal(uint indexed id);
   event CreatedDeal(uint indexed id);
   event Payed(uint indexed id);
   event TargetConfirm(uint indexed id);
   event SourceConfirm(uint indexed id);
+  event Confirmed(uint id, address source, address target, uint256 indexed value);
+  event Reimbursed(uint indexed id);
+  event DeletedDeal(uint indexed id);
 
   //modifiers declaration, essential to reduce useless function calls if some conditions are not met. A sort of collections of requires. Order of each modifier's requires- is not relevant.
 
@@ -74,8 +75,8 @@ contract DealHandler {
     deals[_id].targetConfirmation = true;
 
     if (deals[_id].sourceConfirmation == true) {
-      fulfillDeal(_id);
       emit TargetConfirm(_id);
+      fulfillDeal(_id);
     }
   }
 
@@ -84,8 +85,8 @@ contract DealHandler {
     deals[_id].sourceConfirmation = true;
 
     if (deals[_id].targetConfirmation == true) {
-      payDeal(_id);
       emit SourceConfirm(_id);
+      fulfillDeal(_id);
     }
   }
 
@@ -116,6 +117,7 @@ contract DealHandler {
   function discardDeal(uint _id) public {
     require(msg.sender == owner, 'only the owner can perform this action!'); //this could go in a modifier, but as long as only condition is there a require is fine.
     deals[_id].source.transfer(deals[_id].amount);
+    emit Reimbursed(_id);
     delete deals[_id];
     emit DeletedDeal(_id);
   }
@@ -126,6 +128,7 @@ contract DealHandler {
     require(msg.sender == owner, 'only the owner can perform this action!'); //this could go in a modifier, but as long as only condition is there a require is fine.
 
     deals[_id].target.transfer(deals[_id].amount);
+    emit Confirmed(_id, deals[_id].source, deals[_id].target, deals[_id].amount);
     delete deals[_id];
     emit DeletedDeal(_id);
   }

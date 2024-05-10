@@ -2,20 +2,32 @@ import { Injectable } from '@nestjs/common';
 import { Address, Contract, ContractAbi, Web3 } from 'web3';
 import * as dealHandlerContract from '../../truffle/build/contracts/DealHandler.json';
 import { Web3Account } from 'web3-eth-accounts';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { Order } from '../order/order.entity';
+import { OrderStatus } from '../order/static/order-status.enum';
 
 @Injectable()
 export class ContractService {
   private web3: Web3;
   private account: Web3Account;
   private contract: Contract<ContractAbi>;
-  constructor() {
-    const provider = new Web3.providers.HttpProvider(process.env.ETH_NETWORK_URL);
+  private contractEvents;
+  constructor(
+    @InjectDataSource()
+    private datasource: DataSource,
+  ) {
+    const provider = new Web3.providers.WebsocketProvider(process.env.ETH_NETWORK_URL);
     this.web3 = new Web3(provider);
     this.account = this.web3.eth.accounts.privateKeyToAccount(process.env.ETH_ACCOUNT);
     this.web3.eth.defaultAccount = this.account.address;
     this.contract = new Contract(dealHandlerContract.abi, dealHandlerContract.networks[5777].address);
     this.contract.setProvider(provider);
     this.contract.defaultAccount = this.account.address;
+
+    this.contractEvents = this.contract.events.allEvents({});
+    this.contractEvents.on('data', (data) => chainEventHandler(data, this.datasource, this.web3));
+    this.contractEvents.on('error', console.error);
   }
 
   getContractDetails() {
@@ -47,3 +59,28 @@ export class ContractService {
     }
   }
 }
+
+const chainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
+  const orderRepository = datasource.getRepository(Order);
+  const orderId = Number(event.returnValues.id);
+  switch (event.event) {
+    case 'Payed':
+      console.log('Payed', orderId);
+      orderRepository.update(orderId, { status: OrderStatus.ACTIVE });
+      return;
+    case 'TargetConfirm':
+      console.log('TargetConfirm', orderId);
+      orderRepository.update(orderId, { seller_confirmation: true });
+      return;
+    case 'SourceConfirm':
+      console.log('SourceConfirm', orderId);
+      orderRepository.update(orderId, { buyer_confirmation: true });
+      return;
+    case 'Confirmed':
+      console.log('Confirmed', orderId);
+      orderRepository.update(orderId, { status: OrderStatus.FINALIZED });
+      return;
+    default:
+      return;
+  }
+};

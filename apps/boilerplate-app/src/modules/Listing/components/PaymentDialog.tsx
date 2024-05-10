@@ -42,7 +42,7 @@ export const PaymentDialog = ({
       setOpen={setPaymentDialog}
       confirm={confirm}
       amount={listing.price}
-      lockControls={listingOrder && listingOrder.status >= OrderStatus.ON_CHAIN}
+      hideControls={listingOrder && listingOrder.status >= OrderStatus.CONFIRMED}
     >
       {listingOrder && listingOrder.status >= OrderStatus.CONFIRMED && (
         <div className="flex flex-row justify-center items-center">
