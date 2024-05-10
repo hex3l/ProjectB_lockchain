@@ -73,9 +73,9 @@ contract DealHandler {
   // Target can confirm that the task agreed in deal has been compleeted
   function confirmTargetDeal(uint _id) public onlyTarget(_id) {
     deals[_id].targetConfirmation = true;
+    emit TargetConfirm(_id);
 
     if (deals[_id].sourceConfirmation == true) {
-      emit TargetConfirm(_id);
       fulfillDeal(_id);
     }
   }
@@ -83,9 +83,9 @@ contract DealHandler {
   // Target can confirm that the task agreed in deal has been compleeted
   function confirmSourceDeal(uint _id) public onlySource(_id) {
     deals[_id].sourceConfirmation = true;
+    emit SourceConfirm(_id);
 
     if (deals[_id].targetConfirmation == true) {
-      emit SourceConfirm(_id);
       fulfillDeal(_id);
     }
   }
@@ -105,8 +105,9 @@ contract DealHandler {
   }
 
   function payDeal(uint _idl) public payable {
-    require(msg.sender == deals[_idl].source, 'you are not the source!');
+    require(msg.sender == deals[_idl].source, 'You are not the source!');
     require(msg.value == deals[_idl].amount, 'Wrong amount!');
+    require(deals[_idl].payed == true, 'Deal already payed!');
 
     deals[_idl].payed = true;
 
