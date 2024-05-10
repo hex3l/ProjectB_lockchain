@@ -107,7 +107,7 @@ contract DealHandler {
   function payDeal(uint _idl) public payable {
     require(msg.sender == deals[_idl].source, 'You are not the source!');
     require(msg.value == deals[_idl].amount, 'Wrong amount!');
-    require(deals[_idl].payed == true, 'Deal already payed!');
+    require(deals[_idl].payed == false, 'Deal already payed!');
 
     deals[_idl].payed = true;
 
