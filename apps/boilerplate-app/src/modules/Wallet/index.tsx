@@ -10,10 +10,11 @@
 import styled from '@emotion/styled';
 import { Logout } from '@mui/icons-material';
 import { Avatar, Badge, Button, CircularProgress, IconButton, Tooltip } from '@mui/material';
+import { injected } from '@wagmi/core';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 // import { injected } from 'wagmi/connectors';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
@@ -59,9 +60,11 @@ const Wallet = () => {
   const { jwt } = state.auth;
 
   const [enableWalletSync, setEnableWalletSync] = useState(false);
+  const [handledDisconnect, setHandledDisconnect] = useState(false);
   const [avatarColor, setAvatarColor] = useState('#000');
   const { address, status } = useAccount();
   const { disconnect } = useDisconnect();
+  const { connect } = useConnect();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -91,19 +94,24 @@ const Wallet = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
-      /* if (token && status === 'disconnected') {
-        if (isConnecting) return;
-        setIsConnecting(true);
-        enqueueSnackbar('Detected a previous session, reconnecting with your wallet...', { variant: 'info' });
-        connect({ connector: injected() });
-      } else if (status === 'connected' || status === 'reconnecting') {
-        setIsConnecting(false);
-      }*/
       if (!state.auth.jwt) {
         state.auth.jwt = token;
         if (setState) setState(state);
         setEnableWalletSync(true);
       }
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const tout = setTimeout(() => {
+        if (state.auth.jwt && status === 'disconnected' && !handledDisconnect) {
+          enqueueSnackbar('Detected a previous session, reconnecting with your wallet...', { variant: 'info' });
+          connect({ connector: injected() });
+        }
+        setHandledDisconnect(true);
+      }, 1000);
+      return () => clearTimeout(tout);
     }
   }, [status]);
   // //////////////////////////////////////////////////////////////*/

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-misused-promises */
@@ -30,8 +31,8 @@ import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
 
-import { ListingDto } from 'dto/ListingDto';
 import { useBackendCall } from 'utils/useBackendCall';
+import { useInfiniScrollListings } from 'utils/useInfiniScrollListings';
 
 import { OfferRow } from './OfferRow';
 
@@ -68,11 +69,12 @@ const AccordionDetails = styled(MuiAccordionDetails)(() => ({
 export function Listings() {
   const router = useRouter();
   const backendCall = useBackendCall();
-
-  const [listings, setListings] = useState<Array<ListingDto> | undefined>(undefined);
   const [search, setSearch] = useState<string | null | undefined>(undefined);
   const [category, setCategory] = useState<string | null | undefined>(undefined);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const { listings, end } = useInfiniScrollListings({ category, scroller: ref, search });
 
   useEffect(() => {
     if (typeof window !== 'undefined' && router.query.category) {
@@ -89,26 +91,6 @@ export function Listings() {
       console.error(err);
     });
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (search !== undefined && category !== undefined) {
-        console.log('category', category);
-        console.log('search', search);
-        const queryParams: Record<string, string> = {
-          take: '10',
-          page: '1',
-        };
-        if (search) queryParams.search = search;
-        if (category) queryParams.category = category;
-        const dbList = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
-
-        setListings(dbList);
-      }
-    })().catch((err) => {
-      console.error(err);
-    });
-  }, [search, category]);
 
   const [accordionState, setAccordionState] = useState([true, true, true]);
   const [acc1] = accordionState;
@@ -310,6 +292,9 @@ export function Listings() {
                 <OfferRow {...{ id, ...listing }} />
               </Fragment>
             ))}
+            <Box ref={ref} className="flex flex-row items-center">
+              {end ? 'No more listings to show' : <CircularProgress />}
+            </Box>
           </Box>
         </Box>
       </Container>
