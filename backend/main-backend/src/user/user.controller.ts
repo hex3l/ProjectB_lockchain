@@ -20,6 +20,21 @@ export class UserController {
   }
 
   @Private()
+  @Post('/favorite')
+  async createFavorite(@Body() { listing_id }, @Req() request: any): Promise<{ favorite: boolean }> {
+    const { user } = request;
+    if ((await this.userService.findFavorite(user.id_user, listing_id)) === undefined) {
+      console.log('Adding favorite');
+      console.log(listing_id);
+      this.userService.addFavorite(user, listing_id);
+      return { favorite: true };
+    } else {
+      this.userService.removeFavorite(user, listing_id);
+      return { favorite: false };
+    }
+  }
+
+  @Private()
   @Get('/abi')
   getAbi(@Req() request: any): any {
     return this.contractService.getContractDetails();
@@ -42,20 +57,5 @@ export class UserController {
   getFavorite(@Param() params: { id: number }, @Req() request: any): Promise<Listing> {
     const { user } = request;
     return this.userService.findFavorite(user.id_user, params.id);
-  }
-
-  @Private()
-  @Post('/favorite')
-  async createFavorite(@Body() { listing_id }, @Req() request: any): Promise<boolean> {
-    const { user } = request;
-    if ((await this.userService.findFavorite(user.id_user, listing_id)) === undefined) {
-      console.log('Adding favorite');
-      console.log(listing_id);
-      this.userService.addFavorite(user, listing_id);
-      return true;
-    } else {
-      this.userService.removeFavorite(user, listing_id);
-      return false;
-    }
   }
 }

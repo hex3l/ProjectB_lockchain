@@ -23,7 +23,7 @@ INSERT INTO public.listing
 (3, 3, 'Pentester', 'Give me your website and I will try to hack it.', '/assets/defaultLogos/x_Pentester.png', 3, 1, 0.5, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (4, 2, 'Pay To Do Nothing', 'Too much money? I can help you.', '/assets/defaultLogos/x_PayToDoNothing.png', 4, 1, 1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (5, 1, 'Logo Designer', 'Do you need a logo? try this service.', '/assets/defaultLogos/x_LogoDesigner.png', 5, 1, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
-(6, 3, 'Python developer', 'I can develop your Python application.', '/assets/defaultLogos/x_DataBaseManager.png', 1, 1, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
+(6, 3, 'Python developer', 'I can develop your Python application.', '/assets/defaultLogos/x_PythonDeveloper.png', 1, 1, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (7, 1, '.Net Developer', 'I can develop your .Net application.', '/assets/defaultLogos/x_dotNetDeveloper.png', 2, 1, 0.2, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (8, 3, 'Not Ready', 'Not Ready', '/assets/defaultLogos/x_NotReady.png', 3, 1, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (9, 1, 'DataBase Manager', 'Need to store data? This is the service for you.', '/assets/defaultLogos/x_DataBaseManager.png', 4, 1, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),

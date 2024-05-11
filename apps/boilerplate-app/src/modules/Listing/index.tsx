@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -46,7 +48,6 @@ const ListingComponent = ({
   const [listingOrder, setListingOrder] = useState<ListingOrderDto | undefined>(undefined);
   const { id, price } = listingOrder ?? {};
   const [fetchError, setFetchError] = useState(false);
-  const [isFavorited, setIsFavorited] = useState<boolean>(!!listing?.favorite);
 
   const backendCall = useBackendCall();
   const { enqueueSnackbar } = useSnackbar();
@@ -78,10 +79,9 @@ const ListingComponent = ({
       body: JSON.stringify({ listing_id: id_listing }),
     });
     if (data !== undefined) {
-      const result = !!data;
-      setIsFavorited(result);
+      setListing({ ...listing, favorite: (data as { favorite: boolean }).favorite } as ListingDto);
     }
-  }, [backendCall, id_listing]);
+  }, [backendCall, id_listing, listing]);
 
   const report = useCallback(() => {
     enqueueSnackbar({ message: 'Thank you for the report!', variant: 'info' });
@@ -196,7 +196,7 @@ const ListingComponent = ({
                         favorite().catch((err) => console.error(err));
                       }}
                     >
-                      {isFavorited ? <Favorite /> : <FavoriteBorder />}
+                      {listing?.favorite ? <Favorite /> : <FavoriteBorder />}
                     </IconButton>
                     <IconButton
                       aria-label="share"

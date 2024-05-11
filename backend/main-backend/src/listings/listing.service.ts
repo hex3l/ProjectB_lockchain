@@ -1,6 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, ILike, Repository, UpdateResult } from 'typeorm';
+import {
+  And,
+  FindManyOptions,
+  ILike,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { Listing } from './listing.entity';
 import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
 import { Category } from './categories/category.entity';
@@ -24,21 +33,26 @@ export class ListingService {
     page: number,
     address: string,
     states: string,
+    lowerPrice: string | undefined,
+    higherPrice: string | undefined,
   ): Promise<Listing[]> {
     const query: FindManyOptions<Listing> = { take, skip: take * (page - 1) };
 
     query.where = {};
-    if (category || search || address) {
-      if (category && category !== 'All') {
-        const cat = await this.categoryRepository.findOne({ where: { name: category } });
-        query.where.id_category = cat?.id;
-      }
-      if (address) {
-        const addr = await this.userService.findOneByAddress(address);
-        query.where.id_creator = addr?.id;
-      }
-      if (search) query.where.title = ILike(`%${search}%`);
+    if (category && category !== 'All') {
+      const cat = await this.categoryRepository.findOne({ where: { name: category } });
+      query.where.id_category = cat?.id;
     }
+    if (address) {
+      const addr = await this.userService.findOneByAddress(address);
+      query.where.id_creator = addr?.id;
+    }
+    if (search) query.where.title = ILike(`%${search}%`);
+    if (higherPrice || lowerPrice)
+      query.where.price = And(
+        MoreThanOrEqual(parseFloat(lowerPrice ?? '0')),
+        LessThanOrEqual(parseFloat(higherPrice ?? '99999')),
+      );
 
     switch (states) {
       case 'all':

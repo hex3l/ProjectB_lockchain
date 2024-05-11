@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
@@ -29,7 +30,7 @@ import {
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import { useRouter } from 'next/router';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useBackendCall } from 'utils/useBackendCall';
 import { useInfiniScrollListings } from 'utils/useInfiniScrollListings';
@@ -39,11 +40,11 @@ import { OfferRow } from './OfferRow';
 const marks = [
   {
     value: 0,
-    label: '0',
+    label: 0,
   },
   {
-    value: 100,
-    label: '100',
+    value: 2,
+    label: 2,
   },
 ];
 
@@ -73,9 +74,19 @@ export function Listings() {
   const [userSearch, setUserSearch] = useState<string | null | undefined>(undefined);
   const [category, setCategory] = useState<string | null | undefined>(undefined);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
+  const [priceRange, setPriceRange] = useState<Array<number>>([0, 100]);
+  const [userPriceRange, setUserPriceRange] = useState<Array<number>>([0, 100]);
+  const [orderByType, setOrderByType] = useState<string>('Title');
+  const [orderByDirection, setOrderByDirection] = useState<string>('DESC');
 
   const ref = useRef<HTMLDivElement>(null);
-  const { listings, end } = useInfiniScrollListings({ category, scroller: ref, search });
+  const { listings, end } = useInfiniScrollListings({
+    scroller: ref,
+    category,
+    search,
+    lowerPrice: priceRange[0],
+    higherPrice: priceRange[1],
+  });
 
   useEffect(() => {
     if (typeof window !== 'undefined' && router.query.category) {
@@ -98,6 +109,29 @@ export function Listings() {
   const scroll = (scrollOffset: number) => {
     if (categoryScroll.current) categoryScroll.current['scrollLeft'] += scrollOffset;
   };
+
+  const handlePriceRangeChange = (event: Event, newValue: number | Array<number>) => {
+    setUserPriceRange(newValue as Array<number>);
+  };
+
+  useEffect(() => {
+    const tmo = setTimeout(() => {
+      setPriceRange(userPriceRange);
+    }, 500);
+    return () => {
+      clearTimeout(tmo);
+    };
+  }, [userPriceRange]);
+
+  const resetFilters = useCallback(() => {
+    setUserPriceRange([0, 2]);
+  }, []);
+
+  const handleSearch = useCallback(async () => {
+    const params: Record<string, string> = {};
+    if (userSearch) params.search = userSearch;
+    await router.push(`/listings/${encodeURI(category ?? '')}?${new URLSearchParams(params)}`);
+  }, [userSearch, category]);
 
   // ///////////////////////////////////////////////////////////////
   // Handle sticky sidebar
@@ -177,16 +211,13 @@ export function Listings() {
                 value={userSearch}
                 className="w-[250px]"
                 onChange={(event) => setUserSearch(event.target.value)}
-              />
-              <Button
-                variant="contained"
-                startIcon={<Search />}
-                onClick={async () => {
-                  const params: Record<string, string> = {};
-                  if (userSearch) params.search = userSearch;
-                  await router.push(`/listings/${encodeURI(category ?? '')}?${new URLSearchParams(params)}`);
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    handleSearch();
+                  }
                 }}
-              >
+              />
+              <Button variant="contained" startIcon={<Search />} onClick={() => handleSearch()}>
                 Search
               </Button>
             </Paper>
@@ -237,13 +268,14 @@ export function Listings() {
                 className="flex-1"
                 disablePortal
                 options={['Title', 'Date', 'Price']}
-                defaultValue={'Title'}
+                value={orderByType}
                 disableClearable
                 popupIcon={null}
                 renderInput={(params) => <TextField {...params} variant="standard" className="flex-col md:w-[100px]" />}
+                onChange={(event, option) => setOrderByType(option)}
               />
-              <IconButton>
-                <FilterList></FilterList>
+              <IconButton onClick={() => setOrderByDirection(orderByDirection === 'DESC' ? 'ASC' : 'DESC')}>
+                <FilterList className={`${orderByDirection !== 'DESC' ? 'rotate-180' : ''} transition-all`} />
               </IconButton>
             </Paper>
           </Box>
@@ -255,7 +287,7 @@ export function Listings() {
               <Box className="flex flex-col p-5 w-[250px]">
                 <Box className="flex flex-row pb-5 items-center">
                   <Typography className="font-bold flex-1">FILTERS</Typography>
-                  <IconButton>
+                  <IconButton onClick={() => resetFilters()}>
                     <FilterAltOff></FilterAltOff>
                   </IconButton>
                 </Box>
@@ -263,9 +295,12 @@ export function Listings() {
                 <Slider
                   color="secondary"
                   getAriaLabel={() => 'Minimum distance'}
-                  value={[10, 50]}
+                  value={userPriceRange}
+                  step={0.0001}
+                  min={0}
+                  max={2}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => {}}
+                  onChange={handlePriceRangeChange}
                   valueLabelDisplay="auto"
                   marks={marks}
                   disableSwap

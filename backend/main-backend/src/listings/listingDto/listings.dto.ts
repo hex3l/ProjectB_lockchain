@@ -10,4 +10,6 @@ export class ListingsDto {
   category: string | undefined | null;
   address: string | undefined | null;
   states: string | undefined | null;
+  lowerPrice: string | undefined;
+  higherPrice: string | undefined;
 }

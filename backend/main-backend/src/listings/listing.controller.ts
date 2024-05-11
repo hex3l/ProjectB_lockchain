@@ -20,8 +20,8 @@ export class ListingController {
 
   @Get()
   getAllListings(@Query() listingsParams: ListingsDto): Promise<Listing[]> {
-    const { category, address, states, take, page, search } = listingsParams;
-    return this.listingService.findAll(category, search, take, page, address, states);
+    const { category, address, states, take, page, search, lowerPrice, higherPrice } = listingsParams;
+    return this.listingService.findAll(category, search, take, page, address, states, lowerPrice, higherPrice);
   }
 
   @Get('/categories')

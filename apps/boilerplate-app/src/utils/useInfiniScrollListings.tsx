@@ -12,10 +12,14 @@ const maxItems = 5;
 export const useInfiniScrollListings = ({
   search,
   category,
+  lowerPrice,
+  higherPrice,
   scroller,
 }: {
   search: string | undefined | null;
   category: string | undefined | null;
+  lowerPrice?: number;
+  higherPrice?: number;
   scroller: RefObject<HTMLElement>;
 }) => {
   const backendCall = useBackendCall();
@@ -34,6 +38,8 @@ export const useInfiniScrollListings = ({
         };
         if (search) queryParams.search = search;
         if (category) queryParams.category = category;
+        if (lowerPrice) queryParams.lowerPrice = lowerPrice.toString();
+        if (higherPrice) queryParams.higherPrice = higherPrice.toString();
         const dbList = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as
           | Array<ListingDto>
           | undefined;
@@ -49,7 +55,7 @@ export const useInfiniScrollListings = ({
         }
       }
     },
-    [search, category, listings],
+    [search, category, lowerPrice, higherPrice, listings],
   );
 
   useEffect(() => {
@@ -65,7 +71,7 @@ export const useInfiniScrollListings = ({
     })().catch((err) => {
       console.error(err);
     });
-  }, [search, category]); // usare questo se cambiano i parametri di ricerca
+  }, [search, category, lowerPrice, higherPrice]); // usare questo se cambiano i parametri di ricerca
 
   useEffect(() => {
     (async () => {
