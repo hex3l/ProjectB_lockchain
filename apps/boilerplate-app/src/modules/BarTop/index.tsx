@@ -36,29 +36,6 @@ function TopBar() {
       <AppBar sx={{ position: 'fixed', top: 0 }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <Link href="/">
-              <ServiceBayLogo sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-            </Link>
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              {
-                // logoText
-              }
-            </Typography>
-
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"
@@ -99,9 +76,17 @@ function TopBar() {
                 ))}
               </Menu>
             </Box>
-
-            <Link href="/">
-              <ServiceBayLogo sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+            <Link href="/" className="text-decoration-none no-underline text-white">
+              <Box className="flex flex-row items-center z-[1000]">
+                <ServiceBayLogo />
+                <Box className="rotate-[-12deg] translate-x-[-5px] translate-y-[-5px] topbar-logo-text">
+                  <Typography className="font-bukhari text-[1rem] leading-[1rem]">
+                    Service
+                    <br />
+                    Bay
+                  </Typography>
+                </Box>
+              </Box>
             </Link>
             <Typography
               variant="h5"

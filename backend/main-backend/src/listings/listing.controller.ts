@@ -21,7 +21,6 @@ export class ListingController {
   @Get()
   getAllListings(@Query() listingsParams: ListingsDto): Promise<Listing[]> {
     const { category, address, take, page, search } = listingsParams;
-    this.contractService.getDeal(1);
     return this.listingService.findAll(category, search, take, page, address);
   }
 

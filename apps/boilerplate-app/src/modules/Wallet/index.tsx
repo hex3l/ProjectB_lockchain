@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -10,12 +11,14 @@ import styled from '@emotion/styled';
 import { Logout } from '@mui/icons-material';
 import { Avatar, Badge, Button, CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useSnackbar } from 'notistack';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
 // import { injected } from 'wagmi/connectors';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
-import { GlobalStateContext } from 'utils/GlobalState';
+import { clone } from 'utils';
+import { GlobalStateContext, GlobalStateData } from 'utils/GlobalState';
 import { useBackendCall } from 'utils/useBackendCall';
 
 import { WalletLogin } from './WalletLogin';
@@ -50,16 +53,15 @@ const StyledBadge = styled(Badge)(() => ({
 }));
 const Wallet = () => {
   const router = useRouter();
-  // const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const backendCall = useBackendCall();
   const { state, setState } = useContext(GlobalStateContext);
   const { jwt } = state.auth;
 
   const [enableWalletSync, setEnableWalletSync] = useState(false);
-  // const [isConnecting, setIsConnecting] = useState(false);
   const [avatarColor, setAvatarColor] = useState('#000');
   const { address, status } = useAccount();
-  // const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -86,7 +88,6 @@ const Wallet = () => {
   // //////////////////////////////////////////////////////////////
   // Handle connection logic when a token exists and retries until it can connect with metamask
 
-  console.log('wallet doing stuff', status);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
@@ -106,6 +107,20 @@ const Wallet = () => {
     }
   }, [status]);
   // //////////////////////////////////////////////////////////////*/
+
+  const disconnectMe = useCallback(() => {
+    const newState = clone(state) as GlobalStateData;
+    newState.auth = { jwt: null, abi: null, contract: null };
+    localStorage.removeItem('token');
+    setTimeout(() => {
+      if (setState) setState(newState);
+      disconnect();
+      enqueueSnackbar('You have been successfully disconnected, redirecting to homepage...', { variant: 'success' });
+      setTimeout(() => {
+        router.push('/');
+      }, 500);
+    }, 500);
+  }, []);
 
   if (!enableWalletSync) return <></>;
 
@@ -146,7 +161,7 @@ const Wallet = () => {
               </Button>
             </Tooltip>
             <Tooltip title="Logout">
-              <IconButton onClick={() => router.push('/user/logout')}>
+              <IconButton onClick={() => disconnectMe()}>
                 <Logout />
               </IconButton>
             </Tooltip>

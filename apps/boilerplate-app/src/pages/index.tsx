@@ -6,7 +6,7 @@ import { Autocomplete, Box, Button, Container, Paper, TextField, Typography } fr
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 
-import { HotPicks } from 'modules/HotPicks';
+import { LatestPicks } from 'modules/LatestPicks';
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { useBackendCall } from 'utils/useBackendCall';
 
@@ -136,7 +136,7 @@ const Home = () => {
                   <Button
                     key={category.label}
                     variant="contained"
-                    className="flex-1 h-[56px] shadow-2xl border-solid  border-2 hover:bg-transparent hover:border-white hover:text-[#fff]"
+                    className="flex-1 h-[56px] shadow-2xl border-solid  border-2 hover:bg-[#0c0c0c]  hover:border-white hover:text-[#fff]"
                     startIcon={category.icon}
                     sx={{ color: category.color, backgroundColor: '#181818' }}
                     href={`${category.url}`}
@@ -149,7 +149,7 @@ const Home = () => {
           </Box>
         </Container>
       </Box>
-      <HotPicks />
+      <LatestPicks />
     </>
   );
 }; /* <div>

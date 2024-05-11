@@ -209,8 +209,8 @@ export function Listings() {
           </Box>
         </Container>
       </Box>
-      <Container maxWidth="xl" className="pt-10 flex flex-col gap-5">
-        <Box className="flex flex-col md:flex-row">
+      <Container maxWidth="xl" className="pt-5 flex flex-col gap-5">
+        <Box className="flex flex-row">
           <Box
             className="flex flex-col md:flex-row"
             sx={{
@@ -248,7 +248,7 @@ export function Listings() {
                 </IconButton>
               </Box>
             </Paper>
-            <Paper className="flex h-[60px] items-center justify-center gap-3 px-5">
+            <Paper className="flex h-[50px] md:h-[60px] items-center justify-center gap-3 px-5">
               <Autocomplete
                 className="flex-1"
                 disablePortal
