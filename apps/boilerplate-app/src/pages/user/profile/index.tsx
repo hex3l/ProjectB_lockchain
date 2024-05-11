@@ -38,6 +38,7 @@ const Page = () => {
           page: '1',
         };
         queryParams.address = address;
+        queryParams.states = 'all';
         const my = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
         console.log(my);
         setListingsMy(my);
@@ -90,7 +91,7 @@ const Page = () => {
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
               {listingsFav.map(({ id, ...listing }) => (
                 <Fragment key={id}>
-                  <OfferRow {...{ id, ...listing }} />
+                  <OfferRow {...{ id, ...listing }} showStatus />
                 </Fragment>
               ))}
             </Box>
@@ -101,7 +102,7 @@ const Page = () => {
             <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
               {listingsMy.map(({ id, ...listing }) => (
                 <Fragment key={id}>
-                  <OfferRow {...{ id, ...listing }} />
+                  <OfferRow {...{ id, ...listing }} showStatus />
                 </Fragment>
               ))}
             </Box>

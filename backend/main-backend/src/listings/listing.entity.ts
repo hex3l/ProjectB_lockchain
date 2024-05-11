@@ -43,7 +43,7 @@ export class Listing {
   @Column()
   id_category: number;
 
-  @Column({ type: 'int', nullable: false, default: ListingStatus.DRAFT })
+  @Column({ type: 'int', nullable: false, default: ListingStatus.PUBLISHED })
   status: ListingStatus;
 
   @ManyToOne(() => Category)

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository, UpdateResult } from 'typeorm';
 import { Listing } from './listing.entity';
 import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
 import { Category } from './categories/category.entity';
 import { UserService } from '../user/user.service';
+import { ListingStatus } from './static/listing-status.enum';
 
 @Injectable()
 export class ListingService {
@@ -16,11 +17,18 @@ export class ListingService {
     private userService: UserService,
   ) {}
 
-  async findAll(category: string, search: string, take: number, page: number, address: string): Promise<Listing[]> {
+  async findAll(
+    category: string,
+    search: string,
+    take: number,
+    page: number,
+    address: string,
+    states: string,
+  ): Promise<Listing[]> {
     const query: FindManyOptions<Listing> = { take, skip: take * (page - 1) };
 
+    query.where = {};
     if (category || search || address) {
-      query.where = {};
       if (category && category !== 'All') {
         const { id } = await this.categoryRepository.findOne({ where: { name: category } });
         query.where.id_category = id;
@@ -32,9 +40,17 @@ export class ListingService {
       if (search) query.where.title = Like(`%${search}%`);
     }
 
+    switch (states) {
+      case 'all':
+        break;
+      default:
+        query.where.status = ListingStatus.PUBLISHED;
+    }
+
     return this.listingRepository.find({
       ...query,
       select: ['id', 'title', 'description', 'image', 'price', 'status', 'updated'],
+      order: { updated: 'DESC' },
     });
   }
 
@@ -64,6 +80,10 @@ export class ListingService {
     }
 
     return result;
+  }
+
+  update(id: any, lisiting: any): Promise<UpdateResult> {
+    return this.listingRepository.update({ id }, lisiting);
   }
 
   save(lisiting: any): Promise<Listing> {

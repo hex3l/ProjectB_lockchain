@@ -1,22 +1,48 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { FavoriteBorder } from '@mui/icons-material';
-import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
+import { Box, Button, Chip, IconButton, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 
+import { ListingStatus, ListingStatusColors } from 'common/consts/listing-status.enum';
 import { ListingDto } from 'dto/ListingDto';
 import { addQueryParams } from 'modules/utils';
 
-const OfferRow = ({ id, description, title, image, price }: ListingDto) => {
+const OfferRow = ({
+  id,
+  description,
+  title,
+  image,
+  price,
+  status,
+  showStatus,
+}: ListingDto & { showStatus?: boolean }) => {
   const router = useRouter();
 
   return (
     <Paper className="flex flex-row space-x-5 p-5" sx={{ p: '10px', width: '100%', minWidth: 0, height: '180px' }}>
       <img src={image} alt="offer" className="md:max-w-[260px] max-h-full" />
       <Box className="flex flex-col flex-1">
-        <Box className="flex flex-row">
+        <Box className="flex flex-row items-center">
           <Box className="flex-1">
             <Typography sx={{ fontWeight: 'bold' }}>{title}</Typography>
           </Box>
+          {showStatus && (
+            <Chip
+              color={
+                ListingStatusColors[status as keyof typeof ListingStatus] as
+                  | 'default'
+                  | 'success'
+                  | 'warning'
+                  | 'error'
+                  | 'primary'
+                  | 'secondary'
+                  | 'info'
+              }
+              label={ListingStatus[status as keyof typeof ListingStatus].toUpperCase()}
+            />
+          )}
           <IconButton>
             <FavoriteBorder></FavoriteBorder>
           </IconButton>

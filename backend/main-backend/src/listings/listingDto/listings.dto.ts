@@ -9,4 +9,5 @@ export class ListingsDto {
   search: string | undefined | null;
   category: string | undefined | null;
   address: string | undefined | null;
+  states: string | undefined | null;
 }

@@ -9,6 +9,7 @@ import { OrderStatus } from './static/order-status.enum';
 import { Private } from '../auth/decorator/auth.decorator';
 import { ListingService } from '../listings/listing.service';
 import { ContractService } from '../contract/contract.service';
+import { ListingStatus } from '../listings/static/listing-status.enum';
 
 @Controller('order')
 export class OrderController {
@@ -57,6 +58,7 @@ export class OrderController {
     if (user.id_user === order.listing.id_creator && order.status === OrderStatus.PENDING) {
       //non legge l'id del creatore
       await this.orderService.update(id, { status: OrderStatus.CONFIRMED });
+      await this.listingService.update(order.id_listing, { status: ListingStatus.SOLD });
       return { id: order.id, status: OrderStatus.CONFIRMED };
     }
     throw new Error('Only seller can confirm, or order not in pending status');
@@ -91,6 +93,7 @@ export class OrderController {
     const listing = await this.listingService.findOne(order.id_listing, null);
     if (listing.price == order.price) {
       order.status = OrderStatus.CONFIRMED;
+      await this.listingService.update(order.id_listing, { status: ListingStatus.SOLD });
     }
 
     const savedOrder = await this.orderService.save(order);
