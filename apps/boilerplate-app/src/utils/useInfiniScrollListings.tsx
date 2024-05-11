@@ -7,6 +7,8 @@ import { ListingDto } from 'dto/ListingDto';
 import { useBackendCall } from './useBackendCall';
 import { useOnScreen } from './useOnScreen';
 
+const maxItems = 5;
+
 export const useInfiniScrollListings = ({
   search,
   category,
@@ -27,7 +29,7 @@ export const useInfiniScrollListings = ({
     async (page: number, append: boolean) => {
       if (search !== undefined && category !== undefined) {
         const queryParams: Record<string, string> = {
-          take: '5',
+          take: maxItems.toString(),
           page: page.toString(),
         };
         if (search) queryParams.search = search;
@@ -41,6 +43,7 @@ export const useInfiniScrollListings = ({
           else {
             setListings([...(listings ?? []), ...dbList]);
           }
+          if (dbList.length < maxItems) setEnd(true);
         } else {
           setEnd(true);
         }
@@ -67,7 +70,6 @@ export const useInfiniScrollListings = ({
   useEffect(() => {
     (async () => {
       if (isVisible && !end && loadedFirstPage) {
-        console.log('bottom visible');
         await pullListings(page + 1, true);
         setPage(page + 1);
       }

@@ -70,6 +70,7 @@ export function Listings() {
   const router = useRouter();
   const backendCall = useBackendCall();
   const [search, setSearch] = useState<string | null | undefined>(undefined);
+  const [userSearch, setUserSearch] = useState<string | null | undefined>(undefined);
   const [category, setCategory] = useState<string | null | undefined>(undefined);
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
 
@@ -79,6 +80,7 @@ export function Listings() {
   useEffect(() => {
     if (typeof window !== 'undefined' && router.query.category) {
       setSearch(Array.isArray(router.query.search) ? router.query.search[0] : router.query.search ?? null);
+      setUserSearch(Array.isArray(router.query.search) ? router.query.search[0] : router.query.search ?? null);
       setCategory(Array.isArray(router.query.category) ? router.query.category[0] : router.query.category ?? null);
     }
   }, [router.query.search, router.query.category]);
@@ -91,15 +93,6 @@ export function Listings() {
       console.error(err);
     });
   }, []);
-
-  const [accordionState, setAccordionState] = useState([true, true, true]);
-  const [acc1] = accordionState;
-
-  const handleChange = (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-    const newAccordionState = [...accordionState];
-    newAccordionState[panel] = isExpanded;
-    setAccordionState(newAccordionState);
-  };
 
   const categoryScroll = useRef<any>(null);
   const scroll = (scrollOffset: number) => {
@@ -179,12 +172,21 @@ export function Listings() {
               <TextField
                 label="What are you looking for?"
                 variant="outlined"
-                value=" "
-                disabled
+                size="small"
+                InputLabelProps={{ shrink: true }}
+                value={userSearch}
                 className="w-[250px]"
-                inputProps={{ className: 'h-[6px]' }}
+                onChange={(event) => setUserSearch(event.target.value)}
               />
-              <Button variant="contained" startIcon={<Search />}>
+              <Button
+                variant="contained"
+                startIcon={<Search />}
+                onClick={async () => {
+                  const params: Record<string, string> = {};
+                  if (userSearch) params.search = userSearch;
+                  await router.push(`/listings/${encodeURI(category ?? '')}?${new URLSearchParams(params)}`);
+                }}
+              >
                 Search
               </Button>
             </Paper>
@@ -270,9 +272,9 @@ export function Listings() {
                 />
                 <Divider className="my-2" />
                 <div>
-                  <Accordion expanded={acc1} onChange={handleChange(0)}>
-                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                      <Typography className="font-bold">Extra</Typography>
+                  <Accordion defaultExpanded={true}>
+                    <AccordionSummary>
+                      <Typography>Extra</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography>
@@ -286,7 +288,7 @@ export function Listings() {
               </Box>
             </Paper>
           </Box>
-          <Box className="flex flex-wrap flex-row gap-5 justify-evenly">
+          <Box className="w-full flex flex-wrap flex-row gap-5 justify-evenly">
             {listings?.map(({ id, ...listing }) => (
               <Fragment key={id}>
                 <OfferRow {...{ id, ...listing }} />

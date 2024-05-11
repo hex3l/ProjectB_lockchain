@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Like, Repository, UpdateResult } from 'typeorm';
+import { FindManyOptions, ILike, Repository, UpdateResult } from 'typeorm';
 import { Listing } from './listing.entity';
 import { ListingWithFavoriteDto } from './listingDto/listing-with-favorite.dto';
 import { Category } from './categories/category.entity';
@@ -37,7 +37,7 @@ export class ListingService {
         const addr = await this.userService.findOneByAddress(address);
         query.where.id_creator = addr?.id;
       }
-      if (search) query.where.title = Like(`%${search}%`);
+      if (search) query.where.title = ILike(`%${search}%`);
     }
 
     switch (states) {
