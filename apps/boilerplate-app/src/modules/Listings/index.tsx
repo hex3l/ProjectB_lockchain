@@ -9,26 +9,20 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ArrowLeft, ArrowRight, FilterAltOff, FilterList, Search } from '@mui/icons-material';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import { FilterAltOff, FilterList, Search } from '@mui/icons-material';
 import {
-  Accordion,
-  AccordionSummaryProps,
   Autocomplete,
   Box,
   Button,
   CircularProgress,
   Container,
-  Divider,
   IconButton,
+  InputLabel,
   Paper,
   Slider,
   TextField,
   Typography,
-  styled,
 } from '@mui/material';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import { useRouter } from 'next/router';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -48,24 +42,6 @@ const marks = [
   },
 ];
 
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />} {...props} />
-))(() => ({
-  padding: 0,
-  flexDirection: 'row',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
-  },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: 0,
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(() => ({
-  padding: 0,
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
-}));
-
 // eslint-disable-next-line import/no-default-export
 export function Listings() {
   const router = useRouter();
@@ -77,7 +53,7 @@ export function Listings() {
   const [priceRange, setPriceRange] = useState<Array<number>>([0, 100]);
   const [userPriceRange, setUserPriceRange] = useState<Array<number>>([0, 100]);
   const [orderByType, setOrderByType] = useState<string>('Title');
-  const [orderByDirection, setOrderByDirection] = useState<string>('DESC');
+  const [orderByDirection, setOrderByDirection] = useState<'ASC' | 'DESC'>('DESC');
 
   const ref = useRef<HTMLDivElement>(null);
   const { listings, end } = useInfiniScrollListings({
@@ -86,6 +62,8 @@ export function Listings() {
     search,
     lowerPrice: priceRange[0],
     higherPrice: priceRange[1],
+    orderByDirection,
+    orderByType,
   });
 
   useEffect(() => {
@@ -104,11 +82,6 @@ export function Listings() {
       console.error(err);
     });
   }, []);
-
-  const categoryScroll = useRef<any>(null);
-  const scroll = (scrollOffset: number) => {
-    if (categoryScroll.current) categoryScroll.current['scrollLeft'] += scrollOffset;
-  };
 
   const handlePriceRangeChange = (event: Event, newValue: number | Array<number>) => {
     setUserPriceRange(newValue as Array<number>);
@@ -236,47 +209,24 @@ export function Listings() {
             className="topbar flex flex-col md:flex-row gap-5"
             sx={{ width: topbarWidth ? `${topbarWidth}px !important` : '100%' }}
           >
-            <Paper className=" flex-1 flex h-[60px] items-center justify-center gap-3 px-5">
+            <Paper className="flex-1 flex h-[60px] items-center justify-center gap-3 px-5">
               <Typography className="font-bold md:flex hidden">CATEGORIES</Typography>
-              <Box className="flex flex-1 flex-row gap-2 items-center w-0">
-                <IconButton onClick={() => scroll(-100)}>
-                  <ArrowLeft />
-                </IconButton>
-                <Box className="overflow-x-hidden" ref={categoryScroll}>
-                  <Box className=" whitespace-nowrap">
-                    {categories?.map((option) => (
-                      <Button
-                        color="secondary"
-                        key={option.name}
-                        onClick={async () => {
-                          setCategory(option.name);
-                          await router.push(`/listings/${option.name}`);
-                        }}
-                      >
-                        {option.name}
-                      </Button>
-                    ))}
-                  </Box>
+              <Box className="flex flex-1 flex-row gap-2 items-center overflow-x-auto">
+                <Box className=" whitespace-nowrap">
+                  {categories?.map((option) => (
+                    <Button
+                      color={category === option.name ? 'primary' : 'secondary'}
+                      key={option.name}
+                      onClick={async () => {
+                        setCategory(option.name);
+                        await router.push(`/listings/${option.name}`);
+                      }}
+                    >
+                      {option.name}
+                    </Button>
+                  ))}
                 </Box>
-                <IconButton onClick={() => scroll(100)}>
-                  <ArrowRight />
-                </IconButton>
               </Box>
-            </Paper>
-            <Paper className="flex h-[50px] md:h-[60px] items-center justify-center gap-3 px-5">
-              <Autocomplete
-                className="flex-1"
-                disablePortal
-                options={['Title', 'Date', 'Price']}
-                value={orderByType}
-                disableClearable
-                popupIcon={null}
-                renderInput={(params) => <TextField {...params} variant="standard" className="flex-col md:w-[100px]" />}
-                onChange={(event, option) => setOrderByType(option)}
-              />
-              <IconButton onClick={() => setOrderByDirection(orderByDirection === 'DESC' ? 'ASC' : 'DESC')}>
-                <FilterList className={`${orderByDirection !== 'DESC' ? 'rotate-180' : ''} transition-all`} />
-              </IconButton>
             </Paper>
           </Box>
         </Box>
@@ -284,46 +234,52 @@ export function Listings() {
           <Box className="h-full flex-col" sx={{ display: { xs: 'none', md: 'flex' } }}>
             <Box className="w-[250px]" />
             <Paper className="sidebar">
-              <Box className="flex flex-col p-5 w-[250px]">
-                <Box className="flex flex-row pb-5 items-center">
+              <Box className="flex flex-col space-y-5 p-5 w-[250px]">
+                <Box className="flex flex-row items-center">
                   <Typography className="font-bold flex-1">FILTERS</Typography>
                   <IconButton onClick={() => resetFilters()}>
                     <FilterAltOff></FilterAltOff>
                   </IconButton>
                 </Box>
-                <Typography className="font-bold">Price range (ETH)</Typography>
-                <Slider
-                  color="secondary"
-                  getAriaLabel={() => 'Minimum distance'}
-                  value={userPriceRange}
-                  step={0.0001}
-                  min={0}
-                  max={2}
-                  // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={handlePriceRangeChange}
-                  valueLabelDisplay="auto"
-                  marks={marks}
-                  disableSwap
-                />
-                <Divider className="my-2" />
-                <div>
-                  <Accordion defaultExpanded={true}>
-                    <AccordionSummary>
-                      <Typography>Extra</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit
-                        amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                </div>
+                <Box className="flex flex-row">
+                  <Autocomplete
+                    className="flex-1"
+                    disablePortal
+                    options={['Title', 'Date', 'Price']}
+                    value={orderByType}
+                    disableClearable
+                    renderInput={(params) => <TextField {...params} variant="standard" label="Order by" />}
+                    onChange={(event, option) => setOrderByType(option)}
+                  />
+                  <IconButton
+                    className="flex"
+                    onClick={() => setOrderByDirection(orderByDirection === 'DESC' ? 'ASC' : 'DESC')}
+                  >
+                    <FilterList className={`${orderByDirection !== 'DESC' ? 'rotate-180' : ''} transition-all`} />
+                  </IconButton>
+                </Box>
+                <Box>
+                  <InputLabel shrink>Price range (ETH)</InputLabel>
+                  <Box className="px-2">
+                    <Slider
+                      color="secondary"
+                      getAriaLabel={() => 'Minimum distance'}
+                      value={userPriceRange}
+                      step={0.0001}
+                      min={0}
+                      max={2}
+                      // eslint-disable-next-line @typescript-eslint/no-empty-function
+                      onChange={handlePriceRangeChange}
+                      valueLabelDisplay="auto"
+                      marks={marks}
+                      disableSwap
+                    />
+                  </Box>
+                </Box>
               </Box>
             </Paper>
           </Box>
-          <Box className="w-full flex flex-wrap flex-row gap-5 justify-evenly">
+          <Box className="w-full flex flex-wrap flex-row gap-5 justify-evenly transition-all">
             {listings?.map(({ id, ...listing }) => (
               <Fragment key={id}>
                 <OfferRow {...{ id, ...listing }} />

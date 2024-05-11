@@ -12,4 +12,6 @@ export class ListingsDto {
   states: string | undefined | null;
   lowerPrice: string | undefined;
   higherPrice: string | undefined;
+  orderByDirection: 'ASC' | 'DESC' | undefined;
+  orderByType: string | undefined;
 }

@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { FavoriteBorder } from '@mui/icons-material';
 import { Box, Button, Chip, IconButton, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import { useEffect, useRef } from 'react';
 
 import { ListingStatus, ListingStatusColors } from 'common/consts/listing-status.enum';
 import { ListingDto } from 'dto/ListingDto';
@@ -19,9 +21,21 @@ const OfferRow = ({
   showStatus,
 }: ListingDto & { showStatus?: boolean }) => {
   const router = useRouter();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const tmo = setTimeout(() => {
+      if (ref.current) ref.current.classList.remove('opacity-0');
+    }, 200);
+    return () => clearTimeout(tmo);
+  }, [ref.current]);
 
   return (
-    <Paper className="flex flex-row space-x-5 p-5" sx={{ p: '10px', width: '100%', minWidth: 0, height: '180px' }}>
+    <Paper
+      ref={ref}
+      className="flex flex-row space-x-5 p-5 transition-all opacity-0"
+      sx={{ p: '10px', width: '100%', minWidth: 0, height: '180px' }}
+    >
       <img src={image} alt="offer" className="md:max-w-[260px] max-h-full" />
       <Box className="flex flex-col flex-1">
         <Box className="flex flex-row items-center">

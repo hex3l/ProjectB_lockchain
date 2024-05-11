@@ -35,6 +35,8 @@ export class ListingService {
     states: string,
     lowerPrice: string | undefined,
     higherPrice: string | undefined,
+    orderByDirection: 'ASC' | 'DESC' | undefined,
+    orderByType: string | undefined,
   ): Promise<Listing[]> {
     const query: FindManyOptions<Listing> = { take, skip: take * (page - 1) };
 
@@ -53,6 +55,18 @@ export class ListingService {
         MoreThanOrEqual(parseFloat(lowerPrice ?? '0')),
         LessThanOrEqual(parseFloat(higherPrice ?? '99999')),
       );
+    let orderColumn;
+    switch (orderByType) {
+      case 'Title':
+        orderColumn = 'title';
+        break;
+      case 'Price':
+        orderColumn = 'price';
+        break;
+      default:
+        orderColumn = 'updated';
+    }
+    const orderDirection = orderByDirection ?? 'DESC';
 
     switch (states) {
       case 'all':
@@ -64,7 +78,7 @@ export class ListingService {
     return this.listingRepository.find({
       ...query,
       select: ['id', 'title', 'description', 'image', 'price', 'status', 'updated'],
-      order: { updated: 'DESC' },
+      order: { [orderColumn]: orderDirection },
     });
   }
 

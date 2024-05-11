@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { RefObject, useCallback, useEffect, useState } from 'react';
@@ -14,12 +15,16 @@ export const useInfiniScrollListings = ({
   category,
   lowerPrice,
   higherPrice,
+  orderByDirection,
+  orderByType,
   scroller,
 }: {
   search: string | undefined | null;
   category: string | undefined | null;
   lowerPrice?: number;
   higherPrice?: number;
+  orderByDirection?: 'ASC' | 'DESC';
+  orderByType?: string;
   scroller: RefObject<HTMLElement>;
 }) => {
   const backendCall = useBackendCall();
@@ -40,6 +45,8 @@ export const useInfiniScrollListings = ({
         if (category) queryParams.category = category;
         if (lowerPrice) queryParams.lowerPrice = lowerPrice.toString();
         if (higherPrice) queryParams.higherPrice = higherPrice.toString();
+        if (orderByDirection) queryParams.orderByDirection = orderByDirection;
+        if (orderByType) queryParams.orderByType = orderByType;
         const dbList = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as
           | Array<ListingDto>
           | undefined;
@@ -55,7 +62,7 @@ export const useInfiniScrollListings = ({
         }
       }
     },
-    [search, category, lowerPrice, higherPrice, listings],
+    [search, category, lowerPrice, higherPrice, orderByDirection, orderByType, listings],
   );
 
   useEffect(() => {
@@ -71,17 +78,16 @@ export const useInfiniScrollListings = ({
     })().catch((err) => {
       console.error(err);
     });
-  }, [search, category, lowerPrice, higherPrice]); // usare questo se cambiano i parametri di ricerca
+  }, [search, category, lowerPrice, higherPrice, orderByDirection, orderByType]); // usare questo se cambiano i parametri di ricerca
 
   useEffect(() => {
-    (async () => {
+    const visible = setTimeout(async () => {
       if (isVisible && !end && loadedFirstPage) {
         await pullListings(page + 1, true);
         setPage(page + 1);
       }
-    })().catch((err) => {
-      console.error(err);
-    });
+    }, 600);
+    return () => clearTimeout(visible);
   }, [isVisible]); // usare questo se si vuole pullare una nuova pagina
 
   return { listings, end };
