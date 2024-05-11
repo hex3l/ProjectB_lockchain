@@ -10,6 +10,7 @@ import { Private } from '../auth/decorator/auth.decorator';
 import { ListingService } from '../listings/listing.service';
 import { ContractService } from '../contract/contract.service';
 import { ListingStatus } from '../listings/static/listing-status.enum';
+import { OrderDto } from './dto/OrderDto';
 
 @Controller('order')
 export class OrderController {
@@ -21,10 +22,57 @@ export class OrderController {
 
   @Private()
   @Get()
-  findAll(@Query() ordersFind: OrdersFindDto, @Req() request: any): Promise<Order[]> {
+  async findAll(@Req() request: any): Promise<OrderDto[]> {
     const { user } = request;
-    console.log(user);
-    return this.orderService.findAll(ordersFind, user.id_user);
+    const orders = await this.orderService.findAll(user.id_user);
+    const ordersFiltered = orders.filter(
+      (order) => order.listing.creator.address == user.address && (order.status == 0 || order.status == 1),
+    );
+    const orderDtos: OrderDto[] = ordersFiltered.map((pippo) => {
+      return {
+        id: pippo.id,
+        title: pippo.listing.title,
+        seller: pippo.listing.creator.address,
+        buyer: pippo.creator.address,
+        status: pippo.status,
+        image: pippo.listing.image,
+        description: pippo.listing.description,
+        id_listing: pippo.id_listing,
+        price: pippo.price,
+        seller_confimation: pippo.seller_confirmation,
+        buyer_confirmation: pippo.buyer_confirmation,
+      };
+    }, []);
+    return orderDtos;
+  }
+
+  @Private()
+  @Get('/info/:id')
+  async findInfo(@Param('id') id: number, @Req() request: any): Promise<OrderDto> {
+    const { user } = request;
+    const order = await this.orderService.findById(id);
+    const listing = ListingService;
+    if (user.id_user === order.listing.id_creator || user.id_user === order.id_creator) {
+      const orderInfo = await this.orderService.findInfo(id);
+      console.log('order info ', orderInfo);
+      const orderDto: OrderDto = {
+        id: orderInfo.id,
+        title: orderInfo.listing.title,
+        seller: orderInfo.listing.creator.address,
+        buyer: orderInfo.creator.address,
+        status: orderInfo.status,
+        image: orderInfo.listing.image,
+        description: orderInfo.listing.description,
+        id_listing: orderInfo.id_listing,
+        price: orderInfo.price,
+        seller_confimation: orderInfo.seller_confirmation,
+        buyer_confirmation: orderInfo.buyer_confirmation,
+      };
+      console.log('OrderDto', orderDto);
+      return orderDto;
+    }
+    ``;
+    throw new Error('Only buyer or seller can see the order');
   }
 
   @Private()

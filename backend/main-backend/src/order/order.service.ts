@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { Order } from './order.entity';
 import { OrdersFindDto } from './dto/order-find.dto';
+import { OrderDto } from './dto/OrderDto';
+import { number } from 'zod';
+import { Listing } from '../listings/listing.entity';
 
 @Injectable()
 export class OrderService {
@@ -15,23 +18,42 @@ export class OrderService {
     return this.offerRepository.save(lisiting);
   }
 
+  findInfo(id: number): Promise<Order> {
+    console.log('id', id);
+
+    return this.offerRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        listing: { title: true, image: true, description: true, id: true, creator: { address: true } },
+        creator: { address: true },
+        status: true,
+        price: true,
+        seller_confirmation: true,
+        buyer_confirmation: true,
+      },
+      relations: { listing: { creator: true }, creator: true },
+    });
+  }
+
   update(id: any, order: any): Promise<UpdateResult> {
     return this.offerRepository.update({ id }, order);
   }
 
-  findAll({ source, target, status, page, take: queryTake }: OrdersFindDto, user: number): Promise<Order[]> {
-    const take = queryTake || 10;
+  async findAll(user: number): Promise<Order[]> {
     const where = [];
-    if (source || (!target && !source)) where.push({ creator: { id: user }, status });
-    if (target || (!target && !source)) where.push({ listing: { creator: { id: user } }, status });
-    return this.offerRepository.find({
-      where,
+    return await this.offerRepository.find({
+      where: where,
       select: {
-        listing: { image: true, title: true, category: { name: true }, creator: { address: true, username: true } },
+        id: true,
+        listing: { title: true, image: true, description: true, id: true, creator: { address: true } },
+        creator: { address: true },
+        status: true,
+        price: true,
+        seller_confirmation: true,
+        buyer_confirmation: true,
       },
-      relations: { listing: true },
-      take: take,
-      skip: take * (page - 1),
+      relations: { listing: { creator: true }, creator: true },
     });
   }
 
