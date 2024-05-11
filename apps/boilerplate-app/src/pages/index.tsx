@@ -26,7 +26,7 @@ const Home = () => {
 
   const relevantCategories = useMemo(
     () => [
-      { label: 'Web Dev', icon: <ViewQuilt />, url: '/listings/Web%20Development', color: '#FFC107' },
+      { label: 'Web Dev', icon: <ViewQuilt />, url: '/listings/Web%20Dev', color: '#FFC107' },
       { label: 'Editing', icon: <Camera />, url: '/listings/Editing', color: '#FF0000' },
       {
         label: 'Graphics',
@@ -139,7 +139,7 @@ const Home = () => {
                     className="flex-1 h-[56px] shadow-2xl border-solid  border-2 hover:bg-[#0c0c0c]  hover:border-white hover:text-[#fff]"
                     startIcon={category.icon}
                     sx={{ color: category.color, backgroundColor: '#181818' }}
-                    href={`${category.url}`}
+                    onClick={() => router.push(`${category.url}`)}
                   >
                     {category.label}
                   </Button>

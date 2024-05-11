@@ -11,7 +11,10 @@ INSERT INTO public.category
 (2, 'Design', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL),
 (3, 'Web Dev', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL),
 (4, 'Desktop dev', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL),
-(5, 'Video Editor', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL);
+(5, 'Video Editor', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL),
+(6, 'Graphics', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL),
+(7, 'Software', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL),
+(8, 'Editing', '2024-01-28 23:22:50.991', '2024-01-28 23:22:50.991', NULL);
 
 INSERT INTO public.listing
 (id, id_creator, title, description, image, id_category, status, price, created, updated, "deletedAt") VALUES

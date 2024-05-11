@@ -30,12 +30,12 @@ export class ListingService {
     query.where = {};
     if (category || search || address) {
       if (category && category !== 'All') {
-        const { id } = await this.categoryRepository.findOne({ where: { name: category } });
-        query.where.id_category = id;
+        const cat = await this.categoryRepository.findOne({ where: { name: category } });
+        query.where.id_category = cat?.id;
       }
       if (address) {
-        const { id } = await this.userService.findOneByAddress(address);
-        query.where.id_creator = id;
+        const addr = await this.userService.findOneByAddress(address);
+        query.where.id_creator = addr?.id;
       }
       if (search) query.where.title = Like(`%${search}%`);
     }
