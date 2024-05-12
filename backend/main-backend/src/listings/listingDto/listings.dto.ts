@@ -14,4 +14,6 @@ export class ListingsDto {
   higherPrice: string | undefined;
   orderByDirection: 'ASC' | 'DESC' | undefined;
   orderByType: string | undefined;
+  myorders: boolean | undefined;
+  favorite: boolean | undefined;
 }

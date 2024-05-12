@@ -26,19 +26,48 @@ export class ListingService {
     private userService: UserService,
   ) {}
 
-  async findAll(
-    category: string,
-    search: string,
-    take: number,
-    page: number,
-    address: string,
-    states: string,
-    lowerPrice: string | undefined,
-    higherPrice: string | undefined,
-    orderByDirection: 'ASC' | 'DESC' | undefined,
-    orderByType: string | undefined,
-  ): Promise<Listing[]> {
+  async findAll({
+    category,
+    search,
+    take,
+    page,
+    address,
+    states,
+    lowerPrice,
+    higherPrice,
+    orderByDirection,
+    orderByType,
+    favorite,
+    myorders,
+    userId,
+  }: {
+    category?: string;
+    search?: string;
+    take: number;
+    page: number;
+    address?: string;
+    states?: string;
+    lowerPrice?: string;
+    higherPrice?: string;
+    orderByDirection?: 'ASC' | 'DESC';
+    orderByType?: string;
+    favorite?: boolean;
+    myorders?: boolean;
+    userId?: number;
+  }): Promise<Listing[]> {
     const query: FindManyOptions<Listing> = { take, skip: take * (page - 1) };
+    query.relations = ['category'];
+    query.select = {
+      id: true,
+      title: true,
+      image: true,
+      description: true,
+      category: { name: true },
+      price: true,
+      status: true,
+      updated: true,
+      favorites: true,
+    };
 
     query.where = {};
     if (category && category !== 'All') {
@@ -47,6 +76,7 @@ export class ListingService {
     }
     if (address) {
       const addr = await this.userService.findOneByAddress(address);
+      console.log(addr);
       query.where.id_creator = addr?.id;
     }
     if (search) query.where.title = ILike(`%${search}%`);
@@ -75,9 +105,17 @@ export class ListingService {
         query.where.status = ListingStatus.PUBLISHED;
     }
 
+    if (myorders && userId) query.where.orders = { id_creator: userId };
+
+    if (favorite && userId) query.where.favorites = { id: userId };
+
+    if (userId) {
+      query.select.favorites = { id: true };
+      query.relations.push('favorites');
+    }
+
     return this.listingRepository.find({
       ...query,
-      select: ['id', 'title', 'description', 'image', 'price', 'status', 'updated'],
       order: { [orderColumn]: orderDirection },
     });
   }

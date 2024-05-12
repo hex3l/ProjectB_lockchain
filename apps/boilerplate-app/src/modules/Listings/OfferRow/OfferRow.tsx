@@ -3,13 +3,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { FavoriteBorder } from '@mui/icons-material';
+import Favorite from '@mui/icons-material/Favorite';
 import { Box, Button, Chip, IconButton, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ListingStatus, ListingStatusColors } from 'common/consts/listing-status.enum';
 import { ListingDto } from 'dto/ListingDto';
 import { addQueryParams } from 'modules/utils';
+import { useBackendCall } from 'utils/useBackendCall';
 
 const OfferRow = ({
   id,
@@ -18,10 +20,23 @@ const OfferRow = ({
   image,
   price,
   status,
+  favorites,
   showStatus,
-}: ListingDto & { showStatus?: boolean }) => {
+}: ListingDto & { showStatus?: boolean; favorites?: Array<{ id: number }> }) => {
   const router = useRouter();
+  const backendCall = useBackendCall();
+  const [localFavorite, setLocalFavorite] = useState<boolean>(!!favorites && favorites.length > 0);
   const ref = useRef<HTMLDivElement>(null);
+
+  const favorite = useCallback(async () => {
+    const data: unknown = await backendCall(`user/favorite`, {
+      method: 'POST',
+      body: JSON.stringify({ listing_id: id }),
+    });
+    if (data !== undefined) {
+      setLocalFavorite((data as { favorite: boolean }).favorite);
+    }
+  }, [backendCall, id]);
 
   useEffect(() => {
     const tmo = setTimeout(() => {
@@ -57,9 +72,7 @@ const OfferRow = ({
               label={ListingStatus[status as keyof typeof ListingStatus].toUpperCase()}
             />
           )}
-          <IconButton>
-            <FavoriteBorder></FavoriteBorder>
-          </IconButton>
+          <IconButton onClick={() => favorite()}>{localFavorite ? <Favorite /> : <FavoriteBorder />}</IconButton>
         </Box>
 
         <Box className="flex-1" sx={{ pt: 0.5 }}>

@@ -3,50 +3,18 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { Avatar, Box, Container, Divider, Tab, Tabs, Typography } from '@mui/material';
-import { Fragment, useEffect, useState } from 'react';
+import { useState } from 'react';
 import React from 'react';
 import { useAccount } from 'wagmi';
 
-import { ListingDto } from 'dto/ListingDto';
-import { OfferRow } from 'modules/Listings/OfferRow';
-import { useBackendCall } from 'utils/useBackendCall';
+import { MyFavorites, MyOrders, MyListings } from 'modules/UserLists';
 
 const Page = () => {
-  const backendCall = useBackendCall();
-  const [listingsFav, setListingsFav] = useState<Array<ListingDto>>([]);
-  const [listingsMy, setListingsMy] = useState<Array<ListingDto>>([]);
-  const [purchased, setPurchased] = useState<Array<ListingDto>>([]);
   const { address } = useAccount();
   const [value, setValue] = useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  useEffect(() => {
-    (async () => {
-      const favorites = (await backendCall(`user/favorites`)) as Array<ListingDto>;
-      setListingsFav(favorites);
-    })().catch((err) => {
-      console.error(err);
-    });
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (address) {
-        const queryParams: Record<string, string> = {
-          take: '10',
-          page: '1',
-        };
-        queryParams.address = address;
-        queryParams.states = 'all';
-        const my = (await backendCall(`listing?${new URLSearchParams(queryParams)}`, {})) as Array<ListingDto>;
-        console.log(my);
-        setListingsMy(my);
-      }
-    })().catch((err) => {
-      console.error(err);
-    });
-  }, [address, backendCall]);
 
   return (
     <Container fixed>
@@ -74,40 +42,10 @@ const Page = () => {
           <Tab icon={<LocalOfferIcon />} label="My listings" />
         </Tabs>
       </Box>
-      <Box>
-        {value === 0 && (
-          <Box sx={{ p: 3 }}>
-            <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-              {purchased.map(({ id, ...listing }) => (
-                <Fragment key={id}>
-                  <OfferRow {...{ id, ...listing }} />
-                </Fragment>
-              ))}
-            </Box>
-          </Box>
-        )}
-        {value === 1 && (
-          <Box sx={{ p: 3 }}>
-            <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-              {listingsFav.map(({ id, ...listing }) => (
-                <Fragment key={id}>
-                  <OfferRow {...{ id, ...listing }} showStatus />
-                </Fragment>
-              ))}
-            </Box>
-          </Box>
-        )}
-        {value === 2 && (
-          <Box sx={{ p: 3 }}>
-            <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-              {listingsMy.map(({ id, ...listing }) => (
-                <Fragment key={id}>
-                  <OfferRow {...{ id, ...listing }} showStatus />
-                </Fragment>
-              ))}
-            </Box>
-          </Box>
-        )}
+      <Box sx={{ p: 3 }}>
+        {value === 0 && <MyOrders />}
+        {value === 1 && <MyFavorites />}
+        {value === 2 && <MyListings />}
       </Box>
     </Container>
   );

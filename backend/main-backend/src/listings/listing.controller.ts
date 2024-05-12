@@ -19,10 +19,23 @@ export class ListingController {
   ) {}
 
   @Get()
-  getAllListings(@Query() listingsParams: ListingsDto): Promise<Listing[]> {
-    const { category, address, states, take, page, search, lowerPrice, higherPrice, orderByDirection, orderByType } =
-      listingsParams;
-    return this.listingService.findAll(
+  getAllListings(@Query() listingsParams: ListingsDto, @Req() request: any): Promise<Listing[]> {
+    const { user } = request;
+    const {
+      category,
+      address,
+      states,
+      take,
+      page,
+      search,
+      lowerPrice,
+      higherPrice,
+      orderByDirection,
+      orderByType,
+      myorders,
+      favorite,
+    } = listingsParams;
+    return this.listingService.findAll({
       category,
       search,
       take,
@@ -33,12 +46,19 @@ export class ListingController {
       higherPrice,
       orderByDirection,
       orderByType,
-    );
+      myorders,
+      favorite,
+      userId: user?.id_user,
+    });
   }
 
   @Get('/categories')
-  getCategories(): Promise<Category[]> {
-    return this.categoryService.findAll();
+  async getCategories(): Promise<Category[]> {
+    try {
+      return await this.categoryService.findAll();
+    } catch {
+      return [];
+    }
   }
 
   @Get('/:id')

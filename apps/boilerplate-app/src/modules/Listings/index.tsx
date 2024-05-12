@@ -24,7 +24,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { useBackendCall } from 'utils/useBackendCall';
 import { useInfiniScrollListings } from 'utils/useInfiniScrollListings';
@@ -55,9 +55,7 @@ export function Listings() {
   const [orderByType, setOrderByType] = useState<string>('Title');
   const [orderByDirection, setOrderByDirection] = useState<'ASC' | 'DESC'>('DESC');
 
-  const ref = useRef<HTMLDivElement>(null);
-  const { listings, end } = useInfiniScrollListings({
-    scroller: ref,
+  const { listings, PullListings } = useInfiniScrollListings({
     category,
     search,
     lowerPrice: priceRange[0],
@@ -285,9 +283,7 @@ export function Listings() {
                 <OfferRow {...{ id, ...listing }} />
               </Fragment>
             ))}
-            <Box ref={ref} className="flex flex-row items-center">
-              {end ? 'No more listings to show' : <CircularProgress />}
-            </Box>
+            <PullListings />
           </Box>
         </Box>
       </Container>

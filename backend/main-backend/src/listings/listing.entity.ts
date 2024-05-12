@@ -50,7 +50,7 @@ export class Listing {
   @JoinColumn({ name: 'id_category' })
   category: Category;
 
-  @OneToMany(() => Order, (order) => order.id_listing)
+  @OneToMany(() => Order, (order) => order.listing)
   orders: Order[];
 
   @ManyToMany(() => User, (user) => user.favorites)
