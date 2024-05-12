@@ -48,15 +48,68 @@ const OfferRow = ({
   return (
     <Paper
       ref={ref}
-      className="flex flex-row space-x-5 p-5 transition-all opacity-0"
+      className="flex flex-col space-y-3 p-5 transition-all opacity-0 h-[200px] md:h-[180px]"
       sx={{ p: '10px', width: '100%', minWidth: 0, height: '180px' }}
     >
-      <img src={image} alt="offer" className="md:max-w-[260px] max-h-full" />
-      <Box className="flex flex-col flex-1">
-        <Box className="flex flex-row items-center">
-          <Box className="flex-1">
-            <Typography sx={{ fontWeight: 'bold' }}>{title}</Typography>
+      <Box className="flex h-[75%] md:h-full flex-row space-x-3">
+        <img src={image} alt="offer" className="max-h-[260px]" />
+        <Box className="flex flex-col flex-1">
+          <Box className="flex flex-col-reverse md:flex-row md:items-center">
+            <Box className="flex-1">
+              <Typography sx={{ fontWeight: 'bold' }}>{title}</Typography>
+            </Box>
+            <Box className="flex flex-row w-full justify-end md:w-auto items-center">
+              {showStatus && (
+                <Chip
+                  className="hidden md:flex"
+                  color={
+                    ListingStatusColors[status as keyof typeof ListingStatus] as
+                      | 'default'
+                      | 'success'
+                      | 'warning'
+                      | 'error'
+                      | 'primary'
+                      | 'secondary'
+                      | 'info'
+                  }
+                  label={ListingStatus[status as keyof typeof ListingStatus].toUpperCase()}
+                />
+              )}
+              <IconButton onClick={() => favorite()}>{localFavorite ? <Favorite /> : <FavoriteBorder />}</IconButton>
+            </Box>
           </Box>
+
+          <Box className="flex-1" sx={{ pt: 0.5 }}>
+            <Typography className="hidden md:flex">
+              {description.length > 250 ? `${description.slice(0, 250)}...` : description}
+            </Typography>
+          </Box>
+
+          <Box className="hidden md:flex flex-col items-end">
+            <Box className="flex-1" />
+            <Box className="flex flex-col md:flex-row space-x-2 items-center">
+              <Typography className="font-bold">{price} ETH</Typography>
+              <Button
+                variant="contained"
+                className="md:flex hidden"
+                onClick={() => addQueryParams(router, 'listing', `${id}`)}
+              >
+                View more
+              </Button>
+              <Button
+                variant="contained"
+                className="flex md:hidden"
+                onClick={() => addQueryParams(router, 'listing', `${id}`)}
+              >
+                Open
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+      <Box className="md:hidden flex flex-row items-end">
+        <Box className="flex flex-1 flex-row md:flex-row space-x-2 items-center">
+          <Typography className="font-bold flex-1">{price} ETH</Typography>
           {showStatus && (
             <Chip
               color={
@@ -72,34 +125,9 @@ const OfferRow = ({
               label={ListingStatus[status as keyof typeof ListingStatus].toUpperCase()}
             />
           )}
-          <IconButton onClick={() => favorite()}>{localFavorite ? <Favorite /> : <FavoriteBorder />}</IconButton>
-        </Box>
-
-        <Box className="flex-1" sx={{ pt: 0.5 }}>
-          <Typography className="hidden md:flex">
-            {description.length > 250 ? `${description.slice(0, 250)}...` : description}
-          </Typography>
-        </Box>
-
-        <Box className="flex flex-col items-end">
-          <Box className="flex-1" />
-          <Box className="flex flex-row space-x-2 items-center">
-            <Typography className="font-bold">{price} ETH</Typography>
-            <Button
-              variant="contained"
-              className="md:flex hidden"
-              onClick={() => addQueryParams(router, 'listing', `${id}`)}
-            >
-              View more
-            </Button>
-            <Button
-              variant="contained"
-              className="flex md:hidden"
-              onClick={() => addQueryParams(router, 'listing', `${id}`)}
-            >
-              Open
-            </Button>
-          </Box>
+          <Button variant="contained" size="small" onClick={() => addQueryParams(router, 'listing', `${id}`)}>
+            Open
+          </Button>
         </Box>
       </Box>
     </Paper>

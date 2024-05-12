@@ -52,7 +52,7 @@ export function Listings() {
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
   const [priceRange, setPriceRange] = useState<Array<number>>([0, 100]);
   const [userPriceRange, setUserPriceRange] = useState<Array<number>>([0, 100]);
-  const [orderByType, setOrderByType] = useState<string>('Title');
+  const [orderByType, setOrderByType] = useState<string>('Date');
   const [orderByDirection, setOrderByDirection] = useState<'ASC' | 'DESC'>('DESC');
 
   const { listings, PullListings } = useInfiniScrollListings({
@@ -96,6 +96,8 @@ export function Listings() {
 
   const resetFilters = useCallback(() => {
     setUserPriceRange([0, 2]);
+    setOrderByDirection('DESC');
+    setOrderByType('Date');
   }, []);
 
   const handleSearch = useCallback(async () => {
