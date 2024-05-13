@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Box, Button, Chip, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   OrderStatus,
@@ -14,7 +14,9 @@ import {
   OrderStatusFromNumber,
   OrderStatusName,
 } from 'common/consts/order-status.enum';
+import { ListingDto } from 'dto/ListingDto';
 import { OrderDto } from 'dto/OrderDto';
+import { useBackendCall } from 'utils/useBackendCall';
 
 const OfferStatusRow = ({
   id,
@@ -23,11 +25,27 @@ const OfferStatusRow = ({
   image,
   price,
   status,
+  id_listing,
   buyer,
   acceptOffer,
 }: OrderDto & { acceptOffer?: (id: number) => void }) => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
+  const backendCall = useBackendCall();
+  const [listing, setListing] = useState<ListingDto | undefined>(undefined);
+
+  useEffect(() => {
+    if (!listing) {
+      if (id_listing > 0) {
+        (async () => {
+          const dbList = (await backendCall(`listing/${id_listing}`, { cache: 'no-store' })) as ListingDto;
+          setListing(dbList);
+        })().catch((err) => {
+          console.error(err);
+        });
+      }
+    }
+  }, [backendCall, id_listing, listing]);
 
   useEffect(() => {
     const tmo = setTimeout(() => {
@@ -86,8 +104,20 @@ const OfferStatusRow = ({
                   )}...${buyer.substring(35, buyer.length)}`}</Typography>
                 </Box>
                 <Box className="flex flex-col md:flex-row md:space-x-2">
-                  <Typography className="font-bold">Requested price:</Typography>
-                  <Typography className="font-bold flex-1 text-[#6edb38]">{price} ETH</Typography>
+                  {(status === 0 || status === 100) && (
+                    <>
+                      <Typography className="font-bold">Requested price:</Typography>
+                      <Typography className="line-through">{listing?.price}</Typography>
+                      <Typography className="font-bold flex-1 text-[#6edb38]">{price} ETH</Typography>
+                    </>
+                  )}
+                  {status > 0 && status < 100 && (
+                    <>
+                      {status === 1 && <Typography className="font-bold">To be payed:</Typography>}
+                      {status > 1 && <Typography className="font-bold">Payed:</Typography>}
+                      <Typography className="font-bold flex-1">{price} ETH</Typography>
+                    </>
+                  )}
                 </Box>
               </Box>
               <Box className="hidden md:flex flex-row space-x-3">

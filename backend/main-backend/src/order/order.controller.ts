@@ -45,7 +45,7 @@ export class OrderController {
         status: pippo.status,
         image: pippo.listing.image,
         description: pippo.listing.description,
-        id_listing: pippo.id_listing,
+        id_listing: pippo.listing.id,
         price: pippo.price,
         seller_confimation: pippo.seller_confirmation,
         buyer_confirmation: pippo.buyer_confirmation,
