@@ -6,6 +6,7 @@ import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Order } from '../order/order.entity';
 import { OrderStatus } from '../order/static/order-status.enum';
+import { Message } from '../messages/message.entity';
 
 @Injectable()
 export class ContractService {
@@ -62,23 +63,31 @@ export class ContractService {
 
 const chainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
   const orderRepository = datasource.getRepository(Order);
+  const messageRepository = datasource.getRepository(Message);
   const orderId = Number(event.returnValues.id);
+
+  const order = await orderRepository.findOne({ where: { id: orderId }, relations: ['listing'] });
+
   switch (event.event) {
     case 'Payed':
       console.log('Payed', orderId);
-      orderRepository.update(orderId, { status: OrderStatus.ACTIVE });
+      await orderRepository.update(orderId, { status: OrderStatus.ACTIVE });
+      await messageRepository.save({ id_sender: order.id_creator, message: '$$$PAYED', id_order: orderId });
       return;
     case 'TargetConfirm':
       console.log('TargetConfirm', orderId);
-      orderRepository.update(orderId, { seller_confirmation: true });
+      await orderRepository.update(orderId, { seller_confirmation: true });
+      await messageRepository.save({ id_sender: order.listing.id_creator, message: '$$$CONFIRM', id_order: orderId });
       return;
     case 'SourceConfirm':
       console.log('SourceConfirm', orderId);
-      orderRepository.update(orderId, { buyer_confirmation: true });
+      await orderRepository.update(orderId, { buyer_confirmation: true });
+      await messageRepository.save({ id_sender: order.id_creator, message: '$$$CONFIRM', id_order: orderId });
       return;
     case 'Confirmed':
       console.log('Confirmed', orderId);
-      orderRepository.update(orderId, { status: OrderStatus.FINALIZED });
+      await orderRepository.update(orderId, { status: OrderStatus.FINALIZED });
+      await messageRepository.save({ id_sender: order.id_creator, message: '$$$SUCCESS', id_order: orderId });
       return;
     default:
       return;

@@ -28,7 +28,8 @@ const OfferStatusRow = ({
   id_listing,
   buyer,
   acceptOffer,
-}: OrderDto & { acceptOffer?: (id: number) => void }) => {
+  hideButtons,
+}: OrderDto & { hideButtons?: boolean; acceptOffer?: (id: number) => void }) => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const backendCall = useBackendCall();
@@ -120,25 +121,27 @@ const OfferStatusRow = ({
                   )}
                 </Box>
               </Box>
-              <Box className="hidden md:flex flex-row space-x-3">
-                <Box className="space-x-3">
-                  {status === OrderStatus.PENDING && (
-                    <>
-                      <Button variant="contained" color="primary" onClick={() => acceptOffer && acceptOffer(id)}>
-                        Accept
+              {!hideButtons && (
+                <Box className="hidden md:flex flex-row space-x-3">
+                  <Box className="space-x-3">
+                    {status === OrderStatus.PENDING && (
+                      <>
+                        <Button variant="contained" color="primary" onClick={() => acceptOffer && acceptOffer(id)}>
+                          Accept
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={() => acceptOffer && acceptOffer(id)}>
+                          Refuse
+                        </Button>
+                      </>
+                    )}
+                    {status >= OrderStatus.CONFIRMED && status <= OrderStatus.FINALIZED && (
+                      <Button variant="contained" color="primary" onClick={() => router.push(`/chat/${id}`)}>
+                        chat
                       </Button>
-                      <Button variant="contained" color="secondary" onClick={() => acceptOffer && acceptOffer(id)}>
-                        Refuse
-                      </Button>
-                    </>
-                  )}
-                  {status >= OrderStatus.CONFIRMED && status <= OrderStatus.FINALIZED && (
-                    <Button variant="contained" color="primary" onClick={() => router.push(`/chat/${id}`)}>
-                      chat
-                    </Button>
-                  )}
+                    )}
+                  </Box>
                 </Box>
-              </Box>
+              )}
             </Box>
           </Box>
         </Box>
@@ -159,20 +162,24 @@ const OfferStatusRow = ({
               label={OrderStatusName[OrderStatusFromNumber[status as keyof typeof OrderStatusFromNumber]].toUpperCase()}
             />
           </Box>
-          {status === OrderStatus.PENDING && (
+          {!hideButtons && (
             <>
-              <Button variant="contained" color="primary" onClick={() => acceptOffer && acceptOffer(id)}>
-                Accept
-              </Button>
-              <Button variant="contained" color="secondary" onClick={() => acceptOffer && acceptOffer(id)}>
-                Refuse
-              </Button>
+              {status === OrderStatus.PENDING && (
+                <>
+                  <Button variant="contained" color="primary" onClick={() => acceptOffer && acceptOffer(id)}>
+                    Accept
+                  </Button>
+                  <Button variant="contained" color="secondary" onClick={() => acceptOffer && acceptOffer(id)}>
+                    Refuse
+                  </Button>
+                </>
+              )}
+              {status >= OrderStatus.CONFIRMED && status <= OrderStatus.FINALIZED && (
+                <Button variant="contained" color="primary" onClick={() => router.push(`/chat/${id}`)}>
+                  chat
+                </Button>
+              )}
             </>
-          )}
-          {status >= OrderStatus.CONFIRMED && status <= OrderStatus.FINALIZED && (
-            <Button variant="contained" color="primary" onClick={() => router.push(`/chat/${id}`)}>
-              chat
-            </Button>
           )}
         </Box>
       </Box>

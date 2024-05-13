@@ -12,12 +12,12 @@
 import { Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
 import { watchContractEvent } from '@wagmi/core';
 import { useRouter } from 'next/router';
-import React, { Fragment, useState, useEffect, useCallback, useContext } from 'react';
+import React, { Fragment, useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useAccount, useConfig, useWriteContract } from 'wagmi';
 
-import { OrderStatus, OrderStatusFromNumber, OrderStatusName } from 'common/consts/order-status.enum';
 import { MessageDto } from 'dto/MessageDto';
 import { OrderDto } from 'dto/OrderDto';
+import { OfferStatusRow } from 'modules/Listings/OfferStatusRow';
 import { GlobalStateContext } from 'utils/GlobalState';
 import { useBackendCall } from 'utils/useBackendCall';
 
@@ -33,17 +33,29 @@ const Page = () => {
   const [update, setUpdate] = useState<boolean>(true);
   const [newMessage, setNewMessage] = useState<string>('');
   const [orderInfo, setOrderInfo] = useState<OrderDto>({} as OrderDto);
-  const orderStatus: OrderStatus = OrderStatusFromNumber[orderInfo.status as keyof typeof OrderStatusFromNumber];
   const { writeContract } = useWriteContract();
 
   useEffect(() => {
     void (async () => {
       if (orderID !== undefined && update) {
         setUpdate(false);
-        const result = (await backendCall(`message/${orderID}`)) as Array<MessageDto>;
-        setMessageList(result.reverse());
+        const result = (await backendCall(`message/${orderID}`)) as Array<MessageDto> | undefined;
+        if (result) setMessageList(result.reverse());
       }
     })();
+  }, [orderID, update]); // Run this effect only once when the component mounts
+
+  useEffect(() => {
+    const pullmsg = async () => {
+      if (orderID !== undefined) {
+        const result = (await backendCall(`message/${orderID}`)) as Array<MessageDto> | undefined;
+        if (result) setMessageList(result.reverse());
+      }
+    };
+
+    const inter = setInterval(() => pullmsg(), 5000);
+
+    return () => clearInterval(inter);
   }, [orderID, update]); // Run this effect only once when the component mounts
 
   useEffect(() => {
@@ -118,37 +130,54 @@ const Page = () => {
         <div className="static-beach_bar__waves" />
         <div className="static-beach_bar__sand static-beach_bar__sand--background" />
         <div className="static-beach_bar__sand static-beach_bar__sand--foreground" />
-        <Container maxWidth="xl">
-          <Box className="w-full h-[300px] flex flex-col text-center justify-center items-center">
-            <Paper className="max-w-[700px] p-5 mt-[8px] flex flex-col md:flex-row gap-3 shadow-2xl z-[1000] gap">
-              <Box className="flex flex-col gap-5">
-                <img src={orderInfo.image} alt="product" className="w-[200px] h-[200px] object-cover" />
-              </Box>
-              <Typography className=" md:text-[1.5rem] text-[1.5rem] leading-[4rem]">
-                {orderInfo.title} <br /> {orderInfo.price} ETH <br /> State : {`${OrderStatusName[orderStatus]}`}
-              </Typography>
-            </Paper>
-          </Box>
+        <Container fixed className="h-[300px] flex items-center justify-center">
+          {orderInfo.id > 0 && (
+            <Box className="relative space-y-2 z-50">
+              <OfferStatusRow {...{ ...orderInfo }} hideButtons />
+              <Paper className="w-full p-2 flex flex-row text-center justify-center items-center">
+                {orderInfo.buyer === address && (
+                  <>
+                    <Box className="w-1/2">
+                      {orderInfo.seller_confimation ? (
+                        <Button disabled>Seller confirmed completion of order</Button>
+                      ) : (
+                        <Button disabled>Awaiting seller confirmation</Button>
+                      )}
+                    </Box>
+                    <Box className="w-1/2">
+                      {orderInfo.buyer_confirmation ? (
+                        <Button disabled>You have confirmed reception of order</Button>
+                      ) : (
+                        <Button variant="contained" color="primary" onClick={() => sendConfirmation()}>
+                          Mark order as recieved
+                        </Button>
+                      )}
+                    </Box>
+                  </>
+                )}
+                {orderInfo.buyer !== address && (
+                  <>
+                    {orderInfo.buyer_confirmation ? (
+                      <Button disabled>Buyer confirmed reception of order</Button>
+                    ) : (
+                      <Button disabled>Awaiting buyer confirmation of reception</Button>
+                    )}
+                    {orderInfo.seller_confimation ? (
+                      <Button disabled>You have confirmed completion of order</Button>
+                    ) : (
+                      <Button variant="contained" color="primary" onClick={() => sendConfirmation()}>
+                        Mark order as completed
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Paper>
+            </Box>
+          )}
         </Container>
       </Box>
-      <Box className="w-full h-[100px] flex flex-col text-center justify-center items-center">
-        {orderInfo.buyer == address ? (
-          orderInfo.buyer_confirmation ? (
-            <Button disabled>Order recived confirmed</Button>
-          ) : (
-            <Button variant="contained" color="primary" onClick={() => sendConfirmation()}>
-              Confirm Order recipt
-            </Button>
-          )
-        ) : orderInfo.seller_confimation ? (
-          <Button disabled>Order sent</Button>
-        ) : (
-          <Button variant="contained" color="primary" onClick={() => sendConfirmation()}>
-            Confirm Order send
-          </Button>
-        )}
-      </Box>
-      <Container maxWidth="md" className="pt-10 flex flex-col gap-5">
+
+      <Container fixed className="flex flex-col gap-5 pt-5">
         <Paper className="flex flex-col gap-5 p-5">
           <Box className="flex flex-col-reverse gap-y-5 max-h-[300px] overflow-auto p-3">
             {messageList?.map(({ id, ...message }) => (
@@ -156,7 +185,9 @@ const Page = () => {
               <Message
                 key={id}
                 message={message.content}
+                address={message.sender.address}
                 right={message.sender.address === address}
+                buyer={orderInfo.buyer === message.sender.address}
                 timestamp={message.created}
               />
             ))}
@@ -175,6 +206,11 @@ const Page = () => {
                 variant="outlined"
                 fullWidth
                 onChange={(ev) => setNewMessage(ev.target.value)}
+                onKeyDown={(ev) => {
+                  if (ev.key === 'Enter') {
+                    sendMessage();
+                  }
+                }}
                 value={newMessage}
               />
             </Box>
@@ -190,7 +226,57 @@ const Page = () => {
   );
 };
 
-const Message = ({ message, timestamp, right }: { message: string; timestamp: string; right: boolean }) => {
+const Message = ({
+  message,
+  address,
+  timestamp,
+  right,
+  buyer,
+}: {
+  message: string;
+  address: string;
+  timestamp: string;
+  right: boolean;
+  buyer: boolean;
+}) => {
+  const orderStateChange = useMemo(() => {
+    switch (message) {
+      case '$$$PAYED':
+        return ['Order payed', 'has payed the order'];
+      case '$$$CONFIRM':
+        return ['Confirmed', 'confirmed', 'of the order'];
+      case '$$$SUCCESS':
+        return 'Order completed';
+      default:
+        return undefined;
+    }
+  }, [message]);
+
+  if (orderStateChange) {
+    return (
+      <Box className={`flex w-full `}>
+        <Box
+          className={`flex flex-col w-full ${
+            right ? 'bg-green-600 text-end' : 'bg-yellow-700'
+          } bg-opacity-10 rounded-lg p-3 justify-center items-center`}
+        >
+          <Typography variant="h5" className="text-[#ffeb3b]">
+            {orderStateChange[0]}
+          </Typography>
+          <Box className="w-auto text-[8px]">
+            {new Date(timestamp).toLocaleDateString()} {new Date(timestamp).toLocaleTimeString()}
+          </Box>
+          <Box className="">{address}</Box>
+          <Box className="">
+            {right ? 'You' : ''} {orderStateChange[1]}{' '}
+            {orderStateChange.length > 2 ? (buyer ? 'completion' : 'reception') : ''}{' '}
+            {orderStateChange.length > 2 ? orderStateChange[2] : ''}{' '}
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box className={`flex ${right ? 'justify-end' : 'justify-start'}`}>
       <Box className={`flex flex-col`}>
