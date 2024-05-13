@@ -25,3 +25,13 @@ export const OrderStatusName = {
   [OrderStatus.REIMBURSED]: 'reimbursed', // Event Seller has been reimbursed due to dispute
   [OrderStatus.REJECTED]: 'rejected', // When PNEDING is not accepted by seller
 };
+
+export const OrderStatusColors = {
+  [OrderStatus.PENDING]: 'default', // Order created on db (if an offer has been made)
+  [OrderStatus.CONFIRMED]: 'warning', // Push Order on chain (when seller accepts the offer or it is an instant buy, offer has same price as listing)
+  [OrderStatus.ON_CHAIN]: 'warning', // Event from chain confirms order creatin
+  [OrderStatus.ACTIVE]: 'success', // Event Buyer pays out the order
+  [OrderStatus.FINALIZED]: 'success', // Event Both have confirmed the order (or through dispute but payed to seller)
+  [OrderStatus.REIMBURSED]: 'error', // Event Seller has been reimbursed due to dispute
+  [OrderStatus.REJECTED]: 'error', // When PNEDING is not accepted by seller
+};

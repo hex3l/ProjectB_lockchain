@@ -1,5 +1,5 @@
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import InventoryIcon from '@mui/icons-material/Inventory';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { Avatar, Box, Container, Divider, Tab, Tabs, Typography } from '@mui/material';
 import { useState } from 'react';
@@ -39,8 +39,8 @@ const Page = () => {
           textColor="primary"
           indicatorColor="primary"
         >
-          <Tab icon={<InventoryIcon />} label="Purchased" />
-          <Tab icon={<FavoriteIcon />} label="Favorite" />
+          <Tab icon={<CheckCircleIcon />} label="Purchased" />
+          <Tab icon={<CheckCircleIcon />} label="Favorite" />
           <Tab icon={<LocalOfferIcon />} label="My listings" />
         </Tabs>
       </Box>
