@@ -9,19 +9,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { Wallet } from 'modules/Wallet';
 
-const pages = [
-  {
-    label: 'Listings',
-    url: '/listings/All',
-  },
-];
-
 function TopBar() {
+  const { isConnected } = useAccount();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -30,6 +25,24 @@ function TopBar() {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+
+  const pages = useMemo(() => {
+    const pgs = [
+      {
+        label: 'Listings',
+        url: '/listings/All',
+      },
+    ];
+
+    if (isConnected) {
+      pgs.push({
+        label: 'Manage your Deals',
+        url: '/user/offers',
+      });
+    }
+
+    return pgs;
+  }, [isConnected]);
 
   return (
     <>

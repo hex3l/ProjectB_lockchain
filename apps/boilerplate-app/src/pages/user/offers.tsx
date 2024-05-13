@@ -3,11 +3,11 @@
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import { Box, Button, Container, Tab, Tabs } from '@mui/material';
-import router from 'next/router';
+import { Box, Container, Tab, Tabs } from '@mui/material';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { OrderDto } from 'dto/OrderDto';
+import { OfferStatusRow } from 'modules/Listings/OfferStatusRow';
 import { useBackendCall } from 'utils/useBackendCall';
 
 // eslint-disable-next-line import/no-default-export
@@ -80,18 +80,7 @@ const Page = () => {
                 <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
                   {offerInfo?.map(({ id, ...offerInfo }) => (
                     <Fragment key={id}>
-                      <Box className="w-full flex flex-col gap-3">
-                        <Box className="w-full flex flex-row gap-3">
-                          <img src={offerInfo.image} alt={offerInfo.title} className="w-[100px] h-[100px]" />
-                          <Box className="w-full flex flex-col gap-3">
-                            <Box className="text-lg font-bold">{offerInfo.title}</Box>
-                            <Box className="text-sm">{offerInfo.description}</Box>
-                            <Box className="text-sm text-yellow-300">Price offered: {offerInfo.price} ETH</Box>
-                            <Button onClick={() => acceptOffer(id)}>Accept</Button>
-                            <Button onClick={() => acceptOffer(id)}>Refuse</Button>
-                          </Box>
-                        </Box>
-                      </Box>
+                      <OfferStatusRow {...{ id, ...offerInfo }} acceptOffer={acceptOffer} />
                     </Fragment>
                   ))}
                 </Box>
@@ -102,32 +91,7 @@ const Page = () => {
                 <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
                   {offerInfo?.map(({ id, ...offerInfo }) => (
                     <Fragment key={id}>
-                      <Box className="flex flex-col gap-3">
-                        <Box className="flex flex-row gap-3">
-                          <img src={offerInfo.image} alt={offerInfo.title} className="w-[100px] h-[100px]" />
-                          <Box className="flex flex-col gap-3">
-                            <Box className="text-lg font-bold">{offerInfo.title}</Box>
-                            <Box className="text-sm">{offerInfo.description}</Box>
-                            <Box className="text-sm">{offerInfo.price}</Box>
-                            {/*
-                      <Chip
-                  className="hidden md:flex"
-                  color={
-                    OrderStatusColors[offerInfo.status as keyof typeof OrderStatusFromNumber] as
-                      | 'default'
-                      | 'success'
-                      | 'warning'
-                      | 'error'
-                      | 'primary'
-                      | 'secondary'
-                      | 'info'
-                  }
-                  label={OrderStatusName[offerInfo.status as keyof typeof OrderStatusFromNumber].toUpperCase()}
-                />*/}
-                            <Button onClick={() => router.push(`/chat/${id}`)}>chat</Button>
-                          </Box>
-                        </Box>
-                      </Box>
+                      <OfferStatusRow {...{ id, ...offerInfo }} />
                     </Fragment>
                   ))}
                 </Box>
@@ -138,17 +102,7 @@ const Page = () => {
                 <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
                   {offerInfo?.map(({ id, ...offerInfo }) => (
                     <Fragment key={id}>
-                      <Box className="flex flex-col gap-3">
-                        <Box className="flex flex-row gap-3">
-                          <img src={offerInfo.image} alt={offerInfo.title} className="w-[100px] h-[100px]" />
-                          <Box className="flex flex-col gap-3">
-                            <Box className="text-lg font-bold">{offerInfo.title}</Box>
-                            <Box className="text-sm">{offerInfo.description}</Box>
-                            <Box className="text-sm">{offerInfo.price}</Box>
-                            <Box className="text-sm text-red-700">Rejected</Box>
-                          </Box>
-                        </Box>
-                      </Box>
+                      <OfferStatusRow {...{ id, ...offerInfo }} />
                     </Fragment>
                   ))}
                 </Box>
