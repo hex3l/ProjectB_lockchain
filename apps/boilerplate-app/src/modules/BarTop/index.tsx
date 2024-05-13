@@ -36,7 +36,7 @@ function TopBar() {
 
     if (isConnected) {
       pgs.push({
-        label: 'Manage your Deals',
+        label: 'Manage your Listings',
         url: '/user/offers',
       });
     }

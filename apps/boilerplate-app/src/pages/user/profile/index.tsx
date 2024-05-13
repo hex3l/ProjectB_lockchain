@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { Avatar, Box, Container, Divider, Tab, Tabs, Typography } from '@mui/material';
 import { useState } from 'react';
 import React from 'react';
 import { useAccount } from 'wagmi';
 
-import { MyFavorites, MyOrders, MyListings } from 'modules/UserLists';
+import { MyFavorites, MyOrders } from 'modules/UserLists';
 
 const Page = () => {
   const { address } = useAccount();
@@ -39,13 +38,11 @@ const Page = () => {
         >
           <Tab icon={<InventoryIcon />} label="Purchased" />
           <Tab icon={<FavoriteIcon />} label="Favorite" />
-          <Tab icon={<LocalOfferIcon />} label="My listings" />
         </Tabs>
       </Box>
       <Box sx={{ p: 3 }}>
         {value === 0 && <MyOrders />}
         {value === 1 && <MyFavorites />}
-        {value === 2 && <MyListings />}
       </Box>
     </Container>
   );

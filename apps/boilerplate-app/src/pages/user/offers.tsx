@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable prettier/prettier */
+import { LocalOffer } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -8,6 +9,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { OrderDto } from 'dto/OrderDto';
 import { OfferStatusRow } from 'modules/Listings/OfferStatusRow';
+import { MyListings } from 'modules/UserLists';
 import { useBackendCall } from 'utils/useBackendCall';
 
 // eslint-disable-next-line import/no-default-export
@@ -60,6 +62,7 @@ const Page = () => {
             textColor="primary"
             indicatorColor="primary"
           >
+            <Tab icon={<LocalOffer />} label="My listings" />
             <Tab icon={<MonetizationOnIcon />} label="Offers" />
             <Tab icon={<CheckCircleIcon />} label="Confirmed" />
             <Tab icon={<DisabledByDefaultIcon />} label="Rejected" />
@@ -67,19 +70,20 @@ const Page = () => {
         </Box>
         <Box className="flex flex-row gap-5">
           <Box className="flex flex-wrap w-full flex-row gap-5 justify-evenly">
-            {value === 0 &&
+            {value === 0 && <MyListings />}
+            {value === 1 &&
               offerInfo?.map(({ id, ...offerInfo }) => (
                 <Fragment key={id}>
                   <OfferStatusRow {...{ id, ...offerInfo }} acceptOffer={acceptOffer} />
                 </Fragment>
               ))}
-            {value === 1 &&
+            {value === 2 &&
               offerInfo?.map(({ id, ...offerInfo }) => (
                 <Fragment key={id}>
                   <OfferStatusRow {...{ id, ...offerInfo }} />
                 </Fragment>
               ))}
-            {value === 2 &&
+            {value === 3 &&
               offerInfo?.map(({ id, ...offerInfo }) => (
                 <Fragment key={id}>
                   <OfferStatusRow {...{ id, ...offerInfo }} />
