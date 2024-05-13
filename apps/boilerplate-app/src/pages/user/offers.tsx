@@ -50,64 +50,41 @@ const Page = () => {
 
   return (
     <Fragment>
-      <Box className="banner static-beach_bar">
-        <div className="static-beach_bar__waves" />
-        <div className="static-beach_bar__sand static-beach_bar__sand--background" />
-        <div className="static-beach_bar__sand static-beach_bar__sand--foreground" />
-      </Box>
-      <Box sx={{ bgcolor: '#1c1c1c', borderRadius: '16px', m: '16px' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="icon label tabs example justify-center"
-          centered
-          textColor="primary"
-          indicatorColor="primary"
-        >
-          <Tab icon={<MonetizationOnIcon />} label="Offers" />
-          <Tab icon={<CheckCircleIcon />} label="Confirmed" />
-          <Tab icon={<DisabledByDefaultIcon />} label="Rejected" />
-        </Tabs>
-      </Box>
-      <Container maxWidth="xl" className="pt-5 flex flex-col gap-5">
+      <Container fixed>
+        <Box sx={{ bgcolor: '#1c1c1c', borderRadius: '16px', margin: '15px 0' }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="icon label tabs example justify-center"
+            centered
+            textColor="primary"
+            indicatorColor="primary"
+          >
+            <Tab icon={<MonetizationOnIcon />} label="Offers" />
+            <Tab icon={<CheckCircleIcon />} label="Confirmed" />
+            <Tab icon={<DisabledByDefaultIcon />} label="Rejected" />
+          </Tabs>
+        </Box>
         <Box className="flex flex-row gap-5">
-          <Box className="h-full flex-col" sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Box className="w-[250px]" />
-          </Box>
-          <Box className="flex flex-wrap flex-row gap-5 justify-evenly">
-            {value === 0 && (
-              <Box sx={{ p: 3 }}>
-                <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-                  {offerInfo?.map(({ id, ...offerInfo }) => (
-                    <Fragment key={id}>
-                      <OfferStatusRow {...{ id, ...offerInfo }} acceptOffer={acceptOffer} />
-                    </Fragment>
-                  ))}
-                </Box>
-              </Box>
-            )}
-            {value === 1 && (
-              <Box sx={{ p: 3 }}>
-                <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-                  {offerInfo?.map(({ id, ...offerInfo }) => (
-                    <Fragment key={id}>
-                      <OfferStatusRow {...{ id, ...offerInfo }} />
-                    </Fragment>
-                  ))}
-                </Box>
-              </Box>
-            )}
-            {value === 2 && (
-              <Box sx={{ p: 3 }}>
-                <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-                  {offerInfo?.map(({ id, ...offerInfo }) => (
-                    <Fragment key={id}>
-                      <OfferStatusRow {...{ id, ...offerInfo }} />
-                    </Fragment>
-                  ))}
-                </Box>
-              </Box>
-            )}
+          <Box className="flex flex-wrap w-full flex-row gap-5 justify-evenly">
+            {value === 0 &&
+              offerInfo?.map(({ id, ...offerInfo }) => (
+                <Fragment key={id}>
+                  <OfferStatusRow {...{ id, ...offerInfo }} acceptOffer={acceptOffer} />
+                </Fragment>
+              ))}
+            {value === 1 &&
+              offerInfo?.map(({ id, ...offerInfo }) => (
+                <Fragment key={id}>
+                  <OfferStatusRow {...{ id, ...offerInfo }} />
+                </Fragment>
+              ))}
+            {value === 2 &&
+              offerInfo?.map(({ id, ...offerInfo }) => (
+                <Fragment key={id}>
+                  <OfferStatusRow {...{ id, ...offerInfo }} />
+                </Fragment>
+              ))}
           </Box>
         </Box>
       </Container>
