@@ -72,22 +72,22 @@ const chainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
     case 'Payed':
       console.log('Payed', orderId);
       await orderRepository.update(orderId, { status: OrderStatus.ACTIVE });
-      await messageRepository.save({ id_sender: order.id_creator, message: '$$$PAYED', id_order: orderId });
+      await messageRepository.save({ id_sender: order.id_creator, content: '$$$PAYED', id_order: orderId });
       return;
     case 'TargetConfirm':
       console.log('TargetConfirm', orderId);
       await orderRepository.update(orderId, { seller_confirmation: true });
-      await messageRepository.save({ id_sender: order.listing.id_creator, message: '$$$CONFIRM', id_order: orderId });
+      await messageRepository.save({ id_sender: order.listing.id_creator, content: '$$$CONFIRM', id_order: orderId });
       return;
     case 'SourceConfirm':
       console.log('SourceConfirm', orderId);
       await orderRepository.update(orderId, { buyer_confirmation: true });
-      await messageRepository.save({ id_sender: order.id_creator, message: '$$$CONFIRM', id_order: orderId });
+      await messageRepository.save({ id_sender: order.id_creator, content: '$$$CONFIRM', id_order: orderId });
       return;
     case 'Confirmed':
       console.log('Confirmed', orderId);
       await orderRepository.update(orderId, { status: OrderStatus.FINALIZED });
-      await messageRepository.save({ id_sender: order.id_creator, message: '$$$SUCCESS', id_order: orderId });
+      await messageRepository.save({ id_sender: order.id_creator, content: '$$$SUCCESS', id_order: orderId });
       return;
     default:
       return;
