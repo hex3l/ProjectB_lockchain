@@ -17,20 +17,26 @@ const Page = () => {
   const backendCall = useBackendCall();
   const [offerInfo, setOfferInfo] = useState<Array<OrderDto> | undefined>(undefined);
   const [value, setValue] = useState(0);
+  const [filter, setFilter] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    if (newValue === 1) setFilter(0);
+    if (newValue === 2) setFilter(2);
+    if (newValue === 3) setFilter(100);
     setValue(newValue);
   };
 
   useEffect(() => {
     void (async () => {
+      console.log('Filter', filter);
+
       const result = (await backendCall('order', {
         method: 'POST',
-        body: JSON.stringify({ filter: value }),
+        body: JSON.stringify({ filter: filter }),
       })) as Array<OrderDto>;
       setOfferInfo(result);
     })();
-  }, [value]);
+  }, [filter]);
 
   const acceptOffer = useCallback(
     (id: number) => {

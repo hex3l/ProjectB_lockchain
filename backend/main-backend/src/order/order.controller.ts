@@ -26,16 +26,25 @@ export class OrderController {
     const { user } = request;
     const orders = await this.orderService.findAll(user.id_user);
     console.log('orders', orders);
-    if (filter == 2) filter = 100;
     orders.map((order) => {
       console.log(order.listing.creator.address, 'user:', user.address);
       console.log(order.status, filter);
     });
-
-    const ordersFiltered = orders.filter(
-      (order) => order.listing.creator.address == user.address && order.status == filter,
-    );
-
+    let ordersFiltered = [];
+    if (filter == 1) {
+      ordersFiltered = orders.filter(
+        (order) =>
+          order.listing.creator.address == user.address &&
+          (order.status == filter ||
+            order.status == filter + 1 ||
+            order.status == filter + 2 ||
+            order.status == filter + 3),
+      );
+    } else {
+      ordersFiltered = orders.filter(
+        (order) => order.listing.creator.address == user.address && order.status == filter,
+      );
+    }
     const orderDtos: OrderDto[] = ordersFiltered.map((pippo) => {
       return {
         id: pippo.id,

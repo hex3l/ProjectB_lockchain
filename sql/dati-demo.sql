@@ -41,6 +41,9 @@ INSERT INTO public.listing
 (21, 3, 'Not human company', 'Give me a question and i ask you using chatgpt.', '/assets/defaultLogos/Fake_ai.png', 4, 1, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL),
 (22, 1, 'Best Edit ever', 'Just a simple photo editor', '/assets/defaultLogos/photo_editor.png', 6, 1, 0.1, '2024-01-28 23:22:56.953', '2024-01-28 23:22:56.953', NULL);
 
-
-
-
+INSERT INTO public.order
+(id, id_listing, price, status, seller_confirmation, buyer_confirmation, id_creator, created, updated, "deletedAt") VALUES
+(1, 3, 0.2, 0, 'false', 'false', 1, '2024-01-28 23:23:02.953', '2024-01-28 23:23:02.953', NULL),
+(2, 16, 0.1, 0, 'false', 'false', 2, '2024-01-28 23:23:02.953', '2024-01-28 23:23:02.953', NULL),
+(3, 21, 0.1, 0, 'false', 'false', 4, '2024-01-28 23:23:02.953', '2024-01-28 23:23:02.953', NULL),
+(4, 2, 0.1, 1, 'false', 'false', 3, '2024-01-28 23:23:02.953', '2024-01-28 23:23:02.953', NULL);
