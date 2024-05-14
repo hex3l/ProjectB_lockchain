@@ -122,8 +122,8 @@ const OfferStatusRow = ({
                 </Box>
               </Box>
               {!hideButtons && (
-                <Box className="hidden md:flex flex-row space-x-3">
-                  <Box className="space-x-3">
+                <Box className="hidden md:flex flex-row">
+                  <Box className="flex items-center space-x-3">
                     {status === OrderStatus.PENDING && (
                       <>
                         <Button variant="contained" color="primary" onClick={() => acceptOffer && acceptOffer(id)}>

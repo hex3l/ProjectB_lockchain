@@ -19,6 +19,11 @@ html {
   scrollbar-dark-shadow-color: #646464;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 @font-face {
   font-family: bukhari-script;
   src: url(/assets/Bukhari_Script.ttf);
