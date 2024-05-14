@@ -2,11 +2,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { ChatBubble, ShoppingBasket } from '@mui/icons-material';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Chip, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction } from 'react';
+import { useAccount } from 'wagmi';
 
-import { OrderStatus, OrderStatusFromNumber, OrderStatusName } from 'common/consts/order-status.enum';
+import {
+  OrderStatus,
+  OrderStatusColors,
+  OrderStatusFromNumber,
+  OrderStatusName,
+} from 'common/consts/order-status.enum';
 import { ListingDto } from 'dto/ListingDto';
 import { ListingOrderDto } from 'dto/ListingOrderDto';
 
@@ -25,20 +31,37 @@ export const OrderManager = ({
   setConfirmBuy: Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
+  const { address } = useAccount();
   const orderStatus: OrderStatus = OrderStatusFromNumber[listingOrder.status as keyof typeof OrderStatusFromNumber];
   return (
     <>
-      <Box className="flex md:flex-row flex-col gap-1">
+      <Box className="flex md:flex-row flex-col gap-1 items-center">
         <Box className="flex-1">
+          {listingOrder.price != listing.price && (
+            <Typography sx={{ fontSize: '24px' }} className="mr-5 line-through">
+              {listing.price}
+            </Typography>
+          )}
           <Typography sx={{ fontSize: '24px' }} className="mr-5">
-            Your price: {listing.price} ETH
+            {listingOrder.price} ETH
           </Typography>
         </Box>
 
         <Box className="">
-          <Typography sx={{ fontSize: '24px' }} className="mr-5">
-            Status: {`${OrderStatusName[orderStatus]}`}
-          </Typography>
+          <Chip
+            className="hidden md:flex"
+            color={
+              OrderStatusColors[orderStatus] as
+                | 'default'
+                | 'success'
+                | 'warning'
+                | 'error'
+                | 'primary'
+                | 'secondary'
+                | 'info'
+            }
+            label={OrderStatusName[orderStatus].toUpperCase()}
+          />
         </Box>
 
         {listingOrder.status < OrderStatus.ACTIVE && (
@@ -53,7 +76,7 @@ export const OrderManager = ({
             startIcon={<ChatBubble />}
             onClick={() => router.push(`/chat/${listingOrder.id}`)}
           >
-            Chat with seller
+            Chat with {listing.creator.address === address ? 'buyer' : 'seller'}
           </Button>
         )}
       </Box>

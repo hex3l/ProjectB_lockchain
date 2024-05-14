@@ -1,6 +1,7 @@
 import { LocalOffer, ShoppingBasket } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import { Dispatch, SetStateAction, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 import { ListingDto } from 'dto/ListingDto';
 
@@ -18,6 +19,7 @@ export const CreateOffer = ({
   listing: ListingDto;
   setConfirmBuy: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { address } = useAccount();
   const [interaction, setInteraction] = useState<string | boolean>(false);
   return (
     <>
@@ -32,7 +34,7 @@ export const CreateOffer = ({
           variant="contained"
           startIcon={<LocalOffer />}
           color="secondary"
-          disabled={interaction === Interaction.OFFER}
+          disabled={listing.creator.address === address || interaction === Interaction.OFFER}
           onClick={() => setInteraction(Interaction.OFFER)}
         >
           Make an Offer
@@ -46,7 +48,7 @@ export const CreateOffer = ({
         <Button
           variant="contained"
           startIcon={<ShoppingBasket />}
-          disabled={interaction === Interaction.OFFER}
+          disabled={listing.creator.address === address || interaction === Interaction.OFFER}
           onClick={() => setConfirmBuy(true)}
         >
           Buy
