@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -28,8 +29,9 @@ const OfferStatusRow = ({
   id_listing,
   buyer,
   acceptOffer,
+  refuseOffer,
   hideButtons,
-}: OrderDto & { hideButtons?: boolean; acceptOffer?: (id: number) => void }) => {
+}: OrderDto & { hideButtons?: boolean; acceptOffer?: (id: number) => void; refuseOffer?: (id: number) => void }) => {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const backendCall = useBackendCall();
@@ -129,7 +131,7 @@ const OfferStatusRow = ({
                         <Button variant="contained" color="primary" onClick={() => acceptOffer && acceptOffer(id)}>
                           Accept
                         </Button>
-                        <Button variant="contained" color="secondary" onClick={() => acceptOffer && acceptOffer(id)}>
+                        <Button variant="contained" color="secondary" onClick={() => refuseOffer && refuseOffer(id)}>
                           Refuse
                         </Button>
                       </>

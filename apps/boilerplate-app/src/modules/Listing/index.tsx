@@ -17,6 +17,7 @@ import { FavoriteBorder, Flag, Share } from '@mui/icons-material';
 import Favorite from '@mui/icons-material/Favorite';
 import { Avatar, Box, Chip, Container, Divider, IconButton, Paper, Rating, Stack, Typography } from '@mui/material';
 import { watchContractEvent } from '@wagmi/core';
+import Link from 'next/link';
 import { useSnackbar } from 'notistack';
 import { memo, useCallback, useContext, useEffect, useState } from 'react';
 import { Slide } from 'react-slideshow-image';
@@ -226,7 +227,9 @@ const ListingComponent = ({
                   <Box className="flex flex-row gap-3 pt-3">
                     <Avatar />
                     <Box className="flex flex-col md:flex-none flex-1 justify-center">
-                      <Typography className="break-all">{listing.creator.address}</Typography>
+                      <Typography className="break-all">
+                        <Link href={`/user/profile/${listing.creator.address}`}>{listing.creator.address}</Link>
+                      </Typography>
                       <Typography>Seller since {new Date(listing.creator.created).toLocaleDateString()}</Typography>
                     </Box>
                     <Box className="flex items-center">

@@ -1,29 +1,34 @@
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { StarBorder } from '@mui/icons-material';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { Avatar, Box, Container, Divider, Tab, Tabs, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import React from 'react';
-import { useAccount } from 'wagmi';
 
-import { Offer } from 'modules/Listings/OfferBox/Offer';
-
-import listingsFav from '../../../common/listingFav.json';
-import listingsMy from '../../../common/listingMy.json';
-import listings from '../../../common/listings copy.json';
+import { UserLisings } from 'modules/UserLists/UserListings';
 
 const Page = () => {
-  const { address } = useAccount();
+  const router = useRouter();
+  const [address, setAddress] = useState<string | null | undefined>(undefined);
   const [value, setValue] = useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && router.query.id) {
+      setAddress(Array.isArray(router.query.id) ? router.query.id[0] : router.query.id ?? null);
+    }
+  }, [router.query.id]);
+
   return (
     <Container fixed>
       <Box className="flex flex-row gap-3 pt-3">
         <Avatar sx={{ width: 96, height: 96 }} />
         <Box className="flex flex-col md:flex-none flex-1 justify-center">
-          <Typography>${address}</Typography>
+          <Typography>{address}</Typography>
           <Divider />
           <Typography variant="caption" display="block" gutterBottom>
             Seller since 2021
@@ -39,39 +44,13 @@ const Page = () => {
           textColor="primary"
           indicatorColor="primary"
         >
-          <Tab icon={<CheckCircleIcon />} label="Purchased" />
-          <Tab icon={<CheckCircleIcon />} label="Favorite" />
-          <Tab icon={<LocalOfferIcon />} label="My listings" />
+          <Tab icon={<InventoryIcon />} label="Listings" />
+          <Tab icon={<StarBorder />} label="Ratings" />
         </Tabs>
       </Box>
-      <Box>
-        {value === 0 && (
-          <Box sx={{ p: 3 }}>
-            <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-              {listings.map(({ id, ...listing }) => (
-                <Offer key={id} {...{ ...listing, id }} />
-              ))}
-            </Box>
-          </Box>
-        )}
-        {value === 1 && (
-          <Box sx={{ p: 3 }}>
-            <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-              {listingsFav.map(({ id, ...listing }) => (
-                <Offer key={id} {...{ ...listing, id }} />
-              ))}
-            </Box>
-          </Box>
-        )}
-        {value === 2 && (
-          <Box sx={{ p: 3 }}>
-            <Box sx={{ justifyContent: 'center' }} className="flex flex-wrap flex-row gap-5 justify-center">
-              {listingsMy.map(({ id, ...listing }) => (
-                <Offer key={id} {...{ ...listing, id }} />
-              ))}
-            </Box>
-          </Box>
-        )}
+      <Box sx={{ p: 3 }}>
+        {value === 0 && address && <UserLisings address={address} />}
+        {value === 1 && <>Feature coming soon</>}
       </Box>
     </Container>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable prettier/prettier */
 import { LocalOffer } from '@mui/icons-material';
@@ -46,10 +47,36 @@ const Page = () => {
           id,
         }),
       })
-        .then((offers) => {
-          setOfferInfo(offers as Array<OrderDto>);
+        .then(async () => {
+          const result = (await backendCall('order', {
+            method: 'POST',
+            body: JSON.stringify({ filter: filter }),
+          })) as Array<OrderDto>;
+          setOfferInfo(result);
         })
-        .catch((error) => {
+        .catch((error: any) => {
+          console.error(error);
+        });
+    },
+    [offerInfo, backendCall],
+  );
+
+  const refuseOffer = useCallback(
+    (id: number) => {
+      backendCall('order/reject', {
+        method: 'POST',
+        body: JSON.stringify({
+          id,
+        }),
+      })
+        .then(async () => {
+          const result = (await backendCall('order', {
+            method: 'POST',
+            body: JSON.stringify({ filter: filter }),
+          })) as Array<OrderDto>;
+          setOfferInfo(result);
+        })
+        .catch((error: any) => {
           console.error(error);
         });
     },
@@ -134,7 +161,7 @@ const Page = () => {
             {value === 1 &&
               offerInfo?.map(({ id, ...offerInfo }) => (
                 <Fragment key={id}>
-                  <OfferStatusRow {...{ id, ...offerInfo }} acceptOffer={acceptOffer} />
+                  <OfferStatusRow {...{ id, ...offerInfo }} acceptOffer={acceptOffer} refuseOffer={refuseOffer} />
                 </Fragment>
               ))}
             {value === 2 &&
