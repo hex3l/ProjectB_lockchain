@@ -11,4 +11,5 @@ export type OrderDto = {
   price: number;
   seller_confimation: boolean;
   buyer_confirmation: boolean;
+  is_dispute: boolean;
 };

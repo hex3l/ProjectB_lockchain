@@ -58,6 +58,31 @@ export class OrderController {
         price: pippo.price,
         seller_confimation: pippo.seller_confirmation,
         buyer_confirmation: pippo.buyer_confirmation,
+        is_dispute: pippo.is_dispute,
+      };
+    }, []);
+    return orderDtos;
+  }
+
+  @Private()
+  @Get('dispute')
+  async findDispute(@Req() request: any): Promise<OrderDto[]> {
+    const { user } = request;
+    const orders = await this.orderService.findDispute();
+    const orderDtos: OrderDto[] = orders.map((pippo) => {
+      return {
+        id: pippo.id,
+        title: pippo.listing.title,
+        seller: pippo.listing.creator.address,
+        buyer: pippo.creator.address,
+        status: pippo.status,
+        image: pippo.listing.image,
+        description: pippo.listing.description,
+        id_listing: pippo.listing.id,
+        price: pippo.price,
+        seller_confimation: pippo.seller_confirmation,
+        buyer_confirmation: pippo.buyer_confirmation,
+        is_dispute: pippo.is_dispute,
       };
     }, []);
     return orderDtos;
@@ -84,6 +109,7 @@ export class OrderController {
         price: orderInfo.price,
         seller_confimation: orderInfo.seller_confirmation,
         buyer_confirmation: orderInfo.buyer_confirmation,
+        is_dispute: orderInfo.is_dispute,
       };
       console.log('OrderDto', orderDto);
       return orderDto;
@@ -107,7 +133,7 @@ export class OrderController {
     const order = await this.orderService.findById(id);
     if (user.id_user === order.listing.id_creator && order.status === OrderStatus.PENDING) {
       await this.orderService.update(id, { status: OrderStatus.REJECTED });
-      return { id: order.id, status: OrderStatus.REJECTED };
+      return { id: order.id, status: OrderStatus.REJECTED, is_dispute: false };
     }
     throw new Error('Only seller can confirm, or order not in pending status');
   }
@@ -124,7 +150,7 @@ export class OrderController {
       //non legge l'id del creatore
       await this.orderService.update(id, { status: OrderStatus.CONFIRMED });
       await this.listingService.update(order.id_listing, { status: ListingStatus.SOLD });
-      return { id: order.id, status: OrderStatus.CONFIRMED };
+      return { id: order.id, status: OrderStatus.CONFIRMED, is_dispute: false };
     }
     throw new Error('Only seller can confirm, or order not in pending status');
   }
@@ -165,6 +191,18 @@ export class OrderController {
 
     return savedOrder;
   } // Only a buyer can create
+
+  @Private()
+  @Post('/openDispute')
+  async openDispute(@Body() { id }: OrderIdDto, @Req() request: any): Promise<OrderStatusChangeDto> {
+    const { user } = request;
+    const order = await this.orderService.findById(id);
+    if (user.id_user === order.listing.id_creator || user.id_user === order.id_creator) {
+      await this.orderService.update(id, { is_dispute: true });
+      return { id: order.id, status: order.status, is_dispute: true };
+    }
+    throw new Error('Only buyer or seller can open dispute');
+  }
 
   @Private()
   @Post('/pay')
@@ -211,4 +249,20 @@ export class OrderController {
 
     return;
   } // Only a buyer can create
+
+  @Private()
+  @Post('/payBuyer')
+  async payBuyer(@Body() { id }: OrderIdDto, @Req() request: any): Promise<void> {
+    const { user } = request;
+    this.contractService.discard(id);
+    await this.orderService.update(id, { is_dispute: false });
+  }
+
+  @Private()
+  @Post('/paySeller')
+  async paySeller(@Body() { id }: OrderIdDto, @Req() request: any): Promise<void> {
+    const { user } = request;
+    this.contractService.accept(id);
+    await this.orderService.update(id, { is_dispute: false });
+  }
 }

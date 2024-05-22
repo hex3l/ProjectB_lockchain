@@ -232,9 +232,8 @@ const Page = () => {
             </Box>
           </Box>
         </Paper>
-        <Button variant="contained" color="primary" onClick={() => openDispute()}>
-          {' '}
-          Open Dispute{' '}
+        <Button disabled={orderInfo.is_dispute} variant="contained" color="primary" onClick={() => openDispute()}>
+          {orderInfo.is_dispute ? 'Dispute already opened' : 'Open Dispute'}
         </Button>
       </Container>
     </Fragment>

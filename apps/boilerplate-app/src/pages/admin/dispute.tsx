@@ -2,10 +2,10 @@
 /* eslint-disable prettier/prettier */
 
 import { Container, Box } from '@mui/material';
-import { id } from 'date-fns/locale';
+import { Fragment, useCallback, useEffect, useState } from 'react';
+
 import { OrderDto } from 'dto/OrderDto';
 import { DisputeStatusRow } from 'modules/Listings/DisputeStatusRow';
-import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useBackendCall } from 'utils/useBackendCall';
 
 // eslint-disable-next-line import/no-default-export
@@ -28,8 +28,11 @@ const Page = () => {
         method: 'POST',
         body: JSON.stringify({ id }),
       })
-        .then((offers) => {
-          setOfferInfo(offers as Array<OrderDto>);
+        .then(async () => {
+          const result = (await backendCall('order/dispute', {
+            method: 'GET',
+          })) as Array<OrderDto>;
+          setOfferInfo(result);
         })
         .catch((error) => {
           console.error(error);
@@ -44,8 +47,11 @@ const Page = () => {
         method: 'POST',
         body: JSON.stringify({ id }),
       })
-        .then((offers) => {
-          setOfferInfo(offers as Array<OrderDto>);
+        .then(async () => {
+          const result = (await backendCall('order/dispute', {
+            method: 'GET',
+          })) as Array<OrderDto>;
+          setOfferInfo(result);
         })
         .catch((error) => {
           console.error(error);

@@ -31,6 +31,7 @@ export class OrderService {
         price: true,
         seller_confirmation: true,
         buyer_confirmation: true,
+        is_dispute: true,
       },
       relations: { listing: { creator: true }, creator: true },
     });
@@ -38,6 +39,23 @@ export class OrderService {
 
   update(id: any, order: any): Promise<UpdateResult> {
     return this.offerRepository.update({ id }, order);
+  }
+
+  async findDispute(): Promise<Order[]> {
+    const where = [];
+    return await this.offerRepository.find({
+      where: { is_dispute: true },
+      select: {
+        id: true,
+        listing: { title: true, image: true, description: true, id: true, creator: { address: true } },
+        creator: { address: true },
+        status: true,
+        price: true,
+        seller_confirmation: true,
+        buyer_confirmation: true,
+      },
+      relations: { listing: { creator: true }, creator: true },
+    });
   }
 
   async findAll(user: number): Promise<Order[]> {
