@@ -49,6 +49,9 @@ export class Order {
   @JoinColumn({ name: 'id_creator' })
   creator: User;
 
+  @Column({ type: 'boolean', nullable: false, default: false })
+  is_dispute: boolean;
+
   @CreateDateColumn()
   created!: Date;
 

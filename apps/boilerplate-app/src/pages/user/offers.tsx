@@ -22,7 +22,7 @@ const Page = () => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (newValue === 1) setFilter(0);
-    if (newValue === 2) setFilter(2);
+    if (newValue === 2) setFilter(1);
     if (newValue === 3) setFilter(100);
     setValue(newValue);
   };

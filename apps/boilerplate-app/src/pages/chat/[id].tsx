@@ -84,6 +84,17 @@ const Page = () => {
     })();
   }, [orderID, newMessage]);
 
+  const openDispute = useCallback(() => {
+    void (async () => {
+      await backendCall(`order/openDispute`, {
+        method: 'POST',
+        body: JSON.stringify({ id: orderInfo.id }),
+      });
+      setUpdate(true);
+      setNewMessage('');
+    })();
+  }, [orderID, orderInfo, backendCall]);
+
   const config = useConfig();
   useEffect(() => {
     if (contract && abi) {
@@ -221,6 +232,10 @@ const Page = () => {
             </Box>
           </Box>
         </Paper>
+        <Button variant="contained" color="primary" onClick={() => openDispute()}>
+          {' '}
+          Open Dispute{' '}
+        </Button>
       </Container>
     </Fragment>
   );
