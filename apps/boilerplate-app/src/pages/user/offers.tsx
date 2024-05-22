@@ -5,7 +5,8 @@ import { LocalOffer } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import { Box, Container, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Button, Container, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { OrderDto } from 'dto/OrderDto';
@@ -15,6 +16,7 @@ import { useBackendCall } from 'utils/useBackendCall';
 
 // eslint-disable-next-line import/no-default-export
 const Page = () => {
+  const router = useRouter();
   const backendCall = useBackendCall();
   const [offerInfo, setOfferInfo] = useState<Array<OrderDto> | undefined>(undefined);
   const [value, setValue] = useState(0);
@@ -133,10 +135,11 @@ const Page = () => {
         <Box className="flex flex-row">
           <Box className="h-[80px]" />
           <Box
-            className="topbar flex flex-col md:flex-row gap-5 p-5"
+            className="topbar flex flex-col md:flex-row gap-5 py-5"
             sx={{ width: topbarWidth ? `${topbarWidth}px !important` : '100%' }}
           >
-            <Paper className="flex-1 flex h-[60px] items-center justify-center">
+            <Paper className="flex-1 flex-col md:flex-row flex h-[60px] items-center justify-center">
+              <Box className="hidden md:flex flex-row flex-1"></Box>
               <Box sx={{ bgcolor: '#1c1c1c', borderRadius: '16px', margin: '15px 0' }}>
                 <Tabs
                   value={value}
@@ -151,6 +154,13 @@ const Page = () => {
                   <Tab icon={<CheckCircleIcon />} label="Confirmed" />
                   <Tab icon={<DisabledByDefaultIcon />} label="Rejected" />
                 </Tabs>
+              </Box>
+              <Box className="flex flex-row md:flex-1 justify-center">
+                <Box className="p-3">
+                  <Button variant="contained" color="primary" onClick={() => router.push(`/listing/create`)}>
+                    Create new
+                  </Button>
+                </Box>
               </Box>
             </Paper>
           </Box>

@@ -9,14 +9,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useContext, useMemo, useState } from 'react';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { Wallet } from 'modules/Wallet';
+import { GlobalStateContext } from 'utils/GlobalState';
 
 function TopBar() {
-  const { isConnected } = useAccount();
+  const { state } = useContext(GlobalStateContext);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -34,7 +34,7 @@ function TopBar() {
       },
     ];
 
-    if (isConnected) {
+    if (state.auth.jwt) {
       pgs.push({
         label: 'Manage your Listings',
         url: '/user/offers',
@@ -42,7 +42,7 @@ function TopBar() {
     }
 
     return pgs;
-  }, [isConnected]);
+  }, [state.auth.jwt]);
 
   return (
     <>
