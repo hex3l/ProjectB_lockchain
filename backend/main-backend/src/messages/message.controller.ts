@@ -32,7 +32,6 @@ export class MessageController {
     message.content = messageDto.content;
     message.id_order = params.id_order;
     message.id_sender = user.id_user;
-    console.log(message);
     return this.messageService.save(message);
   }
 }

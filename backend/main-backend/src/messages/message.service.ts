@@ -37,7 +37,6 @@ export class MessageService {
   }
 
   findAllByOrder(id_order: number): Promise<Message[]> {
-    console.log(id_order);
     return this.messageRepository.find({
       where: { id_order },
       relations: { sender: true },

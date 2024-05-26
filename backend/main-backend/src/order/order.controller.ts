@@ -253,12 +253,15 @@ export class OrderController {
   @Private()
   @Post('/payBuyer')
   async payBuyer(@Body() { id }: OrderIdDto, @Req() request: any): Promise<void> {
-    this.contractService.discard(id);
+    console.log(await this.contractService.getDeal(id));
+    await this.contractService.discard(id);
+    console.log(await this.contractService.getDeal(id));
   }
 
   @Private()
   @Post('/paySeller')
   async paySeller(@Body() { id }: OrderIdDto, @Req() request: any): Promise<void> {
-    this.contractService.accept(id);
+    await this.contractService.accept(id);
+    console.log(await this.contractService.getDeal(id));
   }
 }

@@ -64,7 +64,7 @@ contract DealHandler {
 
   // Creates a virtual deal for the transaction
   //
-  function createDeal( uint dealID, uint amount,  address _source, address _target) public payable onlyAlive {
+  function createDeal(uint dealID, uint amount, address _source, address _target) public payable onlyAlive {
     require(msg.sender == owner, 'You are not the owner');
     deals[dealID] = Deal(amount, payable(_source), payable(_target), false, false, false, true);
     emit CreatedDeal(dealID);
@@ -105,19 +105,20 @@ contract DealHandler {
     emit DeletedDeal(_id);
   }
 
-  function payDeal(uint _idl) public payable {
-    require(msg.sender == deals[_idl].source, 'You are not the source!');
-    require(msg.value == deals[_idl].amount, 'Wrong amount!');
-    require(deals[_idl].payed == false, 'Deal already payed!');
+  function payDeal(uint _id) public payable {
+    require(msg.sender == deals[_id].source, 'You are not the source!');
+    require(msg.value == deals[_id].amount, 'Wrong amount!');
+    require(deals[_id].payed == false, 'Deal already payed!');
 
-    deals[_idl].payed = true;
+    deals[_id].payed = true;
 
-    emit Payed(_idl);
+    emit Payed(_id);
   }
 
   // Function to discard dispute on a deal, callable only by the owner
   function discardDeal(uint _id) public {
     require(msg.sender == owner, 'only the owner can perform this action!'); //this could go in a modifier, but as long as only condition is there a require is fine.
+    deals[_id].valid = false;
     deals[_id].source.transfer(deals[_id].amount);
     emit Reimbursed(_id);
     delete deals[_id];
@@ -128,7 +129,7 @@ contract DealHandler {
   //not entirely sure if this is the suitable way, the different approach is to make the seller now elegible to claim the earned money directly from the smartdeal on his own.
   function completeAndPay(uint _id) public {
     require(msg.sender == owner, 'only the owner can perform this action!'); //this could go in a modifier, but as long as only condition is there a require is fine.
-    deals[_idl].valid = false;
+    deals[_id].valid = false;
     deals[_id].target.transfer(deals[_id].amount);
     emit Confirmed(_id, deals[_id].source, deals[_id].target, deals[_id].amount);
     delete deals[_id];
