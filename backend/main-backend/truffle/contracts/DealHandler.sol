@@ -55,7 +55,6 @@ contract DealHandler {
   }
 
   modifier onlyAlive() {
-    require(msg.value > 0, 'Amount must be higher than 0');
     require(!selfDestructInitiated, 'cannot create new deal, only pending one are still accepted');
     _;
   }
