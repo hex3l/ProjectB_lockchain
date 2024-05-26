@@ -253,16 +253,12 @@ export class OrderController {
   @Private()
   @Post('/payBuyer')
   async payBuyer(@Body() { id }: OrderIdDto, @Req() request: any): Promise<void> {
-    const { user } = request;
     this.contractService.discard(id);
-    await this.orderService.update(id, { is_dispute: false });
   }
 
   @Private()
   @Post('/paySeller')
   async paySeller(@Body() { id }: OrderIdDto, @Req() request: any): Promise<void> {
-    const { user } = request;
     this.contractService.accept(id);
-    await this.orderService.update(id, { is_dispute: false });
   }
 }

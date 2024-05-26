@@ -106,12 +106,12 @@ const chainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
       return;
     case 'Confirmed':
       console.log('Confirmed', orderId);
-      await orderRepository.update(orderId, { status: OrderStatus.FINALIZED });
+      await orderRepository.update(orderId, { status: OrderStatus.FINALIZED, is_dispute: false });
       await messageRepository.save({ id_sender: order.id_creator, content: '$$$SUCCESS', id_order: orderId });
       return;
     case 'Reimbursed':
       console.log('Reimbursed', orderId);
-      await orderRepository.update(orderId, { status: OrderStatus.REIBURSED });
+      await orderRepository.update(orderId, { status: OrderStatus.REIBURSED, is_dispute: false });
       await messageRepository.save({ id_sender: order.id_creator, content: '$$$REIMBURSED', id_order: orderId });
       return;
     default:
