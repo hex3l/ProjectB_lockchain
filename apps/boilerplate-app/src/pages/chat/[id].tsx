@@ -31,6 +31,7 @@ const Page = () => {
   const [orderID, setOrderID] = useState<string | undefined>(undefined);
   const [messageList, setMessageList] = useState<Array<MessageDto>>([]);
   const [update, setUpdate] = useState<boolean>(true);
+  const [updateOrder, setUpdateOrder] = useState<boolean>(false);
   const [newMessage, setNewMessage] = useState<string>('');
   const [orderInfo, setOrderInfo] = useState<OrderDto>({} as OrderDto);
   const { writeContract } = useWriteContract();
@@ -63,9 +64,10 @@ const Page = () => {
       if (orderID !== undefined) {
         const result = (await backendCall(`order/info/${orderID}`)) as OrderDto;
         setOrderInfo(result);
+        setUpdateOrder(false);
       }
     })();
-  }, [orderID]);
+  }, [orderID, updateOrder]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && router.query.id) {
@@ -90,7 +92,7 @@ const Page = () => {
         method: 'POST',
         body: JSON.stringify({ id: orderInfo.id }),
       });
-      setUpdate(true);
+      setUpdateOrder(true);
       setNewMessage('');
     })();
   }, [orderID, orderInfo, backendCall]);
@@ -254,27 +256,13 @@ const Message = ({
   buyer: boolean;
 }) => {
   const orderStateChange = useMemo(() => {
-    if (buyer) {
-      // if the message is from the buyer
-      const buyerPron = right ? 'You have' : 'The buyer has';
-      switch (message) {
-        case '$$$PAYED':
-          return ['Order payed', `${buyerPron} have payed the order`];
-        case '$$$CONFIRM':
-          return ['Confirmed', `${buyerPron} confirmed reception of the order`];
-        case '$$$REIMBURSED':
-          return ['Order has been reimbursed', `${buyerPron} been reimbursed`];
-        default:
-          return undefined;
-      }
-    }
-    // If the message is from the seller
-    const sellerPron = right ? 'You have' : 'The seller has';
     switch (message) {
+      case '$$$PAYED':
+        return ['Order payed', 'has payed the order'];
       case '$$$CONFIRM':
-        return ['Confirmed', `${sellerPron} confirmed the order`];
+        return ['Confirmed', 'confirmed', 'of the order'];
       case '$$$SUCCESS':
-        return ['Order completed', `The order has been completed. ${sellerPron} been payed`];
+        return 'Order completed';
       default:
         return undefined;
     }
