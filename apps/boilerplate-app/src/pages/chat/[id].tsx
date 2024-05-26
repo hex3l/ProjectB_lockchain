@@ -193,17 +193,18 @@ const Page = () => {
       <Container fixed className="flex flex-col gap-5 pt-5">
         <Paper className="flex flex-col gap-5 p-5">
           <Box className="flex flex-col-reverse gap-y-5 max-h-[300px] overflow-auto p-3">
-            {messageList?.map(({ id, ...message }) => (
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              <Message
-                key={id}
-                message={message.content}
-                address={message.sender.address}
-                right={message.sender.address === address}
-                buyer={orderInfo.buyer === message.sender.address}
-                timestamp={message.created}
-              />
-            ))}
+            {orderInfo.buyer &&
+              messageList?.map(({ id, ...message }) => (
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                <Message
+                  key={id}
+                  message={message.content}
+                  address={message.sender.address}
+                  right={message.sender.address === address}
+                  buyer={orderInfo.buyer === message.sender.address}
+                  timestamp={message.created}
+                />
+              ))}
             <div className="w-full flex flex-col justify-center text-[13px]">
               <div className="w-full flex justify-center">Start of chat with</div>
               <div className="w-full flex justify-center text-[15px]">
