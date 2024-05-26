@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { In, Repository, UpdateResult } from 'typeorm';
 import { Order } from './order.entity';
 import { OrdersFindDto } from './dto/order-find.dto';
 import { OrderDto } from './dto/OrderDto';
@@ -12,6 +12,8 @@ export class OrderService {
   constructor(
     @InjectRepository(Order)
     private offerRepository: Repository<Order>,
+    @InjectRepository(Listing)
+    private listingRepository: Repository<Listing>,
   ) {}
 
   save(lisiting: any): Promise<Order> {
@@ -79,7 +81,11 @@ export class OrderService {
     return this.offerRepository.findOne({ where: { id }, relations: ['listing', 'listing.creator'] });
   }
 
-  findByListing(id: number, user?: number): Promise<Order> {
+  async findByListing(id: number, user?: number): Promise<Order> {
+    const listing = await this.listingRepository.findOne({ where: { id } });
+    if (listing.id_creator === user) {
+      return this.offerRepository.findOne({ where: { id_listing: id, status: In([2, 3, 4, 5, 100]) } });
+    }
     return this.offerRepository.findOne({
       where: { listing: { id }, id_creator: user },
       select: ['id', 'id_listing', 'price', 'status'],
