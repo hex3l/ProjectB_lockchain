@@ -64,7 +64,7 @@ contract DealHandler {
 
   // Creates a virtual deal for the transaction
   //
-  function createDeal(uint dealID, uint amount, address _source, address _target) public payable onlyAlive {
+  function createDeal(uint dealID, uint amount, address _source, address _target) public onlyAlive {
     require(msg.sender == owner, 'You are not the owner');
     deals[dealID] = Deal(amount, payable(_source), payable(_target), false, false, false, true);
     emit CreatedDeal(dealID);
@@ -118,7 +118,6 @@ contract DealHandler {
   // Function to discard dispute on a deal, callable only by the owner
   function discardDeal(uint _id) public {
     require(msg.sender == owner, 'only the owner can perform this action!'); //this could go in a modifier, but as long as only condition is there a require is fine.
-    deals[_id].valid = false;
     deals[_id].source.transfer(deals[_id].amount);
     emit Reimbursed(_id);
     delete deals[_id];
@@ -129,7 +128,6 @@ contract DealHandler {
   //not entirely sure if this is the suitable way, the different approach is to make the seller now elegible to claim the earned money directly from the smartdeal on his own.
   function completeAndPay(uint _id) public {
     require(msg.sender == owner, 'only the owner can perform this action!'); //this could go in a modifier, but as long as only condition is there a require is fine.
-    deals[_id].valid = false;
     deals[_id].target.transfer(deals[_id].amount);
     emit Confirmed(_id, deals[_id].source, deals[_id].target, deals[_id].amount);
     delete deals[_id];

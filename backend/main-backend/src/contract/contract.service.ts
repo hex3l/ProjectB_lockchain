@@ -52,7 +52,7 @@ export class ContractService {
     try {
       const result = await this.contract.methods
         .createDeal(dealId, this.web3.utils.toWei(amount, 'ether'), source, target)
-        .send({ value: '1', gas: '6721975' });
+        .send({ gas: '6721975' });
       return { data: result, error: undefined };
     } catch (error) {
       console.log(error);
@@ -62,7 +62,7 @@ export class ContractService {
 
   async discard(dealId: number) {
     try {
-      const result = await this.contract.methods.discardDeal(dealId).send({ value: '1', gas: '6721975' });
+      const result = await this.contract.methods.discardDeal(dealId).send({ gas: '6721975' });
       return { data: result, error: undefined };
     } catch (error) {
       console.log(error);
@@ -72,7 +72,7 @@ export class ContractService {
 
   async accept(dealId: number) {
     try {
-      const result = await this.contract.methods.completeAndPay(dealId).send({ value: '1', gas: '6721975' });
+      const result = await this.contract.methods.completeAndPay(dealId).send({ gas: '6721975' });
       return { data: result, error: undefined };
     } catch (error) {
       console.log(error);
