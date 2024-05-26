@@ -122,6 +122,7 @@ export class OrderController {
   @Get('/listing/:id')
   findByListing(@Param('id') id: number, @Req() request: any): Promise<Order> {
     const { user } = request;
+
     return this.orderService.findByListing(id, user.id_user);
   }
 
