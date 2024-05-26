@@ -254,13 +254,27 @@ const Message = ({
   buyer: boolean;
 }) => {
   const orderStateChange = useMemo(() => {
+    if (buyer) {
+      // if the message is from the buyer
+      const buyerPron = right ? 'You have' : 'The buyer has';
+      switch (message) {
+        case '$$$PAYED':
+          return ['Order payed', `${buyerPron} have payed the order`];
+        case '$$$CONFIRM':
+          return ['Confirmed', `${buyerPron} confirmed reception of the order`];
+        case '$$$REIMBURSED':
+          return ['Order has been reimbursed', `${buyerPron} been reimbursed`];
+        default:
+          return undefined;
+      }
+    }
+    // If the message is from the seller
+    const sellerPron = right ? 'You have' : 'The seller has';
     switch (message) {
-      case '$$$PAYED':
-        return ['Order payed', 'has payed the order'];
       case '$$$CONFIRM':
-        return ['Confirmed', 'confirmed', 'of the order'];
+        return ['Confirmed', `${sellerPron} confirmed the order`];
       case '$$$SUCCESS':
-        return 'Order completed';
+        return ['Order completed', `The order has been completed. ${sellerPron} been payed`];
       default:
         return undefined;
     }
