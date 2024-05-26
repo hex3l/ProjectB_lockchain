@@ -128,7 +128,6 @@ const Page = () => {
           abi,
           address: contract,
           functionName: orderInfo.buyer == address ? 'confirmSourceDeal' : 'confirmTargetDeal',
-          gas: BigInt(6721975),
           args: [BigInt(orderInfo.id)],
         },
         { onError: (err) => console.error(err) },

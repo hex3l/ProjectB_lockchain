@@ -96,7 +96,8 @@ contract DealHandler {
   //		- ERC20-like approach: The sender of the message (so final users) will have to specify an amount (higher than the msg.value). In short, the final user pays those fees.
   function fulfillDeal(uint _id) private onlyAgreed(_id) {
     //if (deals[_id].sourceConfirmation == true && deals[_id].targetConfirmation == true) { //this can be modified as a modifier I guess
-    require(deals[_id].amount > address(this).balance, 'Insufficient funds');
+    require(deals[_id].amount <= address(this).balance, 'Insufficient contract funds'); // should never happen
+    require(deals[_id].valid == true, 'Deal is not valid');
     deals[_id].target.transfer(deals[_id].amount);
     emit Confirmed(_id, deals[_id].source, deals[_id].target, deals[_id].amount);
     // TODO: elimino il Deal dall'hashmap
@@ -127,7 +128,7 @@ contract DealHandler {
   //not entirely sure if this is the suitable way, the different approach is to make the seller now elegible to claim the earned money directly from the smartdeal on his own.
   function completeAndPay(uint _id) public {
     require(msg.sender == owner, 'only the owner can perform this action!'); //this could go in a modifier, but as long as only condition is there a require is fine.
-
+    deals[_idl].valid = false;
     deals[_id].target.transfer(deals[_id].amount);
     emit Confirmed(_id, deals[_id].source, deals[_id].target, deals[_id].amount);
     delete deals[_id];
