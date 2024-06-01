@@ -26,6 +26,7 @@ interface I {
 
 contract GoldenNugget is ERC20, ERC20Pausable, Ownable, ERC20Permit {
 
+ event ReviewLeft(uint indexed id);
 I dealInterface;
 // GreeterInterface GreeterContract = GreeterInterface(OTHER_CONTRACT);
     struct Deal {
@@ -54,7 +55,7 @@ I dealInterface;
         _unpause();
     }
 
-    function mint(uint dealID, bool flag) public returns (bool ){
+    function mint(uint dealID, bool flag) public{
         // require(DealHandler(0xF7d6Cf0B3fA5779692deD8862c495091a8035e38).deals(dealID).valid == true, "Deal has not been reviewed yet");
          require(dealInterface.getDealType(dealID).source == msg.sender, "Not the original buyer!");
         // require(deals[dealID].payed == true, "Deal has not been payed yet");
@@ -69,7 +70,8 @@ I dealInterface;
          else {
             _mint(dealInterface.getDealType(dealID).target, 1); //mint 1 GDN token for the seller, 2 if good review TODO
          }
-        return false;
+         emit ReviewLeft(dealID);
+        
     }
 
     // The following functions are overrides required by Solidity.
