@@ -1,11 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { ChatBubble, ShoppingBasket } from '@mui/icons-material';
 import { Box, Button, Chip, Typography } from '@mui/material';
+import { watchContractEvent } from '@wagmi/core';
 import { useRouter } from 'next/router';
-import { Dispatch, SetStateAction } from 'react';
-import { useAccount } from 'wagmi';
+import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
+import { useAccount, useConfig, useWriteContract } from 'wagmi';
 
 import {
   OrderStatus,
@@ -15,6 +19,7 @@ import {
 } from 'common/consts/order-status.enum';
 import { ListingDto } from 'dto/ListingDto';
 import { ListingOrderDto } from 'dto/ListingOrderDto';
+import { GlobalStateContext } from 'utils/GlobalState';
 
 export const Interaction = {
   OFFER: 'offer',
@@ -32,7 +37,51 @@ export const OrderManager = ({
 }) => {
   const router = useRouter();
   const { address } = useAccount();
-  const orderStatus: OrderStatus = OrderStatusFromNumber[listingOrder.status as keyof typeof OrderStatusFromNumber];
+  const { writeContract } = useWriteContract();
+  const { state } = useContext(GlobalStateContext);
+  const { nuggetAbi, nuggetContract } = state.auth;
+  const [localOrderStatus, setLocalOrderStatus] = useState(listingOrder.status);
+  const orderStatus: OrderStatus = OrderStatusFromNumber[localOrderStatus as keyof typeof OrderStatusFromNumber];
+
+  const leaveFeedback = useCallback(
+    (feedback: boolean) => {
+      if (nuggetContract && listingOrder.id)
+        writeContract(
+          {
+            abi: nuggetAbi,
+            address: nuggetContract,
+            functionName: 'mint',
+            args: [BigInt(listingOrder.id), feedback],
+          },
+          { onError: (err) => console.error(err) },
+        );
+    },
+    [listingOrder.id, nuggetAbi, nuggetContract, writeContract],
+  );
+
+  const config = useConfig();
+  useEffect(() => {
+    if ((listingOrder.id, nuggetAbi, nuggetContract)) {
+      const onLogs = (logs: any) => {
+        for (const log of logs) {
+          console.log('Blockchain event:', log.eventName);
+          switch (log.eventName) {
+            case 'ReviewLeft':
+              setLocalOrderStatus(6);
+              break;
+          }
+        }
+      };
+      const watchConfig = {
+        address: nuggetContract,
+        abi: nuggetAbi,
+        onLogs,
+      };
+
+      return watchContractEvent(config, watchConfig);
+    }
+  }, [config, listingOrder.id, nuggetAbi, nuggetContract]);
+
   return (
     <>
       <Box className="flex md:flex-row flex-col gap-1 items-center">
@@ -64,13 +113,19 @@ export const OrderManager = ({
           />
         </Box>
 
-        {listingOrder.status < OrderStatus.ACTIVE && (
-          <Button variant="contained" startIcon={<ShoppingBasket />} onClick={() => setConfirmBuy(true)}>
+        {localOrderStatus < OrderStatus.ACTIVE && (
+          <Button
+            variant="contained"
+            startIcon={<ShoppingBasket />}
+            onClick={() => {
+              setConfirmBuy(true);
+            }}
+          >
             Pay order
           </Button>
         )}
 
-        {listingOrder.status === OrderStatus.ACTIVE && (
+        {localOrderStatus === OrderStatus.ACTIVE && (
           <Button
             variant="contained"
             startIcon={<ChatBubble />}
@@ -78,6 +133,16 @@ export const OrderManager = ({
           >
             Chat with {listing.creator.address === address ? 'buyer' : 'seller'}
           </Button>
+        )}
+        {localOrderStatus === OrderStatus.FINALIZED && listing.creator.address !== address && (
+          <>
+            <Button variant="contained" startIcon={<ChatBubble />} onClick={() => leaveFeedback(true)}>
+              Positive
+            </Button>
+            <Button variant="contained" startIcon={<ChatBubble />} onClick={() => leaveFeedback(false)}>
+              Negative
+            </Button>
+          </>
         )}
       </Box>
     </>

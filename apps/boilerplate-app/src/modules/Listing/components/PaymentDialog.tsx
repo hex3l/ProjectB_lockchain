@@ -28,6 +28,7 @@ export const PaymentDialog = ({
   const [paymentDialog, setPaymentDialog] = paymentDialogState;
 
   useEffect(() => {
+    console.log('paymentDialog', paymentDialog, listingOrder);
     if (paymentDialog && listingOrder && listingOrder.status === OrderStatus.ON_CHAIN) {
       payOrder();
     }

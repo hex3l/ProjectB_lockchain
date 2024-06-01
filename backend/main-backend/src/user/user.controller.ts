@@ -41,6 +41,12 @@ export class UserController {
   }
 
   @Private()
+  @Get('/nuggetabi')
+  getNuggetAbi(@Req() request: any): any {
+    return this.contractService.getNuggetContractDetails();
+  }
+
+  @Private()
   @Get('/favorites')
   getFavorites(@Req() request: any): Promise<Listing[]> {
     const { user } = request;

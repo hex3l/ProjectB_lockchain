@@ -5,5 +5,6 @@ export enum OrderStatus {
   ACTIVE = 3, // Event Buyer payed out the order
   FINALIZED = 4, // Event Both have confirmed the order (or through dispute but payed to seller)
   REIBURSED = 5, // Event Seller has been reimbursed due to dispute
+  REVIEWED = 6, // Event buyer reviwed the order
   REJECTED = 100, // When PNEDING is not accepted by seller
 }

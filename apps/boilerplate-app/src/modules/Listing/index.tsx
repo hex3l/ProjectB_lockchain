@@ -113,7 +113,7 @@ const ListingComponent = ({
 
   // Triggers payment through metamask
   const payOrder = useCallback(() => {
-    console.log(id, price);
+    console.log(id, price, contract);
     if (contract && id && price)
       writeContract(
         {

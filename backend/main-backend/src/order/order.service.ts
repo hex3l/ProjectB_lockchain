@@ -83,7 +83,7 @@ export class OrderService {
 
   async findByListing(id: number, user?: number): Promise<Order> {
     const listing = await this.listingRepository.findOne({ where: { id } });
-    if (listing.id_creator === user) {
+    if (listing?.id_creator === user) {
       return this.offerRepository.findOne({ where: { id_listing: id, status: In([2, 3, 4, 5, 100]) } });
     }
     return this.offerRepository.findOne({

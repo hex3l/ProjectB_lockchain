@@ -6,6 +6,8 @@ export const emptyGlobalState: GlobalStateData = {
     jwt: null,
     abi: null,
     contract: null,
+    nuggetAbi: null,
+    nuggetContract: null,
   },
 };
 
@@ -31,6 +33,8 @@ export type GlobalStateData = {
     jwt: string | null;
     abi: any;
     contract: `0x${string}` | null;
+    nuggetAbi: any;
+    nuggetContract: `0x${string}` | null;
   };
 };
 

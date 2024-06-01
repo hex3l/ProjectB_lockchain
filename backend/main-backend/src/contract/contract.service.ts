@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Address, Contract, ContractAbi, Web3 } from 'web3';
 import * as dealHandlerContract from '../../truffle/build/contracts/DealHandler.json';
+import * as goldenNuggetContract from '../../truffle/build/contracts/GoldenNugget.json';
 import { Web3Account } from 'web3-eth-accounts';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -14,6 +15,8 @@ export class ContractService {
   private account: Web3Account;
   private contract: Contract<ContractAbi>;
   private contractEvents;
+  private nuggetContract: Contract<ContractAbi>;
+  private nuggetContractEvents;
   constructor(
     @InjectDataSource()
     private datasource: DataSource,
@@ -29,12 +32,27 @@ export class ContractService {
     this.contractEvents = this.contract.events.allEvents({});
     this.contractEvents.on('data', (data) => chainEventHandler(data, this.datasource, this.web3));
     this.contractEvents.on('error', console.error);
+
+    this.nuggetContract = new Contract(goldenNuggetContract.abi, goldenNuggetContract.networks[5777].address);
+    this.nuggetContract.setProvider(provider);
+    this.nuggetContract.defaultAccount = this.account.address;
+
+    this.nuggetContractEvents = this.contract.events.allEvents({});
+    this.nuggetContractEvents.on('data', (data) => nuggetChainEventHandler(data, this.datasource, this.web3));
+    this.nuggetContractEvents.on('error', console.error);
   }
 
   getContractDetails() {
     return {
       contract: dealHandlerContract.networks[5777].address,
       abi: dealHandlerContract.abi,
+    };
+  }
+
+  getNuggetContractDetails() {
+    return {
+      contract: goldenNuggetContract.networks[5777].address,
+      abi: goldenNuggetContract.abi,
     };
   }
 
@@ -113,6 +131,24 @@ const chainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
       console.log('Reimbursed', orderId);
       await orderRepository.update(orderId, { status: OrderStatus.REIBURSED, is_dispute: false });
       await messageRepository.save({ id_sender: order.id_creator, content: '$$$REIMBURSED', id_order: orderId });
+      return;
+    default:
+      return;
+  }
+};
+
+const nuggetChainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
+  const orderRepository = datasource.getRepository(Order);
+  const messageRepository = datasource.getRepository(Message);
+  const orderId = Number(event.returnValues.id);
+
+  const order = await orderRepository.findOne({ where: { id: orderId }, relations: ['listing'] });
+
+  switch (event.event) {
+    case 'ReviewLeft':
+      console.log('ReviewLeft', orderId);
+      await orderRepository.update(orderId, { status: OrderStatus.REVIEWED });
+      await messageRepository.save({ id_sender: order.id_creator, content: '$$$REVIEWED', id_order: orderId });
       return;
     default:
       return;

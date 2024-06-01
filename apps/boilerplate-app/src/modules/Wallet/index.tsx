@@ -19,7 +19,7 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { clone } from 'utils';
-import { GlobalStateContext, GlobalStateData } from 'utils/GlobalState';
+import { GlobalStateContext, GlobalStateData, emptyGlobalState } from 'utils/GlobalState';
 import { useBackendCall } from 'utils/useBackendCall';
 
 import { WalletLogin } from './WalletLogin';
@@ -73,6 +73,9 @@ const Wallet = () => {
           const { abi, contract } = await backendCall('user/abi');
           state.auth.abi = abi;
           state.auth.contract = contract;
+          const { abi: nuggetAbi, contract: nuggetContract } = await backendCall('user/nuggetabi');
+          state.auth.nuggetAbi = nuggetAbi;
+          state.auth.nuggetContract = nuggetContract;
           if (setState) setState(state);
         }
       })().catch((error) => console.log(error));
@@ -118,7 +121,7 @@ const Wallet = () => {
 
   const disconnectMe = useCallback(() => {
     const newState = clone(state) as GlobalStateData;
-    newState.auth = { jwt: null, abi: null, contract: null };
+    newState.auth = emptyGlobalState.auth;
     localStorage.removeItem('token');
     setTimeout(() => {
       if (setState) setState(newState);

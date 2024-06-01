@@ -5,6 +5,7 @@ export enum OrderStatus {
   ACTIVE = 3,
   FINALIZED = 4,
   REIMBURSED = 5,
+  REVIEWED = 6,
   REJECTED = 100,
 }
 export const OrderStatusFromNumber = {
@@ -14,6 +15,7 @@ export const OrderStatusFromNumber = {
   3: OrderStatus.ACTIVE,
   4: OrderStatus.FINALIZED,
   5: OrderStatus.REIMBURSED,
+  6: OrderStatus.REVIEWED,
   100: OrderStatus.REJECTED,
 };
 export const OrderStatusName = {
@@ -23,6 +25,7 @@ export const OrderStatusName = {
   [OrderStatus.ACTIVE]: 'payed', // Event Buyer pays out the order
   [OrderStatus.FINALIZED]: 'finalized', // Event Both have confirmed the order (or through dispute but payed to seller)
   [OrderStatus.REIMBURSED]: 'reimbursed', // Event Seller has been reimbursed due to dispute
+  [OrderStatus.REVIEWED]: 'reviewed', // review left
   [OrderStatus.REJECTED]: 'rejected', // When PNEDING is not accepted by seller
 };
 
@@ -33,5 +36,6 @@ export const OrderStatusColors = {
   [OrderStatus.ACTIVE]: 'success', // Event Buyer pays out the order
   [OrderStatus.FINALIZED]: 'success', // Event Both have confirmed the order (or through dispute but payed to seller)
   [OrderStatus.REIMBURSED]: 'error', // Event Seller has been reimbursed due to dispute
+  [OrderStatus.REVIEWED]: 'success', // review left
   [OrderStatus.REJECTED]: 'error', // When PNEDING is not accepted by seller
 };
