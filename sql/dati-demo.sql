@@ -2,7 +2,7 @@ INSERT INTO public."user"
 (id, address, username, email, created, updated, "deletedAt") VALUES
 (1, '0xbB2095532dE259FDf3a4Af484eF4de0E080bCa4C', NULL, NULL, '2023-12-11 18:03:05.678', '2023-12-11 18:03:05.678', NULL),
 (2, '0x3afA2A3fA6A1C6f4439D098e5F2622cA9dBFB035', NULL, NULL, '2023-12-11 18:03:05.678', '2023-12-11 18:03:05.678', NULL),
-(3, '0x71aEB6a9Ba62f9bb637BdD8cef7b2aeC6F9c962e', NULL, NULL, '2023-12-11 18:03:05.678', '2023-12-11 18:03:05.678', NULL),
+(3, '0x71aEB6a9Ba62f9bb637BdD8cef7b2aeC6F9c962e', NULL, NULL, '2023-12-11 18:03:05.678', '2023-12-11 18:03:05.678', NULL);
 
 INSERT INTO public.category
 (id, "name", created, updated, "deletedAt") VALUES
