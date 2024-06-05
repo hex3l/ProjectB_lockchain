@@ -1,3 +1,7 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-misused-promises */
@@ -8,13 +12,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import styled from '@emotion/styled';
-import { Logout } from '@mui/icons-material';
+import { Logout, VisibilityOff } from '@mui/icons-material';
 import { Avatar, Badge, Button, CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { injected } from '@wagmi/core';
+import { readContract } from '@wagmi/core';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useConfig, useConnect, useDisconnect } from 'wagmi';
 // import { injected } from 'wagmi/connectors';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
@@ -56,11 +61,13 @@ const Wallet = () => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const backendCall = useBackendCall();
+  const config = useConfig();
   const { state, setState } = useContext(GlobalStateContext);
-  const { jwt } = state.auth;
+  const { jwt, nuggetAbi, nuggetContract } = state.auth;
 
   const [enableWalletSync, setEnableWalletSync] = useState(false);
   const [handledDisconnect, setHandledDisconnect] = useState(false);
+  const [myNugget, setMyNugget] = useState<null | string>(null);
   const [avatarColor, setAvatarColor] = useState('#000');
   const { address, status } = useAccount();
   const { disconnect } = useDisconnect();
@@ -81,6 +88,18 @@ const Wallet = () => {
       })().catch((error) => console.log(error));
     }
   }, [status]);
+
+  const refreshNuggets = useCallback(async () => {
+    if (!!nuggetContract && !!nuggetAbi && !!address) {
+      const nuggets = await readContract(config, {
+        abi: nuggetAbi,
+        address: nuggetContract,
+        functionName: 'balanceOf',
+        args: [address],
+      });
+      setMyNugget(`${nuggets}`);
+    }
+  }, [nuggetContract, nuggetAbi?.contractName, address]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -128,7 +147,7 @@ const Wallet = () => {
       disconnect();
       enqueueSnackbar('You have been successfully disconnected, redirecting to homepage...', { variant: 'success' });
       setTimeout(() => {
-        router.push('/');
+        window.location.href = '/';
       }, 500);
     }, 500);
   }, []);
@@ -139,7 +158,15 @@ const Wallet = () => {
     <>
       {jwt ? (
         <>
-          <div className="flex flex-row space-x-1">
+          <div className="flex flex-row space-x-2">
+            <Tooltip title="My golden nuggets">
+              <div id="refresh_nuggets" className="flex flex-row items-center" onClick={() => refreshNuggets()}>
+                <div className="flex items-center">{myNugget ?? <VisibilityOff className="w-[16px]" />}</div>
+                <div className="w-[30px] flex items-center">
+                  <img className="w-full" src="/assets/gold_nugget.png"></img>
+                </div>
+              </div>
+            </Tooltip>
             <Tooltip title="Open profile">
               <Button
                 variant="contained"
