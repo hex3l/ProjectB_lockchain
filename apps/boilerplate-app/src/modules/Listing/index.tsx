@@ -139,9 +139,16 @@ const ListingComponent = ({
               payOrder();
               break;
             case 'Payed':
-              if (listingOrder) setListingOrder({ ...listingOrder, status: OrderStatus.ACTIVE });
+              console.log('listing order', listingOrder);
+              if (listingOrder)
+                setListingOrder({ ...(listingOrder ?? {}), status: OrderStatus.ACTIVE } as ListingOrderDto);
               setConfirmBuy(false);
               enqueueSnackbar('Order payed succesfully', { variant: 'success' });
+              break;
+            case 'ReviewLeft':
+              if (listingOrder)
+                setListingOrder({ ...(listingOrder ?? {}), status: OrderStatus.REVIEWED } as ListingOrderDto);
+              setConfirmBuy(false);
               break;
           }
         }

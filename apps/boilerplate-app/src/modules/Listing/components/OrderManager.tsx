@@ -8,7 +8,7 @@ import { ChatBubble, ShoppingBasket } from '@mui/icons-material';
 import { Box, Button, Chip, Typography } from '@mui/material';
 import { watchContractEvent } from '@wagmi/core';
 import { useRouter } from 'next/router';
-import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useContext, useEffect } from 'react';
 import { useAccount, useConfig, useWriteContract } from 'wagmi';
 
 import {
@@ -40,8 +40,7 @@ export const OrderManager = ({
   const { writeContract } = useWriteContract();
   const { state } = useContext(GlobalStateContext);
   const { nuggetAbi, nuggetContract } = state.auth;
-  const [localOrderStatus, setLocalOrderStatus] = useState(listingOrder.status);
-  const orderStatus: OrderStatus = OrderStatusFromNumber[localOrderStatus as keyof typeof OrderStatusFromNumber];
+  const orderStatus: OrderStatus = OrderStatusFromNumber[listingOrder.status as keyof typeof OrderStatusFromNumber];
 
   const leaveFeedback = useCallback(
     (feedback: boolean) => {
@@ -66,9 +65,6 @@ export const OrderManager = ({
         for (const log of logs) {
           console.log('Blockchain event:', log.eventName);
           switch (log.eventName) {
-            case 'ReviewLeft':
-              setLocalOrderStatus(6);
-              break;
           }
         }
       };
@@ -113,7 +109,7 @@ export const OrderManager = ({
           />
         </Box>
 
-        {localOrderStatus < OrderStatus.ACTIVE && (
+        {listingOrder.status < OrderStatus.ACTIVE && (
           <Button
             variant="contained"
             startIcon={<ShoppingBasket />}
@@ -125,7 +121,7 @@ export const OrderManager = ({
           </Button>
         )}
 
-        {localOrderStatus === OrderStatus.ACTIVE && (
+        {listingOrder.status === OrderStatus.ACTIVE && (
           <Button
             variant="contained"
             startIcon={<ChatBubble />}
@@ -134,7 +130,7 @@ export const OrderManager = ({
             Chat with {listing.creator.address === address ? 'buyer' : 'seller'}
           </Button>
         )}
-        {localOrderStatus === OrderStatus.FINALIZED && listing.creator.address !== address && (
+        {listingOrder.status === OrderStatus.FINALIZED && listing.creator.address !== address && (
           <>
             <Button variant="contained" startIcon={<ChatBubble />} onClick={() => leaveFeedback(true)}>
               Positive
