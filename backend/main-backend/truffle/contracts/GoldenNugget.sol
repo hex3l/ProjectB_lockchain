@@ -11,6 +11,7 @@ import "./DealHandler.sol";
 
 interface I {
     function getDealType(uint dealID) external view returns (Deal memory);
+    function deleteDeal(uint dealID) external;
     // function deals(uint dealID) external view returns (Deal memory);
     struct Deal {
         uint amount;
@@ -27,6 +28,7 @@ interface I {
 contract GoldenNugget is ERC20, ERC20Pausable, Ownable, ERC20Permit {
 
  event ReviewLeft(uint indexed id);
+ event DealDeleted(uint indexed id);
 I dealInterface;
 // GreeterInterface GreeterContract = GreeterInterface(OTHER_CONTRACT);
     struct Deal {
@@ -71,6 +73,8 @@ I dealInterface;
             _mint(dealInterface.getDealType(dealID).target, 1); //mint 1 GDN token for the seller, 2 if good review TODO
          }
          emit ReviewLeft(dealID);
+        dealInterface.deleteDeal(dealID);
+        emit DealDeleted(dealID);
         
     }
 
@@ -81,6 +85,11 @@ I dealInterface;
         override(ERC20, ERC20Pausable)
     {
         super._update(from, to, value);
+    }
+
+    function getDeal(uint dealID) public view returns (address){
+        
+        return dealInterface.getDealType(dealID).source;
     }
 
 }

@@ -131,7 +131,6 @@ contract DealHandler {
         }
         deals[_id].target.transfer(deals[_id].amount);
         emit Confirmed(_id, deals[_id].source, deals[_id].target, deals[_id].amount);
-        delete deals[_id];
         emit DeletedDeal(_id);
     }
 
@@ -190,6 +189,10 @@ contract DealHandler {
     function destroySmartDeal(address payable _to) public onlyOwner {
         selfDestructInitiated = true;
         selfdestruct(_to);
+    }
+
+    function deleteDeal(uint dealID) external{
+        delete deals[dealID];
     }
 
 
