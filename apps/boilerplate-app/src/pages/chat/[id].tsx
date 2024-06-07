@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable no-nested-ternary */
@@ -9,12 +10,14 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
+import { ChatBubble } from '@mui/icons-material';
 import { Box, Button, Container, Paper, TextField, Typography } from '@mui/material';
 import { watchContractEvent } from '@wagmi/core';
 import { useRouter } from 'next/router';
 import React, { Fragment, useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useAccount, useConfig, useWriteContract } from 'wagmi';
 
+import { OrderStatus } from 'common/consts/order-status.enum';
 import { MessageDto } from 'dto/MessageDto';
 import { OrderDto } from 'dto/OrderDto';
 import { OfferStatusRow } from 'modules/Listings/OfferStatusRow';
@@ -23,7 +26,7 @@ import { useBackendCall } from 'utils/useBackendCall';
 
 const Page = () => {
   const { state } = useContext(GlobalStateContext);
-  const { abi, contract } = state.auth;
+  const { abi, contract, nuggetAbi, nuggetContract } = state.auth;
   const backendCall = useBackendCall();
   const router = useRouter();
   const { address } = useAccount();
@@ -110,6 +113,12 @@ const Page = () => {
             case 'TargetConfirm':
               setOrderInfo({ ...orderInfo, seller_confimation: true });
               break;
+            case 'Confirmed':
+              setOrderInfo({ ...orderInfo, status: OrderStatus.FINALIZED });
+              break;
+            case 'Reimbursed':
+              setOrderInfo({ ...orderInfo, status: OrderStatus.REIMBURSED });
+              break;
           }
         }
       };
@@ -122,6 +131,28 @@ const Page = () => {
       return watchContractEvent(config, watchConfig);
     }
   }, [contract, abi, id, orderInfo]);
+
+  useEffect(() => {
+    if (nuggetAbi && nuggetContract) {
+      const onLogs = (logs: any) => {
+        for (const log of logs) {
+          console.log('Blockchain event:', log.eventName);
+          switch (log.eventName) {
+            case 'ReviewLeft':
+              setOrderInfo({ ...orderInfo, status: OrderStatus.REVIEWED });
+              break;
+          }
+        }
+      };
+      const watchConfig = {
+        address: nuggetContract,
+        abi: nuggetAbi,
+        onLogs,
+      };
+
+      return watchContractEvent(config, watchConfig);
+    }
+  }, [config, nuggetAbi, nuggetContract]);
 
   const sendConfirmation = useCallback(() => {
     if (contract) {
@@ -137,6 +168,21 @@ const Page = () => {
     }
   }, [abi, contract, id, writeContract, orderInfo, address]);
 
+  const leaveFeedback = useCallback(
+    (feedback: boolean) => {
+      if (nuggetContract && orderInfo.id)
+        writeContract(
+          {
+            abi: nuggetAbi,
+            address: nuggetContract,
+            functionName: 'mint',
+            args: [BigInt(orderInfo.id), feedback],
+          },
+          { onError: (err) => console.error(err) },
+        );
+    },
+    [orderInfo.id, nuggetAbi, nuggetContract, writeContract],
+  );
   return (
     <Fragment>
       <Box className="banner static-beach_bar">
@@ -200,7 +246,7 @@ const Page = () => {
                   key={id}
                   message={message.content}
                   address={message.sender.address}
-                  right={message.sender.address === address}
+                  right={message.sender.address == address}
                   buyer={orderInfo.buyer === message.sender.address}
                   timestamp={message.created}
                 />
@@ -235,9 +281,21 @@ const Page = () => {
             </Box>
           </Box>
         </Paper>
-        <Button disabled={orderInfo.is_dispute} variant="contained" color="primary" onClick={() => openDispute()}>
-          {orderInfo.is_dispute ? 'Dispute already opened' : 'Open Dispute'}
-        </Button>
+        {orderInfo.status === OrderStatus.FINALIZED && orderInfo.buyer === address && (
+          <>
+            <Button variant="contained" startIcon={<ChatBubble />} onClick={() => leaveFeedback(true)}>
+              Leave positive feedback
+            </Button>
+            <Button variant="contained" startIcon={<ChatBubble />} onClick={() => leaveFeedback(false)}>
+              Leave negative feedback
+            </Button>
+          </>
+        )}
+        {orderInfo.status < OrderStatus.FINALIZED && (
+          <Button disabled={orderInfo.is_dispute} variant="contained" color="primary" onClick={() => openDispute()}>
+            {orderInfo.is_dispute ? 'Dispute already opened' : 'Open Dispute'}
+          </Button>
+        )}
       </Container>
     </Fragment>
   );
@@ -267,6 +325,8 @@ const Message = ({
           return ['Confirmed', `${buyerPron} confirmed reception of the order`];
         case '$$$REIMBURSED':
           return ['Order has been reimbursed', `${buyerPron} been reimbursed`];
+        case '$$$REVIEWED':
+          return [`${buyerPron} reviewed the experience with this order`, ``];
         default:
           return undefined;
       }

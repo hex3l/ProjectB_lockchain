@@ -6,10 +6,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { ChatBubble, ShoppingBasket } from '@mui/icons-material';
 import { Box, Button, Chip, Typography } from '@mui/material';
-import { watchContractEvent } from '@wagmi/core';
 import { useRouter } from 'next/router';
-import { Dispatch, SetStateAction, useCallback, useContext, useEffect } from 'react';
-import { useAccount, useConfig, useWriteContract } from 'wagmi';
+import { Dispatch, SetStateAction } from 'react';
+import { useAccount } from 'wagmi';
 
 import {
   OrderStatus,
@@ -19,7 +18,6 @@ import {
 } from 'common/consts/order-status.enum';
 import { ListingDto } from 'dto/ListingDto';
 import { ListingOrderDto } from 'dto/ListingOrderDto';
-import { GlobalStateContext } from 'utils/GlobalState';
 
 export const Interaction = {
   OFFER: 'offer',
@@ -37,46 +35,7 @@ export const OrderManager = ({
 }) => {
   const router = useRouter();
   const { address } = useAccount();
-  const { writeContract } = useWriteContract();
-  const { state } = useContext(GlobalStateContext);
-  const { nuggetAbi, nuggetContract } = state.auth;
   const orderStatus: OrderStatus = OrderStatusFromNumber[listingOrder.status as keyof typeof OrderStatusFromNumber];
-
-  const leaveFeedback = useCallback(
-    (feedback: boolean) => {
-      if (nuggetContract && listingOrder.id)
-        writeContract(
-          {
-            abi: nuggetAbi,
-            address: nuggetContract,
-            functionName: 'mint',
-            args: [BigInt(listingOrder.id), feedback],
-          },
-          { onError: (err) => console.error(err) },
-        );
-    },
-    [listingOrder.id, nuggetAbi, nuggetContract, writeContract],
-  );
-
-  const config = useConfig();
-  useEffect(() => {
-    if ((listingOrder.id, nuggetAbi, nuggetContract)) {
-      const onLogs = (logs: any) => {
-        for (const log of logs) {
-          console.log('Blockchain event:', log.eventName);
-          switch (log.eventName) {
-          }
-        }
-      };
-      const watchConfig = {
-        address: nuggetContract,
-        abi: nuggetAbi,
-        onLogs,
-      };
-
-      return watchContractEvent(config, watchConfig);
-    }
-  }, [config, listingOrder.id, nuggetAbi, nuggetContract]);
 
   return (
     <>
@@ -121,7 +80,7 @@ export const OrderManager = ({
           </Button>
         )}
 
-        {listingOrder.status === OrderStatus.ACTIVE && (
+        {listingOrder.status >= OrderStatus.ACTIVE && (
           <Button
             variant="contained"
             startIcon={<ChatBubble />}
@@ -129,16 +88,6 @@ export const OrderManager = ({
           >
             Chat with {listing.creator.address === address ? 'buyer' : 'seller'}
           </Button>
-        )}
-        {listingOrder.status === OrderStatus.FINALIZED && listing.creator.address !== address && (
-          <>
-            <Button variant="contained" startIcon={<ChatBubble />} onClick={() => leaveFeedback(true)}>
-              Positive
-            </Button>
-            <Button variant="contained" startIcon={<ChatBubble />} onClick={() => leaveFeedback(false)}>
-              Negative
-            </Button>
-          </>
         )}
       </Box>
     </>

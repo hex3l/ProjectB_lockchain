@@ -37,7 +37,7 @@ export class ContractService {
     this.nuggetContract.setProvider(provider);
     this.nuggetContract.defaultAccount = this.account.address;
 
-    this.nuggetContractEvents = this.contract.events.allEvents({});
+    this.nuggetContractEvents = this.nuggetContract.events.allEvents({});
     this.nuggetContractEvents.on('data', (data) => nuggetChainEventHandler(data, this.datasource, this.web3));
     this.nuggetContractEvents.on('error', console.error);
   }
@@ -138,6 +138,7 @@ const chainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
 };
 
 const nuggetChainEventHandler = async (event, datasource: DataSource, web3: Web3) => {
+  console.log('nugget event', event);
   const orderRepository = datasource.getRepository(Order);
   const messageRepository = datasource.getRepository(Message);
   const orderId = Number(event.returnValues.id);
