@@ -104,20 +104,25 @@ const Page = () => {
   useEffect(() => {
     if (contract && abi) {
       const onLogs = (logs: any) => {
+        let tmpOrder = { ...orderInfo };
         for (const log of logs) {
           console.log('Blockchain event:', log.eventName);
           switch (log.eventName) {
             case 'SourceConfirm':
-              setOrderInfo({ ...orderInfo, buyer_confirmation: true });
+              tmpOrder = { ...tmpOrder, buyer_confirmation: true };
+              setOrderInfo(tmpOrder);
               break;
             case 'TargetConfirm':
-              setOrderInfo({ ...orderInfo, seller_confimation: true });
+              tmpOrder = { ...tmpOrder, seller_confimation: true };
+              setOrderInfo(tmpOrder);
               break;
             case 'Confirmed':
-              setOrderInfo({ ...orderInfo, status: OrderStatus.FINALIZED });
+              tmpOrder = { ...tmpOrder, status: OrderStatus.FINALIZED };
+              setOrderInfo(tmpOrder);
               break;
             case 'Reimbursed':
-              setOrderInfo({ ...orderInfo, status: OrderStatus.REIMBURSED });
+              tmpOrder = { ...tmpOrder, status: OrderStatus.REIMBURSED };
+              setOrderInfo(tmpOrder);
               break;
           }
         }
@@ -152,7 +157,7 @@ const Page = () => {
 
       return watchContractEvent(config, watchConfig);
     }
-  }, [config, nuggetAbi, nuggetContract]);
+  }, [config, nuggetAbi, nuggetContract, orderInfo]);
 
   const sendConfirmation = useCallback(() => {
     if (contract) {

@@ -141,7 +141,8 @@ const nuggetChainEventHandler = async (event, datasource: DataSource, web3: Web3
   console.log('nugget event', event);
   const orderRepository = datasource.getRepository(Order);
   const messageRepository = datasource.getRepository(Message);
-  const orderId = Number(event.returnValues.id);
+  let orderId = Number(event.returnValues.id);
+  if (Number.isNaN(orderId)) orderId = Number(event.returnValues['0']);
 
   const order = await orderRepository.findOne({ where: { id: orderId }, relations: ['listing'] });
 
