@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/require-await */
@@ -26,8 +27,8 @@ const Home = () => {
 
   const relevantCategories = useMemo(
     () => [
-      { label: 'Web Dev', icon: <ViewQuilt />, url: '/listings/Web%20Dev', color: '#FFC107' },
-      { label: 'Editing', icon: <Camera />, url: '/listings/Editing', color: '#FF0000' },
+      { label: 'AI Artist', icon: <Camera />, url: '/listings/AI%20Artist', color: '#FFC107' },
+      { label: 'Social Media', icon: <ViewQuilt />, url: '/listings/Social%20Media', color: '#FF3030' },
       {
         label: 'Graphics',
         icon: <Brush />,
@@ -97,12 +98,17 @@ const Home = () => {
                 <Box className="flex-1 flex flex-col space-y-2">
                   <Typography className="flex-1 font-bold">What are you looking for?</Typography>
                   <TextField
-                    placeholder="Write something..."
+                    placeholder="Anything"
                     variant="outlined"
                     className="w-full flex-1"
                     value={search}
                     onChange={async (event) => {
                       setSearch(event.target.value);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        router.push(`/listings/${selectedCategory}${search ? `?search=${search}` : ''}`);
+                      }
                     }}
                   />
                 </Box>
@@ -115,7 +121,7 @@ const Home = () => {
                       setSelectedCategory(option);
                     }}
                     options={categories.map((el) => el.name)}
-                    renderInput={(params) => <TextField {...params} placeholder="CMS development" />}
+                    renderInput={(params) => <TextField {...params} placeholder="All" />}
                   />
                 </Box>
                 <Box className="flex flex-col space-y-2">
