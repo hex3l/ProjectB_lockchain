@@ -280,7 +280,7 @@ const ListingComponent = ({
                         <Box className="flex items-center flex-1 justify-end">
                           <Tooltip title="User golden nuggets">
                             <div className="flex flex-row items-center">
-                              <div className="flex items-center">{nugget}</div>
+                              <div className="flex items-center text-yellow-600 font-bold">{nugget}</div>
                               <div className="w-[23px] flex items-center">
                                 <img className="w-full" src="/assets/gold_nugget.png"></img>
                               </div>

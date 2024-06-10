@@ -144,6 +144,13 @@ const Wallet = () => {
     }, 500);
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => {
+      const nugget = document.getElementById('refresh_nuggets');
+      nugget?.click();
+    }, 2000);
+  }, [status, jwt]);
+
   if (!enableWalletSync) return <></>;
 
   return (
@@ -153,7 +160,9 @@ const Wallet = () => {
           <div className="flex flex-row space-x-2">
             <Tooltip title="My golden nuggets">
               <div id="refresh_nuggets" className="flex flex-row items-center" onClick={() => refreshNuggets()}>
-                <div className="flex items-center">{myNugget ?? <VisibilityOff className="w-[16px]" />}</div>
+                <div className="flex items-center text-yellow-600 font-bold">
+                  {myNugget ?? <VisibilityOff className="w-[16px]" />}
+                </div>
                 <div className="w-[30px] flex items-center">
                   <img className="w-full" src="/assets/gold_nugget.png"></img>
                 </div>

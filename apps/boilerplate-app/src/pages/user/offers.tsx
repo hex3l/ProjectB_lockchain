@@ -7,6 +7,7 @@ import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { Box, Button, Container, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { OrderDto } from 'dto/OrderDto';
@@ -17,6 +18,7 @@ import { useBackendCall } from 'utils/useBackendCall';
 // eslint-disable-next-line import/no-default-export
 const Page = () => {
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const backendCall = useBackendCall();
   const [offerInfo, setOfferInfo] = useState<Array<OrderDto> | undefined>(undefined);
   const [value, setValue] = useState(0);
@@ -55,12 +57,13 @@ const Page = () => {
             body: JSON.stringify({ filter: filter }),
           })) as Array<OrderDto>;
           setOfferInfo(result);
+          enqueueSnackbar('Offer accepted', { variant: 'success' });
         })
         .catch((error: any) => {
           console.error(error);
         });
     },
-    [offerInfo, backendCall],
+    [backendCall, filter, enqueueSnackbar],
   );
 
   const refuseOffer = useCallback(
@@ -77,12 +80,13 @@ const Page = () => {
             body: JSON.stringify({ filter: filter }),
           })) as Array<OrderDto>;
           setOfferInfo(result);
+          enqueueSnackbar('Offer rejected', { variant: 'success' });
         })
         .catch((error: any) => {
           console.error(error);
         });
     },
-    [offerInfo, backendCall],
+    [backendCall, filter, enqueueSnackbar],
   );
 
   // ///////////////////////////////////////////////////////////////

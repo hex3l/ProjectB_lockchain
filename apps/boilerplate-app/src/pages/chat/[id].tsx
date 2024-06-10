@@ -325,7 +325,7 @@ const Message = ({
       const buyerPron = right ? 'You have' : 'The buyer has';
       switch (message) {
         case '$$$PAYED':
-          return ['Order payed', `${buyerPron} have payed the order`];
+          return ['Order payed', `${buyerPron} payed the order`];
         case '$$$CONFIRM':
           return ['Confirmed', `${buyerPron} confirmed reception of the order`];
         case '$$$REIMBURSED':
