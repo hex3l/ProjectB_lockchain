@@ -23,6 +23,7 @@ import { useAccount, useConfig, useConnect, useDisconnect } from 'wagmi';
 // import { injected } from 'wagmi/connectors';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
+import { useRandomColor } from 'modules/utils/useRandomColor';
 import { clone } from 'utils';
 import { GlobalStateContext, GlobalStateData, emptyGlobalState } from 'utils/GlobalState';
 import { useBackendCall } from 'utils/useBackendCall';
@@ -68,7 +69,7 @@ const Wallet = () => {
   const [enableWalletSync, setEnableWalletSync] = useState(false);
   const [handledDisconnect, setHandledDisconnect] = useState(false);
   const [myNugget, setMyNugget] = useState<null | string>(null);
-  const [avatarColor, setAvatarColor] = useState('#000');
+  const avatarColor = useRandomColor();
   const { address, status } = useAccount();
   const { disconnect } = useDisconnect();
   const { connect } = useConnect();
@@ -100,15 +101,6 @@ const Wallet = () => {
       setMyNugget(`${nuggets}`);
     }
   }, [nuggetContract, nuggetAbi?.contractName, address]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setTimeout(() => {
-        const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-        setAvatarColor(randomColor);
-      }, 50);
-    }
-  }, []);
 
   // //////////////////////////////////////////////////////////////
   // Handle connection logic when a token exists and retries until it can connect with metamask

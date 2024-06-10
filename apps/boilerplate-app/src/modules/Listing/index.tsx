@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
@@ -15,8 +16,21 @@
 /* eslint-disable @next/next/no-img-element */
 import { FavoriteBorder, Flag, Share } from '@mui/icons-material';
 import Favorite from '@mui/icons-material/Favorite';
-import { Avatar, Box, Chip, Container, Divider, IconButton, Paper, Rating, Stack, Typography } from '@mui/material';
-import { watchContractEvent } from '@wagmi/core';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Chip,
+  Container,
+  Divider,
+  IconButton,
+  Paper,
+  Rating,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import { readContract, watchContractEvent } from '@wagmi/core';
 import Link from 'next/link';
 import { useSnackbar } from 'notistack';
 import { memo, useCallback, useContext, useEffect, useState } from 'react';
@@ -27,6 +41,8 @@ import { useConfig, useWriteContract } from 'wagmi';
 import { OrderStatus } from 'common/consts/order-status.enum';
 import { ListingDto } from 'dto/ListingDto';
 import { ListingOrderDto } from 'dto/ListingOrderDto';
+import { ServiceBayLogo } from 'modules/ServiceBayLogo';
+import { useRandomColor } from 'modules/utils/useRandomColor';
 import { GlobalStateContext } from 'utils/GlobalState';
 import { useBackendCall } from 'utils/useBackendCall';
 
@@ -44,7 +60,7 @@ const ListingComponent = ({
   closeDialog?: () => void;
 }) => {
   const { state } = useContext(GlobalStateContext);
-  const { abi, contract } = state.auth;
+  const { abi, contract, nuggetAbi, nuggetContract } = state.auth;
   const [listing, setListing] = useState<ListingDto | undefined>(undefined);
   const [listingOrder, setListingOrder] = useState<ListingOrderDto | undefined>(undefined);
   const { id, price } = listingOrder ?? {};
@@ -180,6 +196,24 @@ const ListingComponent = ({
     }
   }, [backendCall, enqueueSnackbar, setupPayment, id_listing, listing?.price]);
 
+  const avatarColor = useRandomColor();
+
+  const [nugget, setNugget] = useState<null | string>(null);
+
+  useEffect(() => {
+    (async () => {
+      if (!!nuggetContract && !!nuggetAbi && !!listing?.creator?.address) {
+        const nuggets = await readContract(config, {
+          abi: nuggetAbi,
+          address: nuggetContract,
+          functionName: 'balanceOf',
+          args: [listing?.creator?.address],
+        });
+        setNugget(`${nuggets}`);
+      }
+    })();
+  }, [nuggetContract, nuggetAbi?.contractName, listing?.creator?.address]);
+
   return (
     listing && (
       <Container maxWidth="xl" className={`flex flex-col px-0 ${!dialog ? 'pt-10 pb-10 gap-5' : ''}`}>
@@ -232,21 +266,28 @@ const ListingComponent = ({
                   )}
                   <Divider className="pt-3" />
                   <Box className="flex flex-row gap-3 pt-3">
-                    <Avatar />
+                    <Badge overlap="circular">
+                      <Avatar className="h-8 w-8" sx={{ backgroundColor: avatarColor }}>
+                        <ServiceBayLogo sx={{ height: '70%', width: '70%' }} />
+                      </Avatar>
+                    </Badge>
                     <Box className="flex flex-col md:flex-none flex-1 justify-center">
                       <Typography className="break-all">
                         <Link href={`/user/profile/${listing.creator.address}`}>{listing.creator.address}</Link>
                       </Typography>
-                      <Typography>Seller since {new Date(listing.creator.created).toLocaleDateString()}</Typography>
-                    </Box>
-                    <Box className="flex items-center">
-                      <Rating
-                        name="half-rating-read"
-                        defaultValue={listing.creator.rating}
-                        precision={0.25}
-                        readOnly
-                        size="small"
-                      />
+                      <Box className="flex flex-row">
+                        <Typography>Seller since {new Date(listing.creator.created).toLocaleDateString()}</Typography>
+                        <Box className="flex items-center flex-1 justify-end">
+                          <Tooltip title="User golden nuggets">
+                            <div className="flex flex-row items-center">
+                              <div className="flex items-center">{nugget}</div>
+                              <div className="w-[23px] flex items-center">
+                                <img className="w-full" src="/assets/gold_nugget.png"></img>
+                              </div>
+                            </div>
+                          </Tooltip>
+                        </Box>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
