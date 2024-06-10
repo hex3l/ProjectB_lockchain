@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { ServiceBayLogo } from 'modules/ServiceBayLogo';
 import { Wallet } from 'modules/Wallet';
@@ -17,6 +17,7 @@ import { GlobalStateContext } from 'utils/GlobalState';
 
 function TopBar() {
   const { state } = useContext(GlobalStateContext);
+  const [localJwt, setlocalJwt] = useState(state.auth.jwt);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -42,6 +43,10 @@ function TopBar() {
     }
 
     return pgs;
+  }, [localJwt]);
+
+  useEffect(() => {
+    setlocalJwt(state.auth.jwt);
   }, [state.auth.jwt]);
 
   return (
