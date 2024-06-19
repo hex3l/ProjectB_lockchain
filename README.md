@@ -1,10 +1,13 @@
-# ServiceBay setup
+# Service Bay
+This is a university project
+
+# Setup
 
 - Install node@20.8.0
 - Install and execute a PostgreSQL database (run it on standard 5432 port)
 - Install ganache and truffle globally ([https://archive.trufflesuite.com/docs/ganache/quickstart/#1-install-ganache](Ganache quickstart) [https://archive.trufflesuite.com/docs/truffle/how-to/install/#install-truffle](Truffle quickstart))
 - Create a ganache project with this mnemonic (grab convince arrest old shiver round door grid peace notice slim ugly)
-- Edit the .env file under `./backend/main-backend` to reflect your postgres user and create a database for the application
+- Copy the .env.example into .env file under `./backend/main-backend` to reflect your postgres user and create a database for the application
 - In this folder execute `npm i` in order to install all the dependencies
 - (Optional) Run the sql demo data script `.sql/dati-demo.sql` (tuned for the provided mnemonic)
 - Deploy the contracts under `./backend/main-backend/truffle` (navigate to the folder and execute the command `truffle migrate`)
