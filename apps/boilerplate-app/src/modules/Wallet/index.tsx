@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -88,7 +89,7 @@ const Wallet = () => {
         }
       })().catch((error) => console.log(error));
     }
-  }, [status]);
+  }, [status, address, state?.auth?.jwt]);
 
   const refreshNuggets = useCallback(async () => {
     if (!!nuggetContract && !!nuggetAbi && !!address) {
